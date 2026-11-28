@@ -5,7 +5,7 @@ import { existsSync } from 'node:fs';
 import type { TaskSystemStore } from '../../../../shared/task-system/store.js';
 import { normalizeAutonomySessionScope, type AutonomySessionScope } from '../../../../shared/types/identity-scope.js';
 import {
-  emptyMaterialPage, MATERIAL_SCAN_LIMIT, MATERIAL_SUMMARY_LIMIT, materialReference,
+  emptyMaterialPage, equalMaterialRef, MATERIAL_SCAN_LIMIT, MATERIAL_SUMMARY_LIMIT, materialReference,
   parseSessionCollaborationMaterialQuery, type SessionCollaborationMaterial, type SessionCollaborationMaterialQuery, type SessionCollaborationMaterialPage,
 } from '../../../../shared/types/session-collaboration-material.js';
 import { loadSessionEntry } from '../session-utils.js';
@@ -59,6 +59,27 @@ export function mayReadCollaborationSource(requester: AutonomySessionScope, targ
   return checker.check({ key: target.sessionKey, spawnedBy: entry?.spawnedBy, parentSessionKey: entry?.parentSessionKey }).allowed;
 }
 
+/** Only an owner-recorded same-session migration can resolve a previous generation's internal reference. */
+function migratedMaterial(query: SessionCollaborationMaterialQuery, readOwner: Awaited<ReturnType<typeof createOwnerReader>>,
+  context: GatewayRequestContext): SessionCollaborationMaterialPage | null {
+  const { requester, target, ref } = query;
+  if (!target || !ref || target.sessionKey !== requester.sessionKey || target.sessionGeneration === requester.sessionGeneration
+    || target.workspaceId !== requester.workspaceId || target.projectId !== requester.projectId) return null;
+  if (!mayReadCollaborationSource(requester, requester, context)) return null;
+  const detail = readOwner(requester, store => {
+    const task = store.binding(requester.sessionKey, requester.sessionGeneration);
+    if (!task) return null;
+    const inherited = store.collaborationContinuity(requester.sessionKey, requester.sessionGeneration, task.contract.taskNodeId)
+      .some(item => item.kind === 'migration' && item.materials.some(material => equalMaterialRef(material.ref, ref)
+        && material.source.sessionKey === target.sessionKey && material.source.sessionGeneration === target.sessionGeneration
+        && material.source.workspaceId === target.workspaceId && material.source.projectId === target.projectId));
+    if (!inherited) return null;
+    const material = store.readSharedMaterial(requester, target, ref);
+    return material?.sensitivity === 'internal' ? { material, ...store.sharedMaterialStatus(material, requester, Date.now()) } : null;
+  });
+  return detail ? { ...emptyMaterialPage(query, 'ready'), detail, scanned: 1 } : null;
+}
+
 /** Finish all asynchronous preparation before collecting the selected owners in one synchronous batch. */
 export async function readSessionCollaborationMaterialBatch(value: unknown, context: GatewayRequestContext): Promise<SessionCollaborationMaterialPage[]> {
   if (!Array.isArray(value) || !value.length || value.length > 4) throw new TypeError('One bounded material batch required');
@@ -71,8 +92,10 @@ export async function readSessionCollaborationMaterialBatch(value: unknown, cont
     target: query.target, fields: [], limit: 1 }, context)));
   const readOwner = await createOwnerReader();
   return queries.map((query, index) => {
-    if (visible[index].state !== 'ready') return emptyMaterialPage(query, visible[index].state, visible[index].reason);
     try {
+      const migrated = migratedMaterial(query, readOwner, context);
+      if (migrated) return migrated;
+      if (visible[index].state !== 'ready') return emptyMaterialPage(query, visible[index].state, visible[index].reason);
       const target = query.target!;
       if (!mayReadCollaborationSource(query.requester, target, context)) return emptyMaterialPage(query, 'unavailable', 'not-visible');
       const detail = readOwner(target, store => {
@@ -121,6 +144,13 @@ export async function readSessionCollaborationMaterials(value: unknown, context:
   const sourcePage = await readSessionCollaborationQuery({ requester, target, workspace, fields: [],
     limit: target ? 1 : SOURCE_PAGE_LIMIT, cursor: position?.sources ?? undefined }, context);
   const readOwner = await createOwnerReader();
+  try {
+    const migrated = migratedMaterial(query, readOwner, context);
+    if (migrated) return migrated;
+  } catch (error) {
+    const reason = staleReason(error);
+    return emptyMaterialPage(query, reason ? 'stale' : 'unavailable', reason ?? 'owner-unavailable');
+  }
   if (target && ref && sourcePage.reason === 'not-visible' &&
       !loadSessionEntry(target.sessionKey, { readOnly: true, skipCache: true }).entry) {
     try {

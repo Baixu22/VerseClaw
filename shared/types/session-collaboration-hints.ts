@@ -1,6 +1,8 @@
 import { normalizeAutonomySessionScope, type AutonomySessionScope } from './identity-scope.js';
 import { parseSessionCollaborationQuery, type SessionCollaborationQuery } from './session-collaboration.js';
 import type { TaskClaim, TaskContract } from '../task-system/types.js';
+import { parseMaterialReference } from './session-collaboration-material.js';
+import type { TaskCollaborationContinuity, CollaborationContinuityOperation } from './session-collaboration-continuity.js';
 
 export type CoordinationTaskRef = Pick<TaskContract, 'taskNodeId' | 'revision' | 'digest' | 'state'>;
 export type TaskCoordinationFacts = {
@@ -11,6 +13,7 @@ export type TaskCoordinationFacts = {
   dependencies: Array<{ taskNodeId: string; state: TaskContract['state'] | 'unknown' }>;
   relation: 'same-task' | 'shared-artifact' | 'different' | 'unknown';
   sharedArtifacts: string[];
+  continuity?: TaskCollaborationContinuity[];
 };
 export type SessionCollaborationHints = {
   schemaVersion: 'SessionCollaborationHints/v1';
@@ -22,6 +25,7 @@ export type SessionCollaborationHints = {
   taskReadState: 'ready' | 'empty' | 'unavailable';
   task: TaskCoordinationFacts | null;
   admission: { owner: 'SessionAdmissionRegistry'; active: number; waiters: number; fenced: boolean } | null;
+  continuityOperations?: CollaborationContinuityOperation[];
 };
 
 export function parseCollaborationHintsQuery(value: unknown) {
@@ -64,11 +68,27 @@ export function validateCollaborationHints(query: ReturnType<typeof parseCollabo
         || !Array.isArray(facts.sharedArtifacts) || facts.sharedArtifacts.length > 4 || facts.sharedArtifacts.some(path => !text(path, 4096))) return invalid();
       if (claim && (!text(claim.sessionKey) || !text(claim.generation) || !count(claim.epoch) || claim.epoch < 1
         || !count(claim.expiresAt) || !['active', 'paused', 'recovery_required', 'released'].includes(claim.state))) return invalid();
+      if (facts.continuity !== undefined) {
+        if (!Array.isArray(facts.continuity) || facts.continuity.length > 8) return invalid();
+        for (const item of facts.continuity) {
+          if (!['fork', 'handoff', 'migration'].includes(item.kind) || !text(item.sourceSessionKey)
+            || !text(item.sourceGeneration) || item.sessionKey !== query.target.sessionKey || item.generation !== query.target.sessionGeneration
+            || !count(item.capturedAt) || typeof item.truncated !== 'boolean' || !Array.isArray(item.materials) || item.materials.length > 4
+            || item.task?.taskNodeId !== task.taskNodeId || !count(item.task.revision) || !/^[a-f0-9]{64}$/.test(item.task.digest)) return invalid();
+          for (const material of item.materials) {
+            normalizeAutonomySessionScope(material.source, material.source);
+            parseMaterialReference(material.ref);
+          }
+        }
+      }
     }
     const admission = page.admission;
     if (admission && (admission.owner !== 'SessionAdmissionRegistry' || !count(admission.active)
       || !count(admission.waiters) || typeof admission.fenced !== 'boolean')) return invalid();
     if (page.task === undefined || page.admission === undefined) return invalid();
-    return page;
+    // Desktop operation projections are attached by Main after its own owner checks.
+    const runtimePage = { ...page };
+    delete runtimePage.continuityOperations;
+    return runtimePage;
   } catch { return invalid(); }
 }

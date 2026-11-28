@@ -78,6 +78,22 @@ beforeEach(()=>{
 afterEach(()=>{closeOpenClawStateDatabaseForTest();vi.unstubAllEnvs();rmSync(root,{recursive:true,force:true});});
 
 describe('Main environment migration composition',()=>{
+ it('retains exact material and original run references after a lost task-transfer acknowledgement',async()=>{
+  const sourceStore=openExecutionTaskStore(sourceRoot);
+  let material;
+  try{material=sourceStore.publishSharedMaterial(sourceStore.get(taskId).claim!,{id:'migration-finding',kind:'claim',summary:'Original finding',
+    sensitivity:'internal',evidenceRefs:[]},'source-run',()=>({workspaceId:'source',projectId:'source',sessionKey:key,sessionGeneration:generation}) as never);}
+  finally{sourceStore.close();}
+  failPhase='task-committed';await expect(migrateExecutionEnvironment(payload(),owner(),runtime())).rejects.toThrow('simulated crash');
+  const pending=read()!;const result=await migrateExecutionEnvironment(payload(),owner(),runtime());
+  expect(result.targetGeneration).toBe(pending.targetGeneration);expect(result.id).toBe(pending.id);
+  const targetStore=openExecutionTaskStore(targetRoot);
+  try{const records=targetStore.collaborationContinuity(key,result.targetGeneration,taskId);
+   expect(records).toHaveLength(1);expect(records[0]).toMatchObject({kind:'migration',sourceGeneration:generation,
+    materials:[{source:{workspaceId:'source',sessionGeneration:generation},ref:{id:material.id,contentDigest:material.contentDigest}}]});
+   expect(()=>targetStore.binding(key,generation)).toThrow('TASK_GENERATION_STALE');
+  }finally{targetStore.close();}
+ });
  it.each(['intent','fenced','drained','reserved','session-committed','task-committed','binding-committed'] as const)('resumes after durable %s without changing task identity',async phase=>{
   failPhase=phase;await expect(migrateExecutionEnvironment(payload(),owner(),runtime())).rejects.toThrow('simulated crash');
   const captured=read()!;closeOpenClawStateDatabaseForTest();

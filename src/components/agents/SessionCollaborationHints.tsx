@@ -6,8 +6,9 @@ import { hostApi } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
 import type { AutonomySessionScope } from '@shared/types/identity-scope';
 import type { SessionCollaborationHints as Hints } from '@shared/types/session-collaboration-hints';
+import { SessionCollaborationContinuity } from './SessionCollaborationContinuity';
 
-export function SessionCollaborationHints({ target }: { target: AutonomySessionScope }) {
+export function SessionCollaborationHints({ target, openSession }: { target: AutonomySessionScope; openSession?: () => void }) {
   const { t, i18n } = useTranslation('agents');
   const [open, setOpen] = useState(false);
   const [readerRevision, setReaderRevision] = useState(0);
@@ -105,6 +106,7 @@ export function SessionCollaborationHints({ target }: { target: AutonomySessionS
         {t(page.taskReadState === 'unavailable' ? 'collaboration.hints.taskUnavailable' : 'collaboration.hints.noTask')}</p>}
       {admission && <p data-testid="collaboration-hints-admission">{t(`collaboration.hints.admission.${admission.fenced ? 'fenced' : 'observed'}`,
         { active: admission.active, waiting: admission.waiters })}</p>}
+      {page && ['ready', 'empty'].includes(page.state) && <SessionCollaborationContinuity key={scopeKey} hints={page} openSession={openSession} />}
       <Button type="button" variant="outline" className="h-11 sm:h-9" disabled={loading} onClick={() => refresh.current()}>{t('collaboration.refresh')}</Button>
     </div>}
   </details>;

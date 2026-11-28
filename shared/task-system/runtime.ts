@@ -29,12 +29,12 @@ export function createTaskModelUsageRecorder(guard: ReturnType<typeof createTask
 }
 
 /** Session lineage and generations come from the session owner; forks inherit no claim. */
-export function inheritPersistentTaskReference(workspace:string,sourceSessionKey:string,sourceGeneration:string,sessionKey:string,generation:string,access?:TaskAuthorityAccess) {
+export function inheritPersistentTaskReference(workspace:string,sourceSessionKey:string,sourceGeneration:string,sessionKey:string,generation:string,access?:TaskAuthorityAccess,before?:number) {
   if (!existsSync(workspace)) return null;
   const domain=access?.domain??resolveTaskDomain(workspace);
   if (!existsSync(domain.database)) return null;
   const store=new TaskSystemStore(domain,undefined,access);
-  try {return store.inheritReference(sourceSessionKey,sourceGeneration,sessionKey,generation);}
+  try {return store.inheritReference(sourceSessionKey,sourceGeneration,sessionKey,generation,before);}
   finally {store.close();}
 }
 

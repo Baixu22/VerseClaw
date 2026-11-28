@@ -100,9 +100,9 @@ export function openExecutionTaskStore(workspaceRoot: string, expected?: Executi
   return new TaskSystemStore(access.domain, undefined, access);
 }
 
-export function inheritExecutionTaskReference(workspace: string, sourceSessionKey: string, sourceGeneration: string, sessionKey: string, generation: string) {
+export function inheritExecutionTaskReference(workspace: string, sourceSessionKey: string, sourceGeneration: string, sessionKey: string, generation: string, before?: number) {
   return inheritPersistentTaskReference(workspace, sourceSessionKey, sourceGeneration, sessionKey, generation,
-    existsSync(workspace) ? createExecutionTaskAccess(workspace) : undefined);
+    existsSync(workspace) ? createExecutionTaskAccess(workspace) : undefined, before);
 }
 
 export function assertExecutionTaskWorktreeReleasable(workspace: string) {

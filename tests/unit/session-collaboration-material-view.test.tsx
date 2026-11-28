@@ -40,6 +40,15 @@ beforeEach(() => {
   mocks.sender.mockResolvedValue({ source: { scope } });
 });
 
+it('opens the exact inherited material version using the current reader without a discovery query', async () => {
+  mocks.query.mockResolvedValue(reply(detail));
+  const reference = { source: scope, ref };
+  render(<MemoryRouter><SessionCollaborationMaterials target={scope} reference={reference} /></MemoryRouter>);
+  await screen.findByText('Full original material');
+  expect(mocks.query).toHaveBeenCalledOnce();
+  expect(mocks.query).toHaveBeenCalledWith({ requester: scope, target: scope, ref });
+});
+
 it('uses the active reader from Main while preserving the selected material source', async () => {
   const active = { ...scope, sessionKey: 'agent:main:active' as typeof scope.sessionKey, sessionGeneration: 'active-generation' };
   mocks.sender.mockResolvedValue({ source: { scope: active } });

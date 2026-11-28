@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -10,18 +10,19 @@ import type {
   SessionCollaborationMaterialPage, SessionCollaborationMaterialQuery, SessionCollaborationMaterialState, SessionCollaborationMaterialSummary,
 } from '@shared/types/session-collaboration-material';
 
-export function SessionCollaborationMaterials({ target }: { target?: AutonomySessionScope }) {
+export function SessionCollaborationMaterials({ target, reference }: { target?: AutonomySessionScope;
+  reference?: Pick<SessionCollaborationMaterialSummary, 'source' | 'ref'> }) {
   const { t } = useTranslation('agents');
   const searchId = useId();
   const sequence = useRef(0);
   const [input, setInput] = useState('');
   const [search, setSearch] = useState('');
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(Boolean(reference));
   const [loading, setLoading] = useState(false);
   const [failure, setFailure] = useState(false);
   const [page, setPage] = useState<SessionCollaborationMaterialPage | null>(null);
   const [reader, setReader] = useState<AutonomySessionScope | null>(null);
-  const [selected, setSelected] = useState<SessionCollaborationMaterialSummary | null>(null);
+  const [selected, setSelected] = useState<Pick<SessionCollaborationMaterialSummary, 'source' | 'ref'> | null>(null);
   const [detail, setDetail] = useState<SessionCollaborationMaterialPage['detail']>(null);
   const [observedState, setObservedState] = useState<SessionCollaborationMaterialState | null>(null);
   useEffect(() => () => { sequence.current++; }, []);
@@ -39,7 +40,7 @@ export function SessionCollaborationMaterials({ target }: { target?: AutonomySes
     });
   }, [open, selected, detail, reader]);
 
-  const request = async (query: Omit<SessionCollaborationMaterialQuery, 'requester'>) => {
+  const request = useCallback(async (query: Omit<SessionCollaborationMaterialQuery, 'requester'>) => {
     const revision = ++sequence.current;
     setLoading(true);
     setFailure(false);
@@ -60,7 +61,7 @@ export function SessionCollaborationMaterials({ target }: { target?: AutonomySes
     } finally {
       if (sequence.current === revision) setLoading(false);
     }
-  };
+  }, []);
   const list = (text: string, cursor?: string) => {
     setSelected(null);
     setDetail(null);
@@ -69,12 +70,13 @@ export function SessionCollaborationMaterials({ target }: { target?: AutonomySes
     if (!cursor) setPage(null);
     void request({ target, ...(text ? { search: text } : {}), cursor });
   };
-  const openMaterial = (item: SessionCollaborationMaterialSummary) => {
+  const openMaterial = useCallback((item: Pick<SessionCollaborationMaterialSummary, 'source' | 'ref'>) => {
     setSelected(item);
     setDetail(null);
     setObservedState(null);
     void request({ target: item.source, ref: item.ref });
-  };
+  }, [request]);
+  useEffect(() => { if (reference) openMaterial(reference); }, [reference, openMaterial]); // Exact inherited version, read through the current owner.
   const status = loading ? t('collaboration.loading') : failure ? t('collaboration.materials.unavailable')
     : page?.state === 'empty' ? t('collaboration.materials.empty')
     : page?.reason ? t('collaboration.materials.unavailable')
@@ -82,11 +84,11 @@ export function SessionCollaborationMaterials({ target }: { target?: AutonomySes
   const material = detail?.material;
   const stateLabel = (state: SessionCollaborationMaterialState) => t(`collaboration.materials.states.${state}`);
 
-  return <details data-testid="collaboration-materials" className="min-w-0 rounded-md border border-border p-3"
+  return <details open={reference ? true : undefined} data-testid="collaboration-materials" className="min-w-0 rounded-md border border-border p-3"
     onToggle={event => {
       setOpen(event.currentTarget.open);
       if (event.currentTarget.open) {
-        if (!page && !loading) list(search);
+        if (!reference && !page && !loading) list(search);
       }
       // Collapsing only hides the view; the pending selection still belongs to this scope.
     }}>

@@ -8,6 +8,7 @@ import { emptyCollaborationHints, parseCollaborationHintsQuery } from '../../sha
 const mocks = vi.hoisted(() => ({ profile: vi.fn(), read: vi.fn(), query: vi.fn(), generation: 'current-generation',
   navigation: undefined as (() => void) | undefined }));
 vi.mock('../../electron/services/workspaces-api', () => ({ getActiveWorkspaceProfile: mocks.profile,
+  readWorkspaceCollaborationContinuity: async () => [],
   observeWorkspaceNavigation: (listener: () => void) => { mocks.navigation = listener; return () => { mocks.navigation = undefined; }; },
 }));
 import { createSessionsApi } from '../../electron/services/sessions-api';

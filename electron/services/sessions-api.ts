@@ -56,7 +56,7 @@ import { assertManagedTaskAdmission, openTaskSystem, persistentTaskChatContext }
 import { projectCoordinatorProfile, projectCoordinatorScope } from '../../shared/task-system/project-coordinator';
 import { routeRole } from '../../openclaw_runtime/src/agents/role-router';
 import type { RoleContract } from '../../openclaw_runtime/src/agents/role-contract';
-import { createWorkspacesApi, getActiveWorkspaceProfile, observeWorkspaceNavigation, readWorkspaceHandoffOperation, updateWorkspaceHandoffOperation,
+import { createWorkspacesApi, getActiveWorkspaceProfile, observeWorkspaceNavigation, readWorkspaceHandoffOperation, readWorkspaceCollaborationContinuity, updateWorkspaceHandoffOperation,
   getWorkspaceRootPathById, getPersistedCoordinatorBinding, type WorkspaceCoordinatorLifecycleEvent } from './workspaces-api';
 import { handoffFirstSendKey, type SessionHandoffOperation } from '@shared/types/session-handoff';
 import { normalizeRunScope, normalizeAutonomySessionScope, resolveProjectIdForWorkspace, type AutonomySessionScope, type WorkspaceId } from '@shared/types/identity-scope';
@@ -2275,14 +2275,17 @@ export function createSessionsApi(ctx: {
         const before = await collaborationReaderIssue(query.requester);
         if (before) return failure(before);
         const result = await ctx.gatewayManager!.rpc<{ hints: unknown }>('session.activitySnapshot', { coordinationHints: query }, 15_000);
+        const continuityOperations = await readWorkspaceCollaborationContinuity(query.target);
         const after = await collaborationReaderIssue(query.requester);
         if (after) return failure(after);
         const accessQuery = parseSessionCollaborationQuery({ ...query, fields: [] });
         const access = await ctx.gatewayManager!.rpc<{ page: SessionCollaborationPage }>('session.activitySnapshot', { query: accessQuery }, 10_000);
         if (navigationChanged) return failure('scope-mismatch');
         const visible = validateSessionCollaborationPage(accessQuery, access?.page);
-        return { success: true, hints: visible.state === 'ready' ? validateCollaborationHints(query, result?.hints)
-          : emptyCollaborationHints(query, visible.state, visible.reason) };
+        const hints = visible.state === 'ready' ? validateCollaborationHints(query, result?.hints)
+          : emptyCollaborationHints(query, visible.state, visible.reason);
+        if (hints.state === 'ready' || hints.state === 'empty') hints.continuityOperations = continuityOperations;
+        return { success: true, hints };
       } catch { return failure('owner-unavailable'); }
       finally { stopNavigation(); }
     },
