@@ -39,6 +39,7 @@ test('two independent sessions discover, exchange, reuse, read resources and rec
   });
   const stores: TaskSystemStore[] = [];
   let app: ElectronApplication | undefined;
+  let cleanupFailure: string | undefined;
   try {
     app = await launchElectronApp({ skipSetup: true });
     await configureSessionChainProvider(app, provider.port);
@@ -172,6 +173,7 @@ test('two independent sessions discover, exchange, reuse, read resources and rec
     evidence.status = scenarioFailed || cleanupErrors.length ? 'failed' : 'passed';
     if (!scenarioFailed && cleanupErrors.length) evidence.firstFailure = cleanupErrors.join('; ');
     await writeFile(info.outputPath('collaboration-center.json'), JSON.stringify(evidence, null, 2));
-    if (!scenarioFailed && cleanupErrors.length) throw new Error(String(evidence.firstFailure));
+    if (!scenarioFailed && cleanupErrors.length) cleanupFailure = String(evidence.firstFailure);
   }
+  if (cleanupFailure) throw new Error(cleanupFailure);
 });
