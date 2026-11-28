@@ -1,0 +1,11 @@
+{
+  "driven_by": "agent",
+  "model": "ccs-ai/gpt-6.1-sol",
+  "reports": [
+    {
+      "file": "independent-unit-verification-r1.md",
+      "sha256": "6dfd98b85e327d1faa17317e90a4edb859d43811b92cbac95c9350796e5c2929",
+      "report": "# E2 unit-r1 独立证据核验\n\n核验对象：D:/tmp/session-collaboration-e2-20261128/unit-r1/report.json 及其 9 份 Vitest JSON/stdout/stderr；当前工作目录 D:/tmp/session-collaboration-mainline-20261126/C/source。\n\n## 来源绑定\n\n- 报告声明 driven_by=agent、actor codex/session-collaboration-e2、base/HEAD e57aff2ef3cfc6207e182aa7e50369689b28b953、dirty candidate 工作树标识 c968b51c355d8878df68605326b21742be01483e。\n- 当前 git rev-parse HEAD 为 e57aff2ef3cfc6207e182aa7e50369689b28b953，分支为 codex/session-collaboration-e2-20261128；E2 改动仍在暂存区。\n- 对 report.json 列出的全部 33 个 source 条目，逐项比对当前工作树 SHA-256 和 index blob：均与报告一致。包含 shared/task-system/store.ts、tests/unit/session-collaboration-continuity.test.ts、迁移/接力服务、Gateway、UI、四语文案、README、模块文档及 Harness 规格。\n- 对 9 个步骤逐项复算 stdout、stderr、Vitest JSON 文件 SHA-256：均与报告对应字段一致；全部退出码为 0，9 份结果均记录 success=true，测试总数与通过数均为 108，失败数为 0。\n\n## 断言与修复核对\n\n- tests/unit/session-collaboration-continuity.test.ts:43-54 覆盖 fork 只读引用、internal/restricted 筛选、重试与重开后的持久性。\n- tests/unit/session-collaboration-continuity.test.ts:57-64 覆盖历史 cutoff、同毫秒歧义输入、不会引入后续材料及普通 tip 分支的材料上限。\n- shared/task-system/store.ts:1275-1288 对历史 transcript cutoff 使用 before - 1，排除时间戳精度无法排序的边界毫秒；未提供历史 cutoff 时使用 Number.MAX_SAFE_INTEGER，保留普通 tip 分支按事务中已记录材料收集的行为。\n- tests/unit/session-collaboration-continuity.test.ts:67-75 覆盖 fork-of-fork 保留原来源，以及回读时采用材料 owner 当前撤销状态。\n- tests/unit/session-collaboration-continuity.test.ts:78-85 覆盖 handoff 来源与新代次、writer epoch 迁移。\n- tests/unit/session-collaboration-continuity.test.ts:88-109 覆盖同逻辑会话迁移后精确回读旧代材料、旧代 binding 拒绝，以及跨 workspace 不生成材料权限；tests/unit/execution-migration.test.ts 的新增断言覆盖任务转移响应丢失后的同 operation 恢复与原 run/reference 保存。\n- 9 份报告结果合计 108/108：continuity 6、hints view 9、material view 4、material query 1、context host 9、coordination hints 10、handoff recovery 24、execution migration 18、durable task system 27。\n\n本次只复算既有报告及来源绑定，没有重新启动测试。该核验确认 unit-r1 产物与当前暂存候选一致，不构成 Electron E2E、完整开发验收或最终 clean commit 验收。\n"
+    }
+  ]
+}

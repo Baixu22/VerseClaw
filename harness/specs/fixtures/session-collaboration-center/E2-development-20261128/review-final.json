@@ -1,0 +1,6 @@
+{
+  "findings": [],
+  "overall_confidence": 0.83,
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "检查了 E2 的材料引用捕获与读取授权、同会话迁移回读、桌面操作状态投影、模型材料准入及异步界面结果处理；未发现可复现的新增缺陷。"
+}

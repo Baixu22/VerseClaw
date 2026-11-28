@@ -1,0 +1,520 @@
+{
+  "driven_by": "agent",
+  "testedTree": "c968b51c355d8878df68605326b21742be01483e",
+  "files": [
+    {
+      "file": "tests/unit/session-collaboration-continuity.test.ts",
+      "testSourceSha256": "96f759831053b2b6000f9119b638dc92af7496af3caf45d395d0c7a5ff6e78b8",
+      "rawResultSha256": "6c6b26e9e5a4745607d58aff060a449000c40beb3bb3d2e3d80021b3d21ced15",
+      "passed": 6,
+      "total": 6,
+      "assertions": [
+        {
+          "name": "pins allowed versions atomically with a readonly fork and preserves them across retries and reopen",
+          "status": "passed"
+        },
+        {
+          "name": "honors a historical fork point and bounds references without importing later material",
+          "status": "passed"
+        },
+        {
+          "name": "retains original sources through a fork of a fork and reads current revocation from the material owner",
+          "status": "passed"
+        },
+        {
+          "name": "records handoff provenance while the original owner alone transfers the writer epoch",
+          "status": "passed"
+        },
+        {
+          "name": "reads a pinned internal predecessor only after a real same-session migration, including final batches",
+          "status": "passed"
+        },
+        {
+          "name": "does not turn a migrated material reference into a cross-workspace grant",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-hints-view.test.tsx",
+      "testSourceSha256": "424f6426decea716c487f43512676ad5aba96cdd3c8186654d154fef2d9e7f0e",
+      "rawResultSha256": "cb825dd45a9540359b448818de923fa76f033eccd3919195143f39d01875495b",
+      "passed": 9,
+      "total": 9,
+      "assertions": [
+        {
+          "name": "loads on demand using the active reader and links to the original task without taking a claim",
+          "status": "passed"
+        },
+        {
+          "name": "removes old facts when a refresh loses visibility and preserves keyboard focus",
+          "status": "passed"
+        },
+        {
+          "name": "does not apply a pending response after the selected target changes",
+          "status": "passed"
+        },
+        {
+          "name": "shows an unavailable task source alongside the available admission observation",
+          "status": "passed"
+        },
+        {
+          "name": "shows original transition and recovery phases and opens the existing session entry",
+          "status": "passed"
+        },
+        {
+          "name": "coalesces notifications during a pending read and shows each completed observation",
+          "status": "passed"
+        },
+        {
+          "name": "ignores another session message when both reader and target are known",
+          "status": "passed"
+        },
+        {
+          "name": "invalidates displayed observations when host navigation switches the actual reader",
+          "status": "passed"
+        },
+        {
+          "name": "invalidates pending observations when host navigation switches the actual reader",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-material-view.test.tsx",
+      "testSourceSha256": "d773188a0f5c8ff6c1cbba8f1fa9070249397b9890170a80d81c23763d2c4fda",
+      "rawResultSha256": "35b432f4ab48a87eedd91c5ff305ebcc46c10775e99baf384300c7070b8ca225",
+      "passed": 4,
+      "total": 4,
+      "assertions": [
+        {
+          "name": "opens the exact inherited material version using the current reader without a discovery query",
+          "status": "passed"
+        },
+        {
+          "name": "uses the active reader from Main while preserving the selected material source",
+          "status": "passed"
+        },
+        {
+          "name": "keeps the pending selected detail across collapse and presents it only after reopening",
+          "status": "passed"
+        },
+        {
+          "name": "discards an earlier selected detail when another search finishes first",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-material-query.test.ts",
+      "testSourceSha256": "9e7076c1d43eb92173370e44e8e70c1c25cb2622f7016418b31d3b2b39c1395c",
+      "rawResultSha256": "b6025ef5ed0944f30135507baa9655f7a467b8d7ea76515260d16871f52f2df3",
+      "passed": 1,
+      "total": 1,
+      "assertions": [
+        {
+          "name": "searches only the visible source scopes and opens the original version by its digest",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-context-host.test.ts",
+      "testSourceSha256": "915f106a03eaf775cc048fad30d32b4955a3136dcc02dd52928e1ca721864e77",
+      "rawResultSha256": "1e7dc0c20a3b9bbdacbd99eb8637f9770ecbe207acc230f4d709e2138744f31a",
+      "passed": 9,
+      "total": 9,
+      "assertions": [
+        {
+          "name": "reads task context for the active requester and rejects a forged requester before the owner read",
+          "status": "passed"
+        },
+        {
+          "name": "drops task context when the requester generation changes during reading",
+          "status": "passed"
+        },
+        {
+          "name": "drops task context when the requester workspace changes during reading",
+          "status": "passed"
+        },
+        {
+          "name": "drops material results when the active requester resets during reading",
+          "status": "passed"
+        },
+        {
+          "name": "binds coordination hints to the actual active reader before and after the Gateway response",
+          "status": "passed"
+        },
+        {
+          "name": "clears hints when the target becomes unavailable during the asynchronous reader recheck",
+          "status": "passed"
+        },
+        {
+          "name": "clears hints when the target becomes stale during the asynchronous reader recheck",
+          "status": "passed"
+        },
+        {
+          "name": "invalidates the complete hint read when navigation occurs during the last target RPC (roundtrip: false)",
+          "status": "passed"
+        },
+        {
+          "name": "invalidates the complete hint read when navigation occurs during the last target RPC (roundtrip: true)",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-coordination-hints.test.ts",
+      "testSourceSha256": "3639724b394c51dc4807d64741c53879b46402aec62307302bed093df39a6ee0",
+      "rawResultSha256": "30c2aa6acac7dc4d2e3fa710819b12ec43f5ccdee1fc53ee4ce0f782c52db9ba",
+      "passed": 10,
+      "total": 10,
+      "assertions": [
+        {
+          "name": "reads exact task identity, observer role and dependency states without writes or a new claim",
+          "status": "passed"
+        },
+        {
+          "name": "distinguishes shared checkpoint paths from task identity and preserves the original writer epoch",
+          "status": "passed"
+        },
+        {
+          "name": "compares the same TaskSystem authority across two real Git worktrees",
+          "status": "passed"
+        },
+        {
+          "name": "keeps a missing task owner distinct from an empty task with 0 active permits",
+          "status": "passed"
+        },
+        {
+          "name": "keeps a missing task owner distinct from an empty task with 1 active permits",
+          "status": "passed"
+        },
+        {
+          "name": "clears hints after a generation change while reading the owner",
+          "status": "passed"
+        },
+        {
+          "name": "clears hints after a visibility change while reading the owner",
+          "status": "passed"
+        },
+        {
+          "name": "uses the original admission fence and drain count without changing permits",
+          "status": "passed"
+        },
+        {
+          "name": "shares the scoped result with the model tool and rejects a requester reset on the reply",
+          "status": "passed"
+        },
+        {
+          "name": "rejects wrong-scope or malformed hints and never accepts task data in an unavailable reply",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-handoff-recovery.test.ts",
+      "testSourceSha256": "b3be0ce5c9d7f78eed5aca9be265de5d89a016938399c511137ca229f3d73f50",
+      "rawResultSha256": "b4e4309651bc5423744ca1d5c859a91de679bc16fce97aba5ca535b64db744ba",
+      "passed": 24,
+      "total": 24,
+      "assertions": [
+        {
+          "name": "durable handoff owner projects the persisted handoff identity and draft retention after a lost creation response",
+          "status": "passed"
+        },
+        {
+          "name": "durable handoff owner retains one pending child while source resources remain unresolved without a writer binding",
+          "status": "passed"
+        },
+        {
+          "name": "durable handoff owner binds the task selected in the existing composer before dispatching chat effects",
+          "status": "passed"
+        },
+        {
+          "name": "durable handoff owner keeps the same pending child when the source starts a run during creation",
+          "status": "passed"
+        },
+        {
+          "name": "durable handoff owner confirms runtime ancestry, saves the child draft and reuses one child across duplicate creation requests",
+          "status": "passed"
+        },
+        {
+          "name": "durable handoff owner creates independent children for different intent IDs and replays each ID without creating again",
+          "status": "passed"
+        },
+        {
+          "name": "durable handoff owner recovers a lost creation reply from the same runtime child after reconstructing Main services",
+          "status": "passed"
+        },
+        {
+          "name": "durable handoff owner keeps creation pending when the lifecycle owner is unavailable",
+          "status": "passed"
+        },
+        {
+          "name": "durable handoff owner pins the child generation before activation and rejects a removed or reset child during recovery",
+          "status": "passed"
+        },
+        {
+          "name": "durable handoff owner rejects a changed source generation or draft without creating a second child",
+          "status": "passed"
+        },
+        {
+          "name": "durable handoff owner records acknowledgement separately and confirms the exact persisted first-turn identity",
+          "status": "passed"
+        },
+        {
+          "name": "durable handoff owner reconciles a lost send reply from the exact runtime transcript after restart",
+          "status": "passed"
+        },
+        {
+          "name": "durable handoff owner retains an unknown delivery and prevents silent resends even when the text matches",
+          "status": "passed"
+        },
+        {
+          "name": "durable handoff owner allows an explicitly retried pre-effect rejection with the same child and send key",
+          "status": "passed"
+        },
+        {
+          "name": "durable handoff owner does not reuse a first-send key with a different compiled payload",
+          "status": "passed"
+        },
+        {
+          "name": "durable handoff owner fences child transcript reads against wrong parents and reset races",
+          "status": "passed"
+        },
+        {
+          "name": "durable handoff owner sends to the selected worker through the existing permission route and rejects stale parent generations",
+          "status": "passed"
+        },
+        {
+          "name": "durable handoff owner retains a successful worker intervention without requiring a new run: {\"queued\":true}",
+          "status": "passed"
+        },
+        {
+          "name": "durable handoff owner retains a successful worker intervention without requiring a new run: {\"queued\":true,\"steered\":true}",
+          "status": "passed"
+        },
+        {
+          "name": "durable handoff owner reports a definite runtime worker rejection as rejected: INVALID_REQUEST",
+          "status": "passed"
+        },
+        {
+          "name": "durable handoff owner reports a definite runtime worker rejection as rejected: -32600",
+          "status": "passed"
+        },
+        {
+          "name": "durable handoff owner reports a definite runtime worker rejection as rejected: -32602",
+          "status": "passed"
+        },
+        {
+          "name": "durable handoff owner keeps a lost worker response unknown until delivery evidence is available",
+          "status": "passed"
+        },
+        {
+          "name": "durable handoff owner recovers a lost worker acknowledgement from the exact persisted intervention key",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/execution-migration.test.ts",
+      "testSourceSha256": "1cfabe485304038d8672a82c120a1325aae2f4efe089f939b09d2cbcc8159d91",
+      "rawResultSha256": "b32e88509d8f2ce53e807202624ff6f8039c66e6ffaca7d390451b54cce243cd",
+      "passed": 18,
+      "total": 18,
+      "assertions": [
+        {
+          "name": "Main environment migration composition retains exact material and original run references after a lost task-transfer acknowledgement",
+          "status": "passed"
+        },
+        {
+          "name": "Main environment migration composition resumes after durable intent without changing task identity",
+          "status": "passed"
+        },
+        {
+          "name": "Main environment migration composition resumes after durable fenced without changing task identity",
+          "status": "passed"
+        },
+        {
+          "name": "Main environment migration composition resumes after durable drained without changing task identity",
+          "status": "passed"
+        },
+        {
+          "name": "Main environment migration composition resumes after durable reserved without changing task identity",
+          "status": "passed"
+        },
+        {
+          "name": "Main environment migration composition resumes after durable session-committed without changing task identity",
+          "status": "passed"
+        },
+        {
+          "name": "Main environment migration composition resumes after durable task-committed without changing task identity",
+          "status": "passed"
+        },
+        {
+          "name": "Main environment migration composition resumes after durable binding-committed without changing task identity",
+          "status": "passed"
+        },
+        {
+          "name": "Main environment migration composition recovers a lost prepare reply through the same Runtime operation",
+          "status": "passed"
+        },
+        {
+          "name": "Main environment migration composition recovers a lost confirm reply through the same Runtime operation",
+          "status": "passed"
+        },
+        {
+          "name": "Main environment migration composition rejects changed request payload and retains unresolved resources",
+          "status": "passed"
+        },
+        {
+          "name": "Main environment migration composition holds target exclusion until publication and never releases a later writer on replay",
+          "status": "passed"
+        },
+        {
+          "name": "Main environment migration composition reconciles an already published operation after its reply is lost",
+          "status": "passed"
+        },
+        {
+          "name": "Main environment migration composition settles a durable task receipt before pausing (previous pause=false)",
+          "status": "passed"
+        },
+        {
+          "name": "Main environment migration composition settles a durable task receipt before pausing (previous pause=true)",
+          "status": "passed"
+        },
+        {
+          "name": "Main environment migration composition retains unknown task effects without advancing the claim",
+          "status": "passed"
+        },
+        {
+          "name": "Main environment migration composition binds relative checkpoint artifacts to the source checkout across recovery",
+          "status": "passed"
+        },
+        {
+          "name": "Main environment migration composition recovers its quiescent target claim after the saved migration outlives its lease",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "testSourceSha256": "2ad6c8930d5c5b884af3f842dc21718d32faa8b0504527bb29ebd36cf4fb9460",
+      "rawResultSha256": "58db2151e39f2ffbd1b8bc136dfd0421c0ea148b3035cc022b0cbbd0c6bc4424",
+      "passed": 27,
+      "total": 27,
+      "assertions": [
+        {
+          "name": "durable product task ownership migrates the prior task schema without changing task identity and rejects future schemas",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership prevents two runs in the same owning session from implementing one task concurrently",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership replaces an exited process's run without replacing its task owner or checkpoint",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership retains the run when the PID probe establishes no exit (undefined)",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership retains the run when the PID probe establishes no exit (EPERM)",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership retains the old run after process exit while an effect is started",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership retains the old run after process exit while an effect is unknown",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership keeps identity across retries, detects exact duplicates, and separates different goals",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership refuses a changed contract for the same business key",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership persists the goal and checkpoint independently of chat compression and process connections",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership rejects a second owner and a stale revision",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership does not convert lease expiration into automatic reassignment",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership resumes an idle expired owner in a new epoch after reopening its store",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership does not revive an expired owner with a started effect",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership does not revive an expired owner with a unknown effect",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership replays an owner-bound expired admission without checking its retired epoch again",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership keeps generation changes, explicit pauses and clock rollback outside automatic renewal",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership keeps in-flight and unknown operations as a handoff barrier",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership enforces dependencies and rejects cycles",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership accepts only the contract-bound artifact after submitting the same candidate",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership does not let a file hash satisfy a business verification requirement",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership uses one task domain for two real Git worktrees",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership rejects forged generation and same-session calls from another worktree",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership preserves the goal while paused, and fences the previous writer on resume",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership refuses recovery while an unknown external operation lacks its owner receipt",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership keeps a lost-response retry tied to the original attempt after ownership changes",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership refuses oversize goals and does not infer uniqueness from the title",
+          "status": "passed"
+        }
+      ]
+    }
+  ],
+  "rawReportSha256": "dd14f5778e8a24d7734d7e81bec6d0d57fff25d362b85258c50f9e0b9a2b73c8"
+}
