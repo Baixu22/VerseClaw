@@ -1,0 +1,115 @@
+{
+  "driven_by": "agent",
+  "runs": [
+    {
+      "job": "session-collaboration-e4-20261128-autoreview-r1",
+      "receipt": {
+        "jobId": "session-collaboration-e4-20261128-autoreview-r1",
+        "commandDigest": "b290bc28ea08b10531d6f014759df5558381d15418f9929ec74200b6281e7c69",
+        "leaseToken": "8fcac42134f34ac0a4305b65fd9e2a15",
+        "actor": "codex/session-collaboration-e4",
+        "driven_by": "agent",
+        "status": "failed",
+        "commandStarted": false,
+        "exitCode": null,
+        "treeExited": true,
+        "reasons": [
+          {
+            "code": "physical_memory",
+            "availableMiB": 1019.832,
+            "requiredMiB": 1024
+          }
+        ]
+      },
+      "receiptSha256": "c7aecc9dc1bbf816062f400e86e6eb3cdc1f935192c4c0ee527ecbfbd4d99db1"
+    },
+    {
+      "job": "session-collaboration-e4-20261128-autoreview-r3",
+      "receipt": {
+        "jobId": "session-collaboration-e4-20261128-autoreview-r3",
+        "commandDigest": "db4f47ad8f8bf65fdd57298399bdde98d245e629871fab9b145bf60e2dc86ff5",
+        "leaseToken": "d482e74ad5ec440c9e73c342e88be27a",
+        "actor": "codex/session-collaboration-e4",
+        "driven_by": "agent",
+        "status": "failed",
+        "commandStarted": false,
+        "exitCode": null,
+        "treeExited": true,
+        "reasons": [
+          {
+            "code": "physical_memory",
+            "availableMiB": 988.828,
+            "requiredMiB": 1024
+          }
+        ]
+      },
+      "receiptSha256": "b852dc102121134fe44d4d265c51e79535123863df89d0a5c58f8986e854e748"
+    },
+    {
+      "job": "session-collaboration-e4-20261128-boundary-red-r2",
+      "receipt": {
+        "jobId": "session-collaboration-e4-20261128-boundary-red-r2",
+        "commandDigest": "b9bbbba7a2f8cc4a9c2c31f15a04c5a37760abd01fbd38b0d3d87c625c6505cc",
+        "leaseToken": "214d1d68d4d64a2e809b2370714a6167",
+        "actor": "codex/session-collaboration-e4",
+        "driven_by": "agent",
+        "status": "failed",
+        "commandStarted": false,
+        "exitCode": null,
+        "treeExited": true,
+        "reasons": [
+          {
+            "code": "cpu_pressure",
+            "actual": 100.0,
+            "limit": 85
+          }
+        ]
+      },
+      "receiptSha256": "f03c0f7871e89913d68eb0601db8dcb3cdb96be28966ed3f52513219014681d0"
+    },
+    {
+      "job": "session-collaboration-e4-20261128-pre-source-r2",
+      "receipt": {
+        "jobId": "session-collaboration-e4-20261128-pre-source-r2",
+        "commandDigest": "6c12c6605d5852cf06152010b689c02244fd91b5a50f8dae41aafa0d408dcebc",
+        "leaseToken": "c5246e30d85f4475b84a8bf3365aa5dc",
+        "actor": "codex/session-collaboration-e4",
+        "driven_by": "agent",
+        "status": "failed",
+        "commandStarted": false,
+        "exitCode": null,
+        "treeExited": true,
+        "reasons": [
+          {
+            "code": "cpu_pressure",
+            "actual": 90.8,
+            "limit": 85
+          }
+        ]
+      },
+      "receiptSha256": "a86c9707131f416074d3502e263204101b4d27c62df240a3c44dd502dbf76489"
+    },
+    {
+      "job": "session-collaboration-e4-20261128-unit-r2",
+      "receipt": {
+        "jobId": "session-collaboration-e4-20261128-unit-r2",
+        "commandDigest": "7210fb996d1c75a6ae9127a6c44042518d241b85ee2a44a731c3c9f80a23cdb4",
+        "leaseToken": "94309fa8f006408fb54f2d3b407f1fd2",
+        "actor": "codex/session-collaboration-e4",
+        "driven_by": "agent",
+        "status": "failed",
+        "commandStarted": false,
+        "exitCode": null,
+        "treeExited": true,
+        "reasons": [
+          {
+            "code": "cpu_pressure",
+            "actual": 93.3,
+            "limit": 85
+          }
+        ]
+      },
+      "receiptSha256": "1f360c17fd747d5a1db6144e6037d5e90fd5c992b4944d35fa04b0f6c9705e04"
+    }
+  ]
+}

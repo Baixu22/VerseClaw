@@ -70,3 +70,6 @@ payload hook 重序列化材料信封后，按实际载荷内的稳定调用 ID�
 从有协作材料的会话分支后，后继只读打开原版本；后续发布不替换已固定的引用。接力创建或迁移任务提交后丢失回复，按原 operationId 恢复同一目标，原引用和草稿保持可追溯。原材料撤销或访问越界时，读取展示原 owner 的失效结果。迁移后的引用保留原 run/代次，旧 writer 请求被原任务入口拒绝。
 
 在消息被原owner接受后丢弃Host回复，重载页面并重启Gateway，再按原消息ID读取回执；恢复过程不额外派发模型。订阅处理前中断不推进游标，确认后重载沿原游标续读。材料来源reset、当前读取者切换和迟到响应场景清除旧正文；一个项目TaskSystem不可读时其它已授权项目仍可查询。
+
+
+E4 反例覆盖当前读取者伪造、读取期间换代和导航往返、消息授权文本、伪造回执及原材料留存。定向入口为 session-collaboration-boundary、boundary-provenance、boundary-retention 单测；Electron boundary 场景核对配置/任务状态及模型调用计数。

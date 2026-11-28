@@ -1877,10 +1877,12 @@ export function createSessionsApi(ctx: {
   const collaborationReaderIssue = async (expected: AutonomySessionScope) => {
     const active = await readCollaborationSender();
     if (!active) return 'owner-unavailable' as const;
-    try { normalizeAutonomySessionScope(expected, active.scope); return null; }
+    try { normalizeAutonomySessionScope(expected, active.scope); }
     catch {
       return expected.sessionGeneration === active.scope.sessionGeneration ? 'scope-mismatch' as const : 'generation-changed' as const;
     }
+    const current = await ctx.gatewayManager!.rpc<{ session?: { sessionId?: string } }>('sessions.describe', { key: expected.sessionKey }, 10_000);
+    return current.session?.sessionId === expected.sessionGeneration ? null : 'generation-changed' as const;
   };
   const delegationFlights = new Map<string, Promise<SessionDelegationResult>>();
   const delegationStore = ctx.delegationStore ?? {
@@ -2251,19 +2253,24 @@ export function createSessionsApi(ctx: {
       if (!query.target || query.limit !== 1) throw new TypeError('One context target required');
       const failure = (reason: string) => ({ success: true, taskContext: emptyTaskContext(query.target!,
         reason === 'owner-unavailable' ? 'unavailable' : 'stale', reason) });
+      let navigationChanged = false;
+      const stopNavigation = observeWorkspaceNavigation(() => { navigationChanged = true; });
       try {
         const before = await collaborationReaderIssue(query.requester);
         if (before) return failure(before);
+        if (navigationChanged) return failure('scope-mismatch');
         const result = await ctx.gatewayManager!.rpc<{ taskContext: SessionCollaborationTaskContext }>(
           'session.activitySnapshot', { taskContext: query }, 15_000);
         // The active reader may reset or switch while the original owner is being read.
         const after = await collaborationReaderIssue(query.requester);
         if (after) return failure(after);
+        if (navigationChanged) return failure('scope-mismatch');
         if (!result?.taskContext || result.taskContext.schemaVersion !== 'SessionCollaborationTaskContext/v1')
           return { success: true, taskContext: emptyTaskContext(query.target, 'unknown', 'protocol-unverified') };
         normalizeAutonomySessionScope(result.taskContext.scope, query.target);
         return { success: true, taskContext: result.taskContext };
       } catch { return failure('owner-unavailable'); }
+      finally { stopNavigation(); }
     },
     collaborationHints: async (payload) => {
       const query = parseCollaborationHintsQuery(payload);
@@ -2293,13 +2300,18 @@ export function createSessionsApi(ctx: {
       const query = parseSessionCollaborationMaterialQuery(payload);
       const failure = (reason: 'owner-unavailable' | 'scope-mismatch' | 'generation-changed') => ({ success: true,
         materials: emptyMaterialPage(query, reason === 'owner-unavailable' ? 'unavailable' : 'stale', reason) });
+      let navigationChanged = false;
+      const stopNavigation = observeWorkspaceNavigation(() => { navigationChanged = true; });
       try {
         const before = await collaborationReaderIssue(query.requester);
         if (before) return failure(before);
+        if (navigationChanged) return failure('scope-mismatch');
         const result = await ctx.gatewayManager!.rpc<{ materials: unknown }>('session.activitySnapshot', { materials: query }, 15_000);
         const after = await collaborationReaderIssue(query.requester);
+        if (navigationChanged) return failure('scope-mismatch');
         return after ? failure(after) : { success: true, materials: validateMaterialPage(query, result?.materials) };
       } catch { return failure('owner-unavailable'); }
+      finally { stopNavigation(); }
     },
     presentCollaborationMaterial: async ({ id, ...payload }) => {
       const query = parseSessionCollaborationMaterialQuery(payload);
@@ -2324,14 +2336,30 @@ export function createSessionsApi(ctx: {
     },
     collaborationMessages: async (payload) => {
       const query = parseSessionCollaborationMessageQuery(payload);
-      const unavailable = (state: 'unavailable' | 'unknown', reason: string): SessionCollaborationMessagePage => ({ schemaVersion: 'SessionCollaborationMessages/v1',
+      const unavailable = (state: 'unavailable' | 'unknown' | 'stale', reason: string): SessionCollaborationMessagePage => ({ schemaVersion: 'SessionCollaborationMessages/v1',
         requester: query.requester, state, items: [], receipt: null, nextCursor: null, reason, capturedAt: Date.now() });
+      const failure = (reason: string) => ({ success: true, messages: unavailable(reason === 'owner-unavailable' ? 'unavailable' : 'stale', reason) });
+      let navigationChanged = false;
+      const stopNavigation = observeWorkspaceNavigation(() => { navigationChanged = true; });
       try {
+        const before = await collaborationReaderIssue(query.requester);
+        if (before) return failure(before);
+        if (navigationChanged) return failure('scope-mismatch');
         const result = await ctx.gatewayManager!.rpc<{ messages: unknown }>('session.activitySnapshot', { messages: query }, 15_000);
+        const after = await collaborationReaderIssue(query.requester);
+        if (after) return failure(after);
+        const accessQuery = parseSessionCollaborationQuery({ requester: query.requester, target: query.target, limit: 1, fields: [] });
+        // This owner query rechecks both identities at its read boundary; do not reopen a window with another await afterward.
+        const access = await ctx.gatewayManager!.rpc<{ page: SessionCollaborationPage }>('session.activitySnapshot', { query: accessQuery }, 10_000);
+        if (navigationChanged) return failure('scope-mismatch');
+        const visible = validateSessionCollaborationPage(accessQuery, access?.page);
+        if (visible.state !== 'ready') return { success: true, messages: unavailable(
+          visible.state === 'stale' ? 'stale' : visible.state === 'unavailable' ? 'unavailable' : 'unknown', visible.reason ?? 'protocol-unverified') };
         const messages = validateSessionCollaborationMessagePage(query, result?.messages);
         if (messages?.receipt) messages.receipt = validateSessionCollaborationReceipt(verifySessionCollaborationMessage(messages.receipt.message), messages.receipt);
         return { success: true, messages: messages ?? unavailable('unknown', 'protocol-unverified') };
       } catch { return { success: true, messages: unavailable('unavailable', 'owner-unavailable') }; }
+      finally { stopNavigation(); }
     },
     sendCollaborationMessage: async (payload) => {
       const { expectedSource, ...input } = payload;

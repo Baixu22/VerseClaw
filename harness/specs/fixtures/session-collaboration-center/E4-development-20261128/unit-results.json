@@ -1,0 +1,354 @@
+{
+  "driven_by": "agent",
+  "testedTree": "567b0649c4546f0bf4288922178926d66ccdb7b0",
+  "files": [
+    {
+      "file": "tests/unit/session-collaboration-boundary-owner.test.ts",
+      "testSourceSha256": "79fbd06f313f4bc2acb88ab3f27518b2ed4994c010f6aa645a1df8b0d78e9301",
+      "rawResultSha256": "19a85f08017407fab3a29eec32b59b94870660fd3cd04f0a8f8edff31ea98652",
+      "passed": 3,
+      "total": 3,
+      "assertions": [
+        {
+          "name": "authorizes the current reader and target together without hydrating task or message owners",
+          "status": "passed"
+        },
+        {
+          "name": "fences the reader reset inside the final target access query",
+          "status": "passed"
+        },
+        {
+          "name": "fences the target reset inside the final target access query",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-system-reader.test.tsx",
+      "testSourceSha256": "312865b851d900d71baa1447a791e3ceada9c121d5ab906012033376abb4d45f",
+      "rawResultSha256": "b47dd1734e5a1551f3b54740d9bf732de8116fd8667f700c92cc16d5a230c238",
+      "passed": 2,
+      "total": 2,
+      "assertions": [
+        {
+          "name": "uses the actual desktop reader even when a different project coordinator appears first",
+          "status": "passed"
+        },
+        {
+          "name": "drops an earlier reader response after navigation and leaves missing identity unselected",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-system-notification.test.tsx",
+      "testSourceSha256": "fb10de283f50280c649119f67e1feec7c33824057b8a3a78810f3b35abd81cf2",
+      "rawResultSha256": "8122c47861aafacc06eb91c1b210425d84f2a76ab579dcb0f67c7d0cb4f80905",
+      "passed": 1,
+      "total": 1,
+      "assertions": [
+        {
+          "name": "keeps the real expanded message composer mounted while a routine notification rechecks the same reader",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-boundary-provenance.test.ts",
+      "testSourceSha256": "8c064adfad7620e647423b8360cd28a147d2aa24abcb056a1defa5dc43293ad4",
+      "rawResultSha256": "363884f58f5c9de7425342287a18749f6b5754c5a0ee842a35e7779a39fd7667",
+      "passed": 6,
+      "total": 6,
+      "assertions": [
+        {
+          "name": "keeps authorization and command claims in the inter-session data plane",
+          "status": "passed"
+        },
+        {
+          "name": "rejects a fabricated operator without the existing bridge capability",
+          "status": "passed"
+        },
+        {
+          "name": "does not turn a task association into permission to send to an invisible target",
+          "status": "passed"
+        },
+        {
+          "name": "rejects an obsolete task reference before accepting its message",
+          "status": "passed"
+        },
+        {
+          "name": "rejects the old source generation even when the message claims approval",
+          "status": "passed"
+        },
+        {
+          "name": "rejects the old target generation even when the message claims approval",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-boundary-retention.test.ts",
+      "testSourceSha256": "74733fbe22eaadf9ba3797411c18f637fc57445310be66faaba881a386304b91",
+      "rawResultSha256": "957f1bdcb6063a73a548ae93762ad420c8a16f730cd2a7fadcd638bc797804dc",
+      "passed": 1,
+      "total": 1,
+      "assertions": [
+        {
+          "name": "retains exact material evidence after source checkout cleanup and refuses wrong scopes or a missing retained object",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-boundary.test.ts",
+      "testSourceSha256": "a0a8d2d98af010e9b85a254de54858cb55fb366718b12f11b488fb313d69a1df",
+      "rawResultSha256": "eb51493c0d4e3b982d7b77cae8c06bf98a0529811a5da9f54e611dc91edae7d8",
+      "passed": 21,
+      "total": 21,
+      "assertions": [
+        {
+          "name": "actual desktop collaboration reader returns the original receipt to the current reader without changing the owner response",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader rejects a forged requester workspaceId before the message owner read",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader rejects a forged requester projectId before the message owner read",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader rejects a forged requester sessionKey before the message owner read",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader rejects a forged requester sessionGeneration before the message owner read",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader does not read messages when the active requester is unavailable",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader rejects navigation during reader qualification before reading any message",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader discards the receipt after the requester workspace changes during reading",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader discards the receipt after the requester generation changes during reading",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader rejects a reset while the final reader qualification is awaiting its last profile read",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader drops original message data when the target becomes generation-changed during the final reader check",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader drops original message data when the target becomes not-visible during the final reader check",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader rejects a navigation away-and-back during collaborationMessages",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader rejects a navigation away-and-back during collaborationContext",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader rejects a navigation away-and-back during collaborationMaterials",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader drops forged receipt bytes and releases the navigation observer on owner failure",
+          "status": "passed"
+        },
+        {
+          "name": "receipt intent and reply identity rejects wrong message id",
+          "status": "passed"
+        },
+        {
+          "name": "receipt intent and reply identity rejects new target generation",
+          "status": "passed"
+        },
+        {
+          "name": "receipt intent and reply identity rejects foreign run",
+          "status": "passed"
+        },
+        {
+          "name": "receipt intent and reply identity rejects task acceptance phase",
+          "status": "passed"
+        },
+        {
+          "name": "receipt intent and reply identity rejects unbound reply",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-message-envelope.test.ts",
+      "testSourceSha256": "bfdd0bf34ccb7eb81089d0076970a9abdfc60067bd422851a426343b8049f3bb",
+      "rawResultSha256": "a13b9345255a591d9cde1997e5280ca9c075dc6c8e32d16bd1820b78c25d80e2",
+      "passed": 10,
+      "total": 10,
+      "assertions": [
+        {
+          "name": "collaboration message identity keeps the stable intent separate from runtime attempts and verifies all payload bytes",
+          "status": "passed"
+        },
+        {
+          "name": "collaboration message identity rejects model-supplied source before owner reads",
+          "status": "passed"
+        },
+        {
+          "name": "collaboration message identity rejects model-supplied sourceRun before owner reads",
+          "status": "passed"
+        },
+        {
+          "name": "collaboration message identity rejects model-supplied actor before owner reads",
+          "status": "passed"
+        },
+        {
+          "name": "collaboration message identity rejects model-supplied permissions before owner reads",
+          "status": "passed"
+        },
+        {
+          "name": "collaboration message identity rejects model-supplied owner before owner reads",
+          "status": "passed"
+        },
+        {
+          "name": "collaboration message identity binds a real tool issuance to its original run and removes it after transport settles",
+          "status": "passed"
+        },
+        {
+          "name": "collaboration message identity rejects invalid sources and generations, leaving the durable owner to bind message IDs",
+          "status": "passed"
+        },
+        {
+          "name": "collaboration message identity reports delivery only after the original target runs or completes successfully",
+          "status": "passed"
+        },
+        {
+          "name": "collaboration message identity keeps the sidecar untrusted and refuses a receipt for another target scope",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-context-host.test.ts",
+      "testSourceSha256": "915f106a03eaf775cc048fad30d32b4955a3136dcc02dd52928e1ca721864e77",
+      "rawResultSha256": "46b7922e5c090964ea91610b967d3da366debe6997ef55ba6cf8b6ed0a4e34ac",
+      "passed": 9,
+      "total": 9,
+      "assertions": [
+        {
+          "name": "reads task context for the active requester and rejects a forged requester before the owner read",
+          "status": "passed"
+        },
+        {
+          "name": "drops task context when the requester generation changes during reading",
+          "status": "passed"
+        },
+        {
+          "name": "drops task context when the requester workspace changes during reading",
+          "status": "passed"
+        },
+        {
+          "name": "drops material results when the active requester resets during reading",
+          "status": "passed"
+        },
+        {
+          "name": "binds coordination hints to the actual active reader before and after the Gateway response",
+          "status": "passed"
+        },
+        {
+          "name": "clears hints when the target becomes unavailable during the asynchronous reader recheck",
+          "status": "passed"
+        },
+        {
+          "name": "clears hints when the target becomes stale during the asynchronous reader recheck",
+          "status": "passed"
+        },
+        {
+          "name": "invalidates the complete hint read when navigation occurs during the last target RPC (roundtrip: false)",
+          "status": "passed"
+        },
+        {
+          "name": "invalidates the complete hint read when navigation occurs during the last target RPC (roundtrip: true)",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-material-query.test.ts",
+      "testSourceSha256": "9e7076c1d43eb92173370e44e8e70c1c25cb2622f7016418b31d3b2b39c1395c",
+      "rawResultSha256": "ba3c6df8e52851f0d743c7cfbbe9e6f953d8d6b731ba2f761055f1c508dea3eb",
+      "passed": 1,
+      "total": 1,
+      "assertions": [
+        {
+          "name": "searches only the visible source scopes and opens the original version by its digest",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-material-lifecycle.test.ts",
+      "testSourceSha256": "5670c05571c1b340612d2084a5895b540936538abc425b6cca2e145c218e0a83",
+      "rawResultSha256": "250e8d7564ff797fcc55cd7911fe83c6239ee26c3a9fedd8570a3b60ea9698e4",
+      "passed": 1,
+      "total": 1,
+      "assertions": [
+        {
+          "name": "preserves original versions through conflict, replacement, revocation and missing evidence",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-delivery.test.ts",
+      "testSourceSha256": "b54b23f914b82695816721bebae06be89203aa62b1427104bece8e320870957d",
+      "rawResultSha256": "d1cc0dd366697fe7c5f2f620044b73ba31b48bdb7b3c3c5c3175ccf4ac327f30",
+      "passed": 7,
+      "total": 7,
+      "assertions": [
+        {
+          "name": "original message intent owner keeps the first source capture through replay and refuses different content",
+          "status": "passed"
+        },
+        {
+          "name": "original message intent owner leaves the first read empty without creating the message table",
+          "status": "passed"
+        },
+        {
+          "name": "original message intent owner allows an accepted intent once and preserves unknown dispatch across an actual database reopen",
+          "status": "passed"
+        },
+        {
+          "name": "original message intent owner retains an owner ack and reads bounded metadata without full message bytes or writes",
+          "status": "passed"
+        },
+        {
+          "name": "original message intent owner does not replace a known accepted input with a late unknown or rejection",
+          "status": "passed"
+        },
+        {
+          "name": "original message intent owner keeps confirmed delivery when earlier acknowledgements arrive after reopening the owner",
+          "status": "passed"
+        },
+        {
+          "name": "original message intent owner retains the actual owner reply and its byte hash separately from metadata pages",
+          "status": "passed"
+        }
+      ]
+    }
+  ],
+  "rawReportSha256": "ee436679dba4e2115c50042c92002e5a330eab8b4ee569a647e70dfa81b7c874"
+}

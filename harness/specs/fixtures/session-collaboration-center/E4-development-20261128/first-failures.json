@@ -1,0 +1,93 @@
+{
+  "driven_by": "agent",
+  "runs": [
+    {
+      "run": "boundary-red-r3",
+      "candidate": {
+        "commit": "eb1d37cdf23323753042a4da53d4da19203e6a57",
+        "tree": "cf29e55b84d8dae0da9f77f8da72c8a9ebf055a7",
+        "dirty": true,
+        "workingTree": "713cfaf9f988a6a1295cee817f6f3eb962c4f094"
+      },
+      "error": "Unit checks failed: session-collaboration-boundary.test.ts",
+      "rawReportSha256": "5cb9d742f9b949cb3c97939310dbc57e01979a24e29fc3e75a56896f853e1d98",
+      "steps": [
+        {
+          "id": "01-session-collaboration-boundary.test",
+          "exitCode": 1,
+          "tests": {
+            "success": false,
+            "numTotalTests": 17,
+            "numPassedTests": 6,
+            "numFailedTests": 11,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        }
+      ]
+    },
+    {
+      "run": "unit-r5",
+      "candidate": {
+        "commit": "eb1d37cdf23323753042a4da53d4da19203e6a57",
+        "tree": "cf29e55b84d8dae0da9f77f8da72c8a9ebf055a7",
+        "dirty": true,
+        "workingTree": "af444b532cbdaed1da30ce36441e97d9ddf3611a"
+      },
+      "error": "Unit checks failed: session-collaboration-system-notification.test.tsx",
+      "rawReportSha256": "02f4025160cb815f84fc738600cf633fae3aff5cd04b4dcb7072cb16f1aef24f",
+      "steps": [
+        {
+          "id": "01-session-collaboration-system-reader.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 2,
+            "numPassedTests": 2,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "02-session-collaboration-system-notification.test",
+          "exitCode": 1,
+          "tests": {
+            "success": false,
+            "numTotalTests": 0,
+            "numPassedTests": 0,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        }
+      ]
+    },
+    {
+      "run": "unit-r6",
+      "candidate": {
+        "commit": "eb1d37cdf23323753042a4da53d4da19203e6a57",
+        "tree": "cf29e55b84d8dae0da9f77f8da72c8a9ebf055a7",
+        "dirty": true,
+        "workingTree": "384a92998db2de8d111c7b39e1f809cf0482ced7"
+      },
+      "error": "Unit checks failed: session-collaboration-boundary-owner.test.ts",
+      "rawReportSha256": "d2115b9b62102186969aa5a2fe8c02622f1a3f7d87c10d024f3c5b4681b1ce8c",
+      "steps": [
+        {
+          "id": "01-session-collaboration-boundary-owner.test",
+          "exitCode": 1,
+          "tests": {
+            "success": true,
+            "numTotalTests": 0,
+            "numPassedTests": 0,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        }
+      ]
+    }
+  ],
+  "retainedRawDirectory": "D:\\tmp\\session-collaboration-e4-20261128"
+}

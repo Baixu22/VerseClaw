@@ -1,0 +1,19 @@
+# E4 原始失败记录说明
+
+boundary-red-r3 对基线Main执行17项：6通过、11失败。消息查询未绑定实际读取者的四种身份伪造、读取者缺失与读取途中换代，共7项为有效失败。
+
+该首轮测试另有模拟数据问题：sender页的run/actions均为not_read却给status idle，应为unknown；clearAllMocks未清除未消费的一次性实现，污染后续伪造回执用例。这些测试数据已修正（unknown与resetAllMocks）。首轮导航与伪造回执失败不作为独立产品缺陷证据。修正数据后的baseline重试因资源未启动而取消；最新完整回归验证真实reader前后核验、导航ABA、异常清理及原回执哈希拒绝。
+
+所有未启动准入失败和初轮原始日志保留。不要把commandStarted:false算测试失败，也不要把测试fixture失配算产品漏洞。
+
+autoreview-r2 的两个换代 finding 已修复并通过 unit-r4：系统组合页监听 sessions./session. 通知后重新读取当前 sender；Main 在读取者自查询后再次 sessions.describe 核验物理代次。新增对应UI通知与final qualification期间reset回归。
+
+独立审查提出的首项目coordinator误作读取者已修：SystemPortfolio只消费实际collaborationSender，缺身份时延迟查询；所有异步身份结果绑定revision，导航/重连/reset使迟到结果失效。全registry导航通知继续保守失效当前查询，保留现有目标绑定/可见性变化语义，未收窄为只看active reader。
+
+autoreview-r4 后续两个finding已修：消息入口在读取者复核后再由原Gateway查询目标当前可见性和代次，失效清空消息页；SystemPortfolio普通会话通知使用不卸载的身份刷新，同一scope返回时保留原对象引用，导航/重连仍立即失效。新增目标最终复核反例及使用真实Panel/Messages子组件的普通通知保持展开与草稿回归。
+
+autoreview-r5“最终target access query期间reader reset未核验”不采纳：session-collaboration-query.ts:65-68先核 requester，25-27的identityRows包含全部会话的sessionId/workspace/元数据，156-157在最终owner读取后比较整份身份签名，因此既检查target也检查requester。新boundary-owner.test.ts直接调用真实readSessionCollaborationQuery，在第二次原会话owner读时分别重置reader/target，预期stale且空页，证明最后一次query不是仅target检查。Main在最终query返回后不再await，导航失效同步检查。
+
+unit-r5的realPanel测试因workspace-session/artifact-panel引入chat/i18n而加载失败，断言未执行；新增两处既有测试同样使用的模块mock隔离，Panel/Messages仍为真实组件。保留原失败。
+
+unit-r6在boundary-owner模块导入阶段触及128MiB V8堆上限，执行0项断言，退出码1；该跑次不计为通过。修正用例只隔离fields=[]不会调用的task effect/process/lifecycle/projection/Gateway transport依赖，并以抛错mock及未调用断言确认没有owner正文加载。真实readSessionCollaborationQuery、scope映射、visibility/sandbox策略和两次metadata读取/身份签名比较保持执行。autoreview-r6在未启动状态取消，新候选由unit-r7及autoreview-r7重新验证。
