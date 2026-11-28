@@ -627,3 +627,7 @@ pnpm runtime:memory:inspect
 
 
 ACP 恢复沿现有 `acp_sessions` 记录持久预算、运行时身份和输出边界。原请求的 fresh handle 与 backend fallback 共用准入，控制器重建保留消耗；进入 turn 后的未知结果保持对账。身份 ACK 校验 Session 和准确预算快照，提交后丢失 ACK 的尝试仍保留预算并释放自己的 claim。验证入口为 `node scripts/recovery-acp-process-proof.mjs --out <fresh-dir>`，使用真实 PID 与原 SQLite 所有者。
+
+## 协作测量入口
+
+E5 整链场景从相同会话 scope 回读模型消耗和资源快照，旧代请求返回失效状态。规模与收益裁定使用同一候选的 A5/D4 原始样本，由 D5 复算输入哈希、独立配对、结果和指标覆盖；运行日志与统计缺口保留在证据中。
