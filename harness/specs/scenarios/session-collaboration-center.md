@@ -73,3 +73,5 @@ payload hook 重序列化材料信封后，按实际载荷内的稳定调用 ID�
 
 
 E4 反例覆盖当前读取者伪造、读取期间换代和导航往返、消息授权文本、伪造回执及原材料留存。定向入口为 session-collaboration-boundary、boundary-provenance、boundary-retention 单测；Electron boundary 场景核对配置/任务状态及模型调用计数。
+
+读取过程中撤销 visibility、A2A 或 sandbox 权限时，Main、UI、sessions_list 和只读 session_status 一致清除旧结果；最终 metadata await 期间的撤销也必须被拒绝。

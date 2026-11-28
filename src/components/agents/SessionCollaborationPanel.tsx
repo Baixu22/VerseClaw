@@ -37,12 +37,13 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
   const [loading, setLoading] = useState(false), [readState, setReadState] = useState('not_read');
   const [recoveryFailed, setRecoveryFailed] = useState(false);
   const revision = useRef(0);
+  const detailEpoch = useRef(0);
   const query = useMemo(() => requester ? parseSessionCollaborationQuery({ requester, ...(workspace ? { workspace } : {}),
     ...(view.search ? { search: view.search } : {}), ...(cursor ? { cursor } : {}) }) : null, [requester, workspace, view.search, cursor]);
   const queryKey = JSON.stringify(query);
   const selectedKey = view.selected ? collaborationScopeKey(view.selected) : null;
   const detailKey = `${viewKey}:${selectedKey}`;
-  const current = useRef({ viewKey, selectedKey }); current.current = { viewKey, selectedKey };
+  const current = useRef({ viewKey, selectedKey, selected: view.selected }); current.current = { viewKey, selectedKey, selected: view.selected };
   const page = observed?.key === queryKey ? observed.page : null;
   const row = selectedRow?.key === detailKey ? selectedRow.row : null;
   const snapshot = detail?.key === detailKey ? detail.snapshot : null;
@@ -55,6 +56,24 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
     const value = await readSessionCollaborationPage(query, hostApi.sessionActivity.query);
     if (token !== revision.current || current.current.viewKey !== viewKey) return;
     setLoading(false); setReadState(value.state);
+    const forgetSelection = () => {
+      detailEpoch.current++;
+      setSelectedRow(null); setDetail(null); setDetailState(null);
+      updateView(viewKey, { selected: null });
+    };
+    if (value.reason === 'not-visible') {
+      setObserved({ key: queryKey, page: value, stale: false });
+      forgetSelection(); setCursor(undefined);
+      return;
+    }
+    const selected = current.current.selected;
+    if (selected && (value.state === 'ready' || value.state === 'empty') &&
+      !value.items.some(item => item.detail && collaborationScopeKey(item.detail.scope) === collaborationScopeKey(selected))) {
+      const access = await readSessionCollaborationPage(parseSessionCollaborationQuery({ requester: query.requester, target: selected, limit: 1 }), hostApi.sessionActivity.query);
+      if (token !== revision.current || current.current.viewKey !== viewKey) return;
+      if (current.current.selectedKey === collaborationScopeKey(selected) &&
+        ['not-visible', 'generation-changed', 'scope-mismatch', 'owner-missing'].includes(access.reason ?? '')) forgetSelection();
+    }
     if (value.state === 'stale' && query.cursor) {
       setCursor(currentCursor => currentCursor === query.cursor ? undefined : currentCursor);
       return;
@@ -62,7 +81,7 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
     setObserved(previous => value.state === 'ready' || value.state === 'empty'
       ? { key: queryKey, page: value, stale: false }
       : previous?.key === queryKey ? { ...previous, stale: true } : { key: queryKey, page: value, stale: true });
-  }, [query, viewKey, queryKey]);
+  }, [query, viewKey, queryKey, updateView]);
   useEffect(() => { const timer = setTimeout(() => void refresh(), 120); return () => { clearTimeout(timer); revision.current++; }; }, [refresh]);
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | undefined;
@@ -78,8 +97,9 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
     const scope = view.selected;
     let active = true;
     let detailRevision = 0;
+    const epoch = detailEpoch.current;
     const target = parseSessionCollaborationQuery({ requester, target: scope, limit: 1 });
-    const isCurrent = () => active && current.current.viewKey === viewKey && current.current.selectedKey === selectedKey;
+    const isCurrent = () => active && epoch === detailEpoch.current && current.current.viewKey === viewKey && current.current.selectedKey === selectedKey;
     const observe = (value: SessionCollaborationPage) => {
       if (!isCurrent()) return false;
       setDetailState({ key: detailKey, state: value.state });

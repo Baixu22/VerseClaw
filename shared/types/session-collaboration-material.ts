@@ -1,10 +1,9 @@
-import type { BlackboardEntryType } from '../../openclaw_runtime/src/agents/orchestration-blackboard.js';
 import { normalizeAutonomySessionScope, type AutonomySessionScope, type ScopedRunId, type TaskId } from './identity-scope.js';
 import type { SessionActivityReadReason } from './session-activity.js';
 
 export const SESSION_COLLABORATION_MATERIAL_KINDS = [
   'fact', 'claim', 'decision', 'artifact', 'conflict', 'handoff',
-] as const satisfies readonly BlackboardEntryType[];
+] as const;
 
 export type SessionCollaborationMaterialInput = {
   id: string;

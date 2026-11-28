@@ -85,6 +85,10 @@ Verse Claw 是基于嵌入式 OpenClaw Runtime 的 Electron 桌面应用。它�
 
 > **当前状态：**`0.4.9-alpha.0`，controlled preview。Windows x64 本地工作流是主要验收目标；macOS/Linux 有构建目标，但平台级运行时验证是另一件事。组件毕业或 agent-driven 证据都不代表公开发布、GA、liveReady 或 productApproved。
 
+
+会话读取在返回前复核访问权限；读取期间撤销访问会清除已收集的详情。
+
+
 ## 产品包含什么
 
 | 领域 | 当前产品形态 | 深入文档 |

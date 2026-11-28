@@ -58,6 +58,40 @@ beforeEach(() => {
   mocks.watch.mockImplementation(() => new Promise(() => {})); mocks.cancel.mockResolvedValue({ success: true, cancelled: true });
 });
 describe('shared collaboration panel', () => {
+  it.each(['during-read', 'before-refresh'])('clears a previously visible list and fences late details when access is revoked %s', async timing => {
+    let release!: (value: unknown) => void;
+    mocks.read.mockImplementationOnce(() => new Promise(resolve => { release = resolve; }));
+    render(<MemoryRouter><SessionCollaborationPanel requester={input.requester} /></MemoryRouter>);
+    const rowId = `collaboration-row-${encodeURIComponent(b.sessionKey)}`;
+    fireEvent.click(await screen.findByTestId(rowId));
+    await waitFor(() => expect(mocks.read).toHaveBeenCalledOnce());
+    mocks.query.mockImplementation(async request => ({ success: true, page: timing === 'during-read' || request.target
+      ? emptySessionCollaborationPage(request, 'unavailable', 'not-visible') : emptySessionCollaborationPage(request, 'empty') }));
+    fireEvent.click(screen.getByTestId('collaboration-refresh'));
+    await waitFor(() => expect(screen.queryByTestId(rowId)).toBeNull());
+    expect(screen.queryByTestId('collaboration-detail')).toBeNull();
+    expect(screen.queryByTestId('collaboration-controls')).toBeNull();
+    expect(screen.queryByTestId('collaboration-more')).toBeNull();
+    const oldSnapshot = createSessionActivityReadSnapshot(parseSessionCollaborationQuery({ requester: b }).requester);
+    await act(async () => release({ success: true, snapshot: oldSnapshot }));
+    mocks.query.mockImplementation(async request => ({ success: true, page: page(request) }));
+    mocks.read.mockImplementationOnce(() => new Promise(() => {}));
+    fireEvent.click(screen.getByTestId('collaboration-refresh'));
+    fireEvent.click(await screen.findByTestId(rowId));
+    await waitFor(() => expect(mocks.read).toHaveBeenCalledTimes(2));
+    const detail = within(screen.getByTestId('collaboration-detail'));
+    const resourceLabel = detail.getByText('collaboration.resources');
+    expect(resourceLabel.nextElementSibling?.textContent).toBe('collaboration.sources.not_read');
+  });
+  it('keeps an authorized selection hidden by a list filter', async () => {
+    render(<MemoryRouter><SessionCollaborationPanel requester={input.requester} /></MemoryRouter>);
+    fireEvent.click(await screen.findByTestId(`collaboration-row-${encodeURIComponent(b.sessionKey)}`));
+    await waitFor(() => expect(mocks.read).toHaveBeenCalledOnce());
+    fireEvent.change(screen.getByTestId('collaboration-search'), { target: { value: 'no-match' } });
+    await waitFor(() => expect(screen.queryByTestId(`collaboration-row-${encodeURIComponent(b.sessionKey)}`)).toBeNull());
+    expect(within(screen.getByTestId('collaboration-detail')).getByText('Goal workspace-b')).toBeTruthy();
+    expect(screen.getByTestId('collaboration-controls')).toBeTruthy();
+  });
   it('shows a paused subscription when its acknowledgement cannot be saved', async () => {
     let finish!: (value: unknown) => void;
     mocks.watch.mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
