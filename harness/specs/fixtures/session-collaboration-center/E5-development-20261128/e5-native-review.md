@@ -1,13 +1,13 @@
 # E5 Native Static Review
 
-Reviewer model: ccs-ai/gpt-6.1-sol  
-Review date: 2026-11-28  
+Reviewer model: ccs-ai/gpt-6.1-sol
+Review date: 2026-11-28
 Result: patch is incorrect; one actionable evidence-integrity finding.
 
 ## Reviewed candidate and files
 
-C checkout: D:/tmp/session-collaboration-mainline-20261126/C/source  
-HEAD: 25118d45eb3bdedefbbe45f8250cec7a2e735b41  
+C checkout: D:/tmp/session-collaboration-mainline-20261126/C/source
+HEAD: 25118d45eb3bdedefbbe45f8250cec7a2e735b41
 Index tree: 8b343cc72d36aaaf6909a974879d97d5a3548a8e
 
 The E5 draft tests/e2e/session-collaboration-center.spec.ts is 159 lines, SHA-256 32B6617DD609F6C3FC78CC93B634EF3286A6076BEADC69F4A85802FC3B8EAFBA.
@@ -21,8 +21,8 @@ The six-file staged diff was reviewed. SHA-256 values:
 - docs/modules/resources-and-observability.md — 0E6966BB753826E9EDEF8451BDEB38CA4A65DE8D0FD486A457C00100448301F4
 - tests/e2e/session-collaboration-center.spec.ts — 32B6617DD609F6C3FC78CC93B634EF3286A6076BEADC69F4A85802FC3B8EAFBA
 
-E implementation reference: D:/tmp/session-collaboration-mainline-20261126/E/source  
-HEAD: 25118d45eb3bdedefbbe45f8250cec7a2e735b41  
+E implementation reference: D:/tmp/session-collaboration-mainline-20261126/E/source
+HEAD: 25118d45eb3bdedefbbe45f8250cec7a2e735b41
 Index tree: c4fb62bdaa9feddf108084be47529cec0ad496df
 
 Current reference-source SHA-256 values:
@@ -51,4 +51,3 @@ The prior message-source gap is resolved in the current draft: lines 70-71 asser
 The Host call shapes and the documented behavior align with the E implementation. The UI check covers same-window page reload plus Gateway restart, as scoped. Material use is tied to the target run, reader, source and digest; usage and resources use the original scopes; reset makes the old-scope resource read stale.
 
 Static review only. No tests were run, and this review does not establish full Electron execution, CI, A5/D4 measurement, or product acceptance.
-
