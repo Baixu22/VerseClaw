@@ -40,6 +40,8 @@ agent 使用 `session_status({ readOnly: true, scope: row.detail.scope })` 读�
 
 查询先应用既有 visibility、A2A allow 与 sandbox 读取策略，再读取任务和动作；它不读取完整 transcript，不调用摘要模型，也不切换活动工作区。实际动作从原 session-task effect request 和 bash process owner 投影，工具的 ScopedRun 使用 Main 原准入结果；待准入、缺少归属或运行中尚未观测到动作时保留 unknown。同 key/generation 的准入工作区或项目不符返回 unavailable/scope-mismatch。搜索无法核验的目标计入 unknownMatches；每个执行根在一次查询中只尝试一个任务连接，旧 schema 保持原数据并返回 unavailable。
 
+最后一次异步来源读取完成后，查询会用当前 visibility、A2A allow 与 sandbox 策略再次核对已读取候选。读取期间撤销访问返回 `unavailable/not-visible`，并清除结果、分页游标和读取计数。
+
 协作模式使用上述 workspace、search、fields、limit、cursor 参数；混入旧列表模式的过滤或转录参数会被拒绝。Main、UI 和工具共同校验返回范围、字段选择与读取预算，缺少 session owner 的行不携带任务或运行事实。
 
 回复的旧 requester、当前会话行或详情代次返回 `stale/generation-changed`，同代范围不符返回 `stale/scope-mismatch`。`not_read` 的 `readAt` 为 null，未知搜索匹配保留 unknown；重复会话行、未知原因码和失败页的分页游标被共同拒绝为 `unknown/protocol-unverified`。

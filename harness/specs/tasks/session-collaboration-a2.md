@@ -4,11 +4,12 @@ id: session-collaboration-a2
 title: A2 扩展会话发现与共用详情查询
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: 86cc00586931a95cf411b665addab763c2715806
+diffBase: d80119701427e5405b507353e004e8312594734a
 intent: 消费 A1 身份与只读 owner 合同，让 UI 和现有会话工具共用有界、带来源的发现与详情查询。
 touchedAreas:
   - shared/types/session-activity.ts
   - shared/types/session-collaboration.ts
+  - shared/types/session-collaboration-material.ts
   - shared/host-api/contract.ts
   - openclaw_runtime/src/config/sessions/combined-store-gateway.ts
   - openclaw_runtime/src/agents/session-task-scope.ts
@@ -66,7 +67,8 @@ requiredTests:
   - pnpm run comms:compare
   - pnpm harness validate --spec harness/specs/tasks/session-collaboration-a2.md
   - pnpm harness run --spec harness/specs/tasks/session-collaboration-a2.md --dry-run
-  - git diff --check 86cc00586931a95cf411b665addab763c2715806 HEAD
+  - git diff --check d80119701427e5405b507353e004e8312594734a HEAD
+  - git diff --check
 acceptance:
   - 现有 sessions_list 与只读 session_status 可取得目标、任务引用、实际动作、状态、来源和详细查询入口。
   - 分页、过滤、字段选择和详情加载有明确界限；列表查询不扫描全部会话完整 transcript。
@@ -82,6 +84,10 @@ docs:
 
 前置 TF-0919 已 done/100；本叶属于 TF-0913 / TF-0664。Task Forest 唯一状态源继续为 D:/ClawX，通过 CLI --workspace D:/ClawX 回读；源码、测试与提交在当前源码工作树。
 
+2026-11-28 接续基线为 `d80119701427e5405b507353e004e8312594734a`。原 A2 实现始于 `39205cb63e0a3746b0216c013bfe10c2b68940d2`，后续读取修复截至 `25cc9abe099282721cf90e01c550506dd6fca703`；本轮使用干净工作树验证这一已整合源码和接续修复。原规格基线 `86cc00586931a95cf411b665addab763c2715806` 到接续基线的 143 文件差异作为交接来源保留。
+
+共享材料种类由 shared 的常量和派生类型定义；shared 不导入 Runtime 的黑板类型。共用读取 facade 的边界回归同时验证这条依赖方向。
+
 扩展 typed `sessionActivity.query`，沿既有 Main-owned Gateway WebSocket 和 `session.activitySnapshot` 路由提供一个共用查询。输入绑定原 requester scope；目标详情携带显式目标 scope，工作区过滤使用既有 workspace/project 映射。工具的发送者 key/generation 来自现有运行上下文，模型参数不能冒充发送者或变更读取资格。
 
 列表使用原 SessionStore 的只读 metadata snapshot；TaskSystem / execution-domain 按根目录在单次查询内复用只读连接。字段选择包含目标、任务引用、ScopedRun、实际工具/进程动作、真实来源和执行域；未选字段返回 not_read。目标文本有长度上限，原任务 digest/revision 与 A1 详情引用保留。
@@ -91,6 +97,8 @@ docs:
 实际动作消费原 session-task effect request 与 bash process owner。工具动作的 ScopedRun 复制原 Main 准入结果；尚未准入时保留 unknown，同 key/generation 的准入工作区或项目不符时返回 unavailable/scope-mismatch，不用当前行重新构造 run。已确认工具/进程按原 session/generation/run 归因；运行存在而动作未观测时保留 unknown，缺少 owner 身份不借当前运行补签。已核验的 run ready 使行保持 running；动作 ready 必须包含已观测动作，ready 与空数组的组合由 Main、UI 和工具共同拒绝。任务引用保持 TaskSystem writer/observer 身份，不据此建立会话血缘。
 
 复用既有 session visibility、A2A allow 与 sandbox 读取策略，先筛选可见会话，再读取目标、任务和动作。只读 session_status 使用显式 readOnly 模式，拒绝同时传入模型修改；原状态工具的模型配置入口继续由既有 owner 执行。
+
+发现与详情在最后一次异步来源读取后再次消费当前配置的 visibility、A2A allow 与 sandbox 策略。已读取候选的访问资格撤销时返回 unavailable/not-visible，清除事实、分页游标和读取计数。正反用例覆盖任务来源读取期间的三种撤销，以及最终 metadata await 期间的撤销；Main、UI、sessions_list 和只读 session_status 返回一致拒绝。
 
 Main、UI 和现有工具共同拒绝重复会话行、未知原因码、带观测时间或缺失来源原因的 not_read，以及仍有未知匹配却声称 empty 的页。unavailable/stale 页带明确原因并清除分页游标与读取计数。回复中的 requester、当前会话行或详情引用换代返回 generation-changed；同代工作区、项目、key 或运行范围不符返回 scope-mismatch。
 

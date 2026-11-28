@@ -24,6 +24,7 @@ appliesTo:
 
 - 共用发现和详情读取绑定原 requester/target scope；模型参数不成为读取者身份。沿同一 Query 合同消费原 owner，先做 visibility/A2A/sandbox 筛选，再读取任务和动作。字段未选保留 not_read；cursor 绑定 metadata 身份，来源变化或 reset 拒绝旧页。只读状态请求跳过模型配置与转录统计，mutation/admission 分类同样保持只读。
 - 共用回复校验保留 generation-changed 与同代 scope-mismatch 的区别，当前会话行与 requester 身份一致。每页会话 key 唯一；not_read 没有观测时间并使用 source-not-read，来源原因码消费原 SessionActivity 合同。未知匹配不能写成 empty，失败或过期页不保留分页游标和计数。
+- 共用发现与详情在最终来源 await 后复核当前 visibility、A2A 和 sandbox 策略；已读取候选的权限撤销返回 unavailable/not-visible 并丢弃事实、游标与读取计数。
 - 发现/详情的 owner 读取失败返回 unavailable/owner-unavailable，已完成读取但缺失合法 Query 页返回 unknown/protocol-unverified；Main、UI 与既有工具使用相同结果。输入和调用者身份的拒绝发生在读取前，不被此错误投影吞掉。
 - 条件等待只拥有监听与有界游标，绑定原读取者、目标代次、ScopedRun 和条件。原运行终态、会话空闲与 TaskSystem 回执分别读取；取消、超时和卸载释放监听，重连补读与未知事件缺口不制造完成事实。
 
@@ -50,6 +51,6 @@ appliesTo:
 - 系统/项目/工作区消费一个协作模块，复用原 worker 阅读页和会话入口。默认摘要、选中详情、原始来源逐层展开。
 - 新文案覆盖 en/zh/ja/ru，复用 design token；状态用文字/图标，键盘焦点可见，异步更新保留选择、筛选、草稿和滚动。状态通知有明确上下文并控制数量。
 - 每个 UI 叶含对应 Electron E2E；通信叶运行 contract、comms replay/compare 和窄 Harness。完成依据是原 owner 事实与磁盘回执。
-- 所有自动场景 driven_by: agent，记录真实 actor、模型路由、输入/源码/候选/产物哈希及第一轮失败。独立模型审查和子代理按用户指定使用 ccs-workbuddy/deepseek-v4.1-flash。
+- 所有自动场景 driven_by: agent，记录真实 actor、模型路由、输入/源码/候选/产物哈希及第一轮失败。独立模型审查和子代理按用户指定使用 ccs-ai/gpt-6.1-sol。
 - 需要索引时先通过 D5 的消费者/规模/延迟复核，另立可重建 derived-index 写集；本合同不改变 TF-0647 历史、产品锁、冻结默认或多机 SessionStore 边界。
 

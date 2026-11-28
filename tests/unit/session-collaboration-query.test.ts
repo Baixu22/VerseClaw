@@ -408,6 +408,51 @@ describe('A2 shared session discovery and detail', () => {
     expect(page.items.map(row => row.sessionKey)).toEqual(visibility === 'self' ? [A] : visibility === 'tree' ? [A, C] : [A, B, C]);
     if (visibility !== 'agent') expect(read.mock.calls.some(([key]) => key === B)).toBe(false);
   });
+  it.each(['visibility', 'a2a', 'sandbox', 'final-owner-await'] as const)('rechecks %s authorization after owner hydration across all consumers', async policy => {
+    const peer = 'agent:peer:a2-policy';
+    if (policy === 'a2a') put(peer, { sessionId: 'peer-generation', workspaceId: 'workspace-b', workspaceDir: workspaceB, updatedAt: 10 });
+    const target = policy === 'a2a' ? scope(peer, 'workspace-b', 'peer-generation') : scope(B, 'workspace-b', 'generation-b');
+    const allowed: OpenClawConfig = { tools: { sessions: { visibility: 'all' }, agentToAgent: { enabled: true, allow: ['main', 'peer'] } } };
+    const revoked: OpenClawConfig = policy === 'visibility' || policy === 'final-owner-await' ? { tools: { sessions: { visibility: 'self' } } }
+      : policy === 'a2a' ? { tools: { sessions: { visibility: 'all' }, agentToAgent: { enabled: false } } }
+      : { ...allowed, agents: { defaults: { sandbox: { mode: 'all', sessionToolsVisibility: 'spawned' } } } };
+    const before = structuredClone(ownerState());
+    if (policy === 'final-owner-await') {
+      const original = metadata.loadCombinedSessionStoreForGateway;
+      let reads = 0;
+      vi.spyOn(metadata, 'loadCombinedSessionStoreForGateway').mockImplementation((cfg, options) => {
+        if (++reads % 2 === 0) mocks.cfg = structuredClone(revoked);
+        return original(cfg, options);
+      });
+    } else {
+      const original = TaskSystemStore.prototype.sessionSnapshot;
+      vi.spyOn(TaskSystemStore.prototype, 'sessionSnapshot').mockImplementation(function (this: TaskSystemStore, ...args) {
+        mocks.cfg = structuredClone(revoked);
+        return original.apply(this, args);
+      });
+    }
+    const workspace = { workspaceId: target.workspaceId, projectId: target.projectId };
+    const input = query({ workspace });
+    const { api } = main();
+    const call = vi.fn(async (request: { params?: unknown }) => runtime((request.params as { query: SessionCollaborationQuery }).query));
+    const opts = () => ({ agentSessionKey: A, agentSessionId: 'generation-a', config: mocks.cfg, callGateway: call as never });
+    const consumers = [
+      ['Main', () => runtime(input).then(result => result.page)],
+      ['UI', () => readSessionCollaborationPage(input, api.query)],
+      ['sessions_list', () => createSessionsListTool(opts()).execute('revoked-list', { collaboration: true, workspace }).then(result => result.details as SessionCollaborationPage)],
+      ['session_status', () => createSessionStatusTool(opts()).execute('revoked-status', { readOnly: true, scope: target }).then(result => result.details as SessionCollaborationPage)],
+    ] as const;
+    const outcomes: Array<{ consumer: string; page: SessionCollaborationPage }> = [];
+    for (const [consumer, read] of consumers) {
+      mocks.cfg = structuredClone(allowed);
+      const page = await read();
+      expect(page, consumer).toMatchObject({ state: 'unavailable', reason: 'not-visible', items: [], nextCursor: null, scanned: 0, unknownMatches: 0 });
+      outcomes.push({ consumer, page });
+    }
+    const after = ownerState();
+    expect({ sessions: after.sessions, files: after.files, tasks: after.tasks }).toEqual({ sessions: before.sessions, files: before.files, tasks: before.tasks });
+    receipts.push({ case: `authorization-revoked-${policy}`, input, allowed, revoked, outcomes, beforeFiles: before.files, afterFiles: after.files });
+  });
   it('uses existing A2A allow rules and sandbox clamps without accepting policy overrides from parameters', async () => {
     put('agent:peer:other', { sessionId: 'peer-gen', workspaceId: 'workspace-b', workspaceDir: workspaceB, updatedAt: 10 });
     expect((await runtime(query())).page.items.some(row => row.sessionKey === 'agent:peer:other')).toBe(false);
