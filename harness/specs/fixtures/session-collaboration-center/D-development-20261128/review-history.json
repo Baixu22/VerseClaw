@@ -1,0 +1,421 @@
+{
+  "driven_by": "agent",
+  "runs": [
+    {
+      "run": "autoreview-r1",
+      "receipt": {
+        "candidate": "25118d45eb3bdedefbbe45f8250cec7a2e735b41",
+        "tree": "78ad6a58976c1662d2d646507fc05d818c399943",
+        "patchSha256": "feba3ab901bfcfbcba11204f164e12d7bed3e6716c6d5f109ebdfd86321bc2df",
+        "datasetSha256": "7ff339c767d922d4c2e3eb0b57892314601d7e969e5683eaea8ed94cfc27ccdd",
+        "argv": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\review-with-raw.py",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r1-engine.json",
+          "--mode",
+          "local",
+          "--base",
+          "25118d45eb3bdedefbbe45f8250cec7a2e735b41",
+          "--engine",
+          "codex",
+          "--stream-engine-output",
+          "--model",
+          "ccs-ai/gpt-6.1-sol",
+          "--thinking",
+          "high",
+          "--no-web-search",
+          "--prompt-file",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r1-notes.md",
+          "--dataset",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r1-dataset.json",
+          "--output",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r1.txt",
+          "--json-output",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r1.json"
+        ],
+        "exitCode": 1,
+        "seconds": 419.515,
+        "model": "ccs-ai/gpt-6.1-sol",
+        "driven_by": "agent",
+        "actor": "codex/session-collaboration-d-mainline",
+        "sourceUnchanged": true
+      },
+      "receiptSha256": "e1b87800970f4ff7b20a718cd465944a809e7729118f9e9a7a97582381fa85be",
+      "result": {
+        "findings": [
+          {
+            "title": "[P2] 资源详情读取仍会更新共享数据库",
+            "body": "启用 provider 预算且会话元数据缓存未命中时，这个新的 scopedRead 入口仍会通过 session-resource-inventory.ts 中的 getSessionEntry 进入 loadSessionStore → loadSqliteSessionStore → openOpenClawAgentDatabase。该数据库入口即使复用连接也会调用 registerAgentDatabase，更新共享 state DB 的 agent_databases.last_seen_at；首次打开还会执行 schema 初始化。因此展开只读资源详情会产生持久写入，providerSpendSnapshot 的 readOnly 选项没有覆盖整条读取链。应在 scopedRead 分支使用现有只读会话加载入口，或传入已经核验的会话记录。",
+            "priority": "P2",
+            "confidence": 0.98,
+            "category": "bug",
+            "code_location": {
+              "file_path": "openclaw_runtime/src/gateway/server-methods/session-collaboration-resources.ts",
+              "line": 31
+            }
+          },
+          {
+            "title": "[P2] 材料注入需要继续遵守最终工具回复预算",
+            "body": "这里删除了替换后不超过原块长度的限制，改为只累计材料对象自身的 JSON 字节数。但材料是在 installProviderPromptHistoryTransform 已按单条及 aggregate 工具回复预算裁剪之后，通过 onPayload 注入的，之后没有重新执行预算检查。配置较小的 toolResultMaxChars，或其他工具结果已接近 aggregate 上限时，能够通过原预算的引用信封会扩张成超预算正文；16 KiB 材料上限也没有计算同块其他内容和外层序列化开销。应按最终实际序列化块核算剩余预算，再决定带入哪些材料，并保留现有最终权限复核。",
+            "priority": "P2",
+            "confidence": 0.96,
+            "category": "regression",
+            "code_location": {
+              "file_path": "openclaw_runtime/src/agents/session-collaboration-material-prompt.ts",
+              "line": 245
+            }
+          },
+          {
+            "title": "[P2] D5 应把缺失的 D4 测量指标计入证据缺口",
+            "body": "D5 只检查配对数量和结果正确性，没有检查 benefit.metrics 的覆盖情况。因此五对结果正确，但 elapsedMs、启动时间、任务排队时间、调用回执缺失且 rss 为空的输入，仍会得到 issues: [] 和 ready-for-review，尽管 D4 汇总已经将多个指标标为 assessment: incomplete、count: 0。新增测试的 positive 样本正好包含这种数据形态。这会让缺少延迟、内存和协调消耗测量的证据进入索引裁定。应检查所需指标的有效配对数量及 excludedPairs，并将缺失项写入 issues。",
+            "priority": "P2",
+            "confidence": 0.98,
+            "category": "bug",
+            "code_location": {
+              "file_path": "harness/specs/fixtures/session-collaboration-center/D5/review-evidence.mjs",
+              "line": 60
+            }
+          }
+        ],
+        "overall_correctness": "patch is incorrect",
+        "overall_explanation": "发现三项可行动缺陷：只读资源查询仍可能写入共享数据库，材料注入绕过既有最终工具回复预算，D5 会将缺少关键 D4 测量指标的证据标为可复核。结论基于变更与相关 owner、调用方的只读源码检查；未运行测试、构建或 Electron。",
+        "overall_confidence": 0.96
+      },
+      "resultSha256": "339009fd2d01f53488700e7050d105d5e7b92872f0d86ee2c4de48265a4970bc"
+    },
+    {
+      "run": "autoreview-r2",
+      "receipt": {
+        "candidate": "25118d45eb3bdedefbbe45f8250cec7a2e735b41",
+        "tree": "78ad6a58976c1662d2d646507fc05d818c399943",
+        "patchSha256": "5d793a8d2c064b6e1e673338f9a6df46003f6a9fbd492840f34ef9d45859398b",
+        "datasetSha256": "1f0ab78b58783870dc64d6b848bf82ee08bf020fbf1b21826d0bbedcc9df1e15",
+        "argv": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\review-with-raw.py",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r2-engine.json",
+          "--mode",
+          "local",
+          "--base",
+          "25118d45eb3bdedefbbe45f8250cec7a2e735b41",
+          "--engine",
+          "codex",
+          "--stream-engine-output",
+          "--model",
+          "ccs-ai/gpt-6.1-sol",
+          "--thinking",
+          "high",
+          "--no-web-search",
+          "--prompt-file",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r2-notes.md",
+          "--dataset",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r2-dataset.json",
+          "--output",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r2.txt",
+          "--json-output",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r2.json"
+        ],
+        "exitCode": 1,
+        "seconds": 178.578,
+        "model": "ccs-ai/gpt-6.1-sol",
+        "driven_by": "agent",
+        "actor": "codex/session-collaboration-d-mainline",
+        "sourceUnchanged": true
+      },
+      "receiptSha256": "8d3dcae6e5eac948f0f6168b2a78df7c00b108ea0e2eb6262f74587b36673851",
+      "result": {
+        "findings": [
+          {
+            "body": "汇总器只检查每次请求使用的模型，没有核对请求实际发送的任务文本是否来自固定基准。`fixtureSha256` 仅绑定基准文件，不能证明两组运行使用了该输入；因此不同任务只要产生预期答案，就会被计入可比配对并用于 D4/D5 裁定。应在原始请求证据中保留可校验的完整输入或其哈希，并要求两组都与固定任务匹配。",
+            "category": "test_gap",
+            "code_location": {
+              "file_path": "harness/specs/fixtures/session-collaboration-center/D4/summarize.mjs",
+              "line": 28
+            },
+            "confidence": 0.96,
+            "priority": "P2",
+            "title": "未验证配对运行实际使用固定任务输入"
+          }
+        ],
+        "overall_confidence": 0.96,
+        "overall_correctness": "patch is incorrect",
+        "overall_explanation": "D4 汇总绑定了固定基准文件，却没有验证每个配对实际发送给模型的任务输入；这会让输入不一致的结果进入配对指标，并影响 D5 的证据裁定。"
+      },
+      "resultSha256": "5aea6e429ab9e7a3f8e5567c82d1012c52a78dc593969b8c1ea7e0326d2ce32b"
+    },
+    {
+      "run": "autoreview-r3",
+      "receipt": {
+        "candidate": "25118d45eb3bdedefbbe45f8250cec7a2e735b41",
+        "tree": "78ad6a58976c1662d2d646507fc05d818c399943",
+        "patchSha256": "557dfea3f5cbe0cd57faaa298696ded1d7d63cb6bc94ea92bcd74686d331774c",
+        "datasetSha256": "38c5d0d2117ba91c9f84e35bea99628d75e821850b3e5be31f2675bc42f3f661",
+        "argv": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\review-with-raw.py",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r3-engine.json",
+          "--mode",
+          "local",
+          "--base",
+          "25118d45eb3bdedefbbe45f8250cec7a2e735b41",
+          "--engine",
+          "codex",
+          "--stream-engine-output",
+          "--model",
+          "ccs-ai/gpt-6.1-sol",
+          "--thinking",
+          "high",
+          "--no-web-search",
+          "--prompt-file",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r3-notes.md",
+          "--dataset",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r3-dataset.json",
+          "--output",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r3.txt",
+          "--json-output",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r3.json"
+        ],
+        "exitCode": 1,
+        "seconds": 531.468,
+        "model": "ccs-ai/gpt-6.1-sol",
+        "driven_by": "agent",
+        "actor": "codex/session-collaboration-d-mainline",
+        "sourceUnchanged": true
+      },
+      "receiptSha256": "17a0bedabd27533c25963b914bc903ca09d97bbf618e54e5d8e4279442b4ed5d",
+      "result": {
+        "findings": [
+          {
+            "title": "[P2] 不要让缺失的 fork 叶 ID 屏蔽当前代次的全部调用",
+            "body": "合法 fork 的原叶 ID 不一定存在于子 transcript。例如父会话最后一条是 label 时，session-fork.runtime.ts 将其 ID 保存为 forkedFromLeafId，但 writeBranchedSession 会移除原 label 并生成新的标签 ID。这里会一直停留在 !atForkBoundary，连 modelCall.sessionKey 明确属于子会话当前代次的后续回复也全部跳过，最终只返回一个未知计数，实际 Token 和费用始终缺失。应优先利用原调用的物理代次识别新调用，或使用 fork 写入方保证保留的边界，避免把未找到边界等同于所有后续记录均为继承历史。",
+            "priority": "P2",
+            "confidence": 0.98,
+            "category": "bug",
+            "code_location": {
+              "file_path": "openclaw_runtime/src/infra/session-cost-usage.ts",
+              "line": 1154
+            }
+          },
+          {
+            "title": "[P2] 保留原生对象材料块的实际 UTF-8 字节上限",
+            "body": "此条件替换了原来的 Buffer.byteLength(candidate) 检查，但 candidate 在原生对象路径中已经是 JSON 文本：第 221 行先对对象 JSON.stringify，应用时第 276 行再 JSON.parse。因此这里比较的是额外转义一层字符串后的大小，而实际请求发送的是对象的一次序列化大小。材料正文包含中文等多字节字符、同时新结构比引用信封少一些引号时，可能同时通过字符数和双重序列化检查，实际对象的 UTF-8 字节数却超过原块。应保留原始 UTF-8 检查，或区分字符串块与原生对象，按最终实际发送的表示检查预算。",
+            "priority": "P2",
+            "confidence": 0.97,
+            "category": "regression",
+            "code_location": {
+              "file_path": "openclaw_runtime/src/agents/session-collaboration-material-prompt.ts",
+              "line": 249
+            }
+          },
+          {
+            "title": "[P2] 将 D4 原始输入哈希纳入固定基准校验",
+            "body": "这里只核对 benchmark.json 的清单哈希和 fixture 对象，完全没有检查采集器写出的 run.inputSha256。删除或修改原始记录中的输入哈希，仍可通过 summarize，并在其余字段齐全时让 D5 返回 ready-for-review；新增 pairedSamples 正例本身就未提供 inputSha256。这使固定基准清单相同、实际输入证据缺失或不一致的跑次仍被判为有效配对。应要求 inputSha256 等于固定 contents 的哈希，并核对原读取／材料产物所绑定的输入哈希，不一致时拒绝或标记证据不完整。",
+            "priority": "P2",
+            "confidence": 0.98,
+            "category": "bug",
+            "code_location": {
+              "file_path": "harness/specs/fixtures/session-collaboration-center/D4/summarize.mjs",
+              "line": 14
+            }
+          }
+        ],
+        "overall_correctness": "patch is incorrect",
+        "overall_explanation": "发现三处可行动缺陷：合法 fork 的模型消耗可能被全部跳过；原生对象材料路径丢失实际 UTF-8 字节预算约束；D4/D5 未校验采集记录的输入哈希。以上结论来自变更及相关写入方、调用方和验证代码的只读审阅，未执行测试、构建或嵌套审查。",
+        "overall_confidence": 0.95
+      },
+      "resultSha256": "58f142423ca3aa855bfebbb7c7695490a616c4112d92dbed5deb251956fdb395"
+    },
+    {
+      "run": "autoreview-r5",
+      "receipt": {
+        "candidate": "25118d45eb3bdedefbbe45f8250cec7a2e735b41",
+        "tree": "78ad6a58976c1662d2d646507fc05d818c399943",
+        "patchSha256": "12f075db1a70b4b2c7a15820d297f48c4b9d1039c02010419c2812377c799bdb",
+        "datasetSha256": "71a171c8d3f520209c3070df13ff31de58a2d63883a82add152712e5fcdbebdf",
+        "argv": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\review-with-raw.py",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r5-engine.json",
+          "--mode",
+          "local",
+          "--base",
+          "25118d45eb3bdedefbbe45f8250cec7a2e735b41",
+          "--engine",
+          "codex",
+          "--stream-engine-output",
+          "--model",
+          "ccs-ai/gpt-6.1-sol",
+          "--thinking",
+          "high",
+          "--no-web-search",
+          "--prompt-file",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r5-notes.md",
+          "--dataset",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r5-dataset.json",
+          "--output",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r5.txt",
+          "--json-output",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r5.json"
+        ],
+        "exitCode": 1,
+        "seconds": 455.562,
+        "model": "ccs-ai/gpt-6.1-sol",
+        "driven_by": "agent",
+        "actor": "codex/session-collaboration-d-mainline",
+        "sourceUnchanged": true
+      },
+      "receiptSha256": "d7904e5027f3012004d974d71925ad813da4f2f427886444880724df713a81e2",
+      "result": {
+        "findings": [
+          {
+            "title": "[P2] 将缺少 usage 的成功响应保留为未知用量",
+            "body": "这里允许 stop、toolUse、length 响应的全零用量进入 known。现有 OpenAI transport 会先用 createEmptyTransportUsage() 初始化所有计数；上游没有返回 usage 帧时，成功结束的 assistant 记录仍保留这些零值。因此这类调用会被统计为已知 0 Token，unknownUsageCalls 也不会增加，导致会话累计少计消耗。应依据实际 usage 观测证明确认零用量；缺少证明的全零占位记录应保留 unknown。",
+            "priority": "P2",
+            "confidence": 0.98,
+            "category": "bug",
+            "code_location": {
+              "file_path": "openclaw_runtime/src/infra/session-cost-usage.ts",
+              "line": 1195
+            }
+          },
+          {
+            "title": "[P2] 用原运行的最终回复验证 D4 结果正确性",
+            "body": "实际采集调用的 agent.wait 只返回运行状态、起止时间等元数据，不返回 text，因此真实样本总会通过这里的 text === undefined 分支。正确性最终只取决于 mock provider 日志中的 issued 字符串，未核对原运行最终保存或交付的答案。即使后续回复处理丢失或改写答案，D4 仍会计为正确，D5 的 incorrect-paired-results 检查也无法识别。应采集绑定原 run 的最终回复或可核验结果回执，要求其内容严格匹配固定结果；缺少结果证据时应判为不完整。",
+            "priority": "P2",
+            "confidence": 0.96,
+            "category": "test_gap",
+            "code_location": {
+              "file_path": "harness/specs/fixtures/session-collaboration-center/D4/summarize.mjs",
+              "line": 35
+            }
+          }
+        ],
+        "overall_correctness": "patch is incorrect",
+        "overall_explanation": "只读审查发现两项可行动问题：会话用量将缺失 usage 的成功响应计为已知零值；D4/D5 的质量核验缺少原运行最终答案证据。审查核对了变更代码及相关 owner、调用方，未执行测试、类型检查、构建或 Electron。",
+        "overall_confidence": 0.95
+      },
+      "resultSha256": "6ffd9e78eedcf0bd0abef65fbe8c12d51ff504f15b7903bb1d5840e588d57a99"
+    },
+    {
+      "run": "autoreview-r6",
+      "receipt": {
+        "candidate": "25118d45eb3bdedefbbe45f8250cec7a2e735b41",
+        "tree": "78ad6a58976c1662d2d646507fc05d818c399943",
+        "patchSha256": "2c3c281b9f9934f0be418f63b59a5f6b55074ae6ebee4337202d65bde8b85144",
+        "datasetSha256": "fc51af6bf490f4f105ffb4d6618217d861cedf83b1ee3eb0f9cd2b04633ea844",
+        "argv": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\review-with-raw.py",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r6-engine.json",
+          "--mode",
+          "local",
+          "--base",
+          "25118d45eb3bdedefbbe45f8250cec7a2e735b41",
+          "--engine",
+          "codex",
+          "--stream-engine-output",
+          "--model",
+          "ccs-ai/gpt-6.1-sol",
+          "--thinking",
+          "high",
+          "--no-web-search",
+          "--prompt-file",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r6-notes.md",
+          "--dataset",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r6-dataset.json",
+          "--output",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r6.txt",
+          "--json-output",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r6.json"
+        ],
+        "exitCode": 1,
+        "seconds": 544.219,
+        "model": "ccs-ai/gpt-6.1-sol",
+        "driven_by": "agent",
+        "actor": "codex/session-collaboration-d-mainline",
+        "sourceUnchanged": true
+      },
+      "receiptSha256": "fd60c9194520ac376a1fc088ba5d9608fe450e8a04444519236467c822ed4f89",
+      "result": {
+        "findings": [
+          {
+            "title": "[P2] 将进程创建标记绑定到原 owner 句柄",
+            "body": "这里仅比较 owner 的 runId/handleId 和 PID，再核对两次即时 OS 采样的创建标记，没有证明该创建标记属于 owner 原先启动的进程。ProcessSupervisor 在 adapter 退出后，会等待 verifyOwnedTreeAfterRootExit 完成才从 active 删除记录，期间 snapshotRunsForLifecycle 仍返回原 PID。如果该 PID 在首次采样前被复用，两次采样会一致地读到新进程，handlesStable 也仍为 true，最终把其他进程的 PID、RSS 和 CPU 标为该会话的已知资源。应使用 owner 保存的原始创建标记进行匹配，并排除已退出、正在做终止核验的根句柄；缺少原始身份时保留 unknown。",
+            "priority": "P2",
+            "confidence": 0.95,
+            "category": "bug",
+            "code_location": {
+              "file_path": "openclaw_runtime/src/gateway/session-resource-inventory.ts",
+              "line": 137
+            }
+          }
+        ],
+        "overall_correctness": "patch is incorrect",
+        "overall_explanation": "发现一项资源归属缺陷：当前创建标记校验只能确认两次采样观察到同一进程，不能确认该进程属于原 owner，PID 复用时可能产生错误的会话资源归因。本次仅进行了只读源码与调用链检查，未运行测试、构建或类型检查。",
+        "overall_confidence": 0.92
+      },
+      "resultSha256": "c26c4d3156a1496ea6b86907803ae473cc2a75f73d3bade90212286d0a960bbf"
+    },
+    {
+      "run": "autoreview-r7",
+      "receipt": {
+        "candidate": "25118d45eb3bdedefbbe45f8250cec7a2e735b41",
+        "tree": "78ad6a58976c1662d2d646507fc05d818c399943",
+        "patchSha256": "3d8d179d9c5cf245503412a996a76509e6fd21a589281ee0627d6367bc7c2209",
+        "datasetSha256": "ac4762b8b82bf90346602b6f77191c0fe2e2df8267837486000d0e4a5b395610",
+        "argv": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\review-with-raw.py",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r7-engine.json",
+          "--mode",
+          "local",
+          "--base",
+          "25118d45eb3bdedefbbe45f8250cec7a2e735b41",
+          "--engine",
+          "codex",
+          "--stream-engine-output",
+          "--model",
+          "ccs-ai/gpt-6.1-sol",
+          "--thinking",
+          "high",
+          "--no-web-search",
+          "--prompt-file",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r7-notes.md",
+          "--dataset",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r7-dataset.json",
+          "--output",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r7.txt",
+          "--json-output",
+          "D:\\tmp\\session-collaboration-d-closeout-20261128\\autoreview-r7.json"
+        ],
+        "exitCode": 1,
+        "seconds": 1366.547,
+        "model": "ccs-ai/gpt-6.1-sol",
+        "driven_by": "agent",
+        "actor": "codex/session-collaboration-d-mainline",
+        "sourceUnchanged": true
+      },
+      "receiptSha256": "869abe74c89883015f18aed89c6a8f7f9705a39466faf5da6893f6e5211623f3",
+      "result": null,
+      "resultSha256": null
+    }
+  ]
+}

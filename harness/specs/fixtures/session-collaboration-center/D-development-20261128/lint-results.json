@@ -1,0 +1,206 @@
+{
+  "candidate": {
+    "commit": "1a9fac9a0efd64eb98cd36f72260b91d7c20e2c7",
+    "tree": "41c3eb09f5006803603e19c791b3e9eeddc33592"
+  },
+  "errors": 0,
+  "warnings": 2,
+  "files": [
+    {
+      "path": "electron/services/long-session-resource-reclamation.ts",
+      "messages": []
+    },
+    {
+      "path": "electron/services/session-activity-api.ts",
+      "messages": []
+    },
+    {
+      "path": "electron/services/terminal-session-manager.ts",
+      "messages": []
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+      "messages": []
+    },
+    {
+      "path": "openclaw_runtime/src/agents/provider-spend-budget.ts",
+      "messages": []
+    },
+    {
+      "path": "openclaw_runtime/src/agents/session-collaboration-material-prompt.ts",
+      "messages": []
+    },
+    {
+      "path": "openclaw_runtime/src/agents/worktree-registry.ts",
+      "messages": []
+    },
+    {
+      "path": "openclaw_runtime/src/agents/worktree-service.ts",
+      "messages": []
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/session-activity.ts",
+      "messages": []
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/session-collaboration-resources.ts",
+      "messages": []
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/session-collaboration-usage.ts",
+      "messages": []
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/session-resource-inventory.ts",
+      "messages": []
+    },
+    {
+      "path": "openclaw_runtime/src/infra/session-cost-usage.ts",
+      "messages": []
+    },
+    {
+      "path": "openclaw_runtime/src/process/supervisor/adapters/child.ts",
+      "messages": []
+    },
+    {
+      "path": "openclaw_runtime/src/process/supervisor/adapters/pty.ts",
+      "messages": []
+    },
+    {
+      "path": "openclaw_runtime/src/process/supervisor/supervisor.ts",
+      "messages": []
+    },
+    {
+      "path": "openclaw_runtime/src/process/supervisor/types.ts",
+      "messages": []
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "messages": []
+    },
+    {
+      "path": "shared/long-session-resource-reclamation.ts",
+      "messages": []
+    },
+    {
+      "path": "shared/task-system/runtime.ts",
+      "messages": []
+    },
+    {
+      "path": "shared/task-system/store.ts",
+      "messages": []
+    },
+    {
+      "path": "shared/task-system/trace.ts",
+      "messages": []
+    },
+    {
+      "path": "shared/types/session-collaboration-resources.ts",
+      "messages": []
+    },
+    {
+      "path": "shared/types/session-collaboration-usage.ts",
+      "messages": []
+    },
+    {
+      "path": "shared/types/usage.ts",
+      "messages": []
+    },
+    {
+      "path": "src/components/agents/SessionCollaborationPanel.tsx",
+      "messages": [
+        {
+          "ruleId": "react-refresh/only-export-components",
+          "severity": 1,
+          "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.",
+          "line": 25,
+          "column": 14,
+          "messageId": "namedExport",
+          "endLine": 25,
+          "endColumn": 35
+        },
+        {
+          "ruleId": "react-hooks/exhaustive-deps",
+          "severity": 1,
+          "message": "The ref value 'revision.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'revision.current' to a variable inside the effect, and use that variable in the cleanup function.",
+          "line": 88,
+          "column": 119,
+          "endLine": 88,
+          "endColumn": 126
+        }
+      ]
+    },
+    {
+      "path": "src/components/agents/SessionCollaborationResources.tsx",
+      "messages": []
+    },
+    {
+      "path": "src/components/agents/SessionCollaborationUsage.tsx",
+      "messages": []
+    },
+    {
+      "path": "src/lib/host-api.ts",
+      "messages": []
+    },
+    {
+      "path": "tests/e2e/session-collaboration-benefit.spec.ts",
+      "messages": []
+    },
+    {
+      "path": "tests/e2e/session-collaboration-budget-view.spec.ts",
+      "messages": []
+    },
+    {
+      "path": "tests/e2e/session-collaboration-cost-attribution.spec.ts",
+      "messages": []
+    },
+    {
+      "path": "tests/e2e/session-collaboration-overview.spec.ts",
+      "messages": []
+    },
+    {
+      "path": "tests/e2e/session-collaboration-resources.spec.ts",
+      "messages": []
+    },
+    {
+      "path": "tests/unit/autonomy-provider-spend.test.ts",
+      "messages": []
+    },
+    {
+      "path": "tests/unit/resource-metrics-owner.test.ts",
+      "messages": []
+    },
+    {
+      "path": "tests/unit/session-collaboration-budget-view.test.tsx",
+      "messages": []
+    },
+    {
+      "path": "tests/unit/session-collaboration-cost-attribution.test.ts",
+      "messages": []
+    },
+    {
+      "path": "tests/unit/session-collaboration-material-adoption.test.ts",
+      "messages": []
+    },
+    {
+      "path": "tests/unit/session-collaboration-material-lifecycle.test.ts",
+      "messages": []
+    },
+    {
+      "path": "tests/unit/session-collaboration-panel.test.tsx",
+      "messages": []
+    },
+    {
+      "path": "tests/unit/session-collaboration-process-identity.test.ts",
+      "messages": []
+    },
+    {
+      "path": "tests/unit/session-collaboration-query.test.ts",
+      "messages": []
+    },
+    {
+      "path": "tests/unit/session-collaboration-resource-owner.test.ts",
+      "messages": []
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "findings": [],
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "基于 r1-r6 审查历史及当前候选的最终进程身份修复限定复核。r6 唯一 PID 归属问题已关闭：supervisor 在 root 活跃时绑定创建身份，退出期间不回填 token；资源投影核对 owner 原始创建 token、runId/PID 关联及句柄稳定性，缺少身份时返回 unknown。D4/D5 等先前修复继续纳入历史审查依据。本结论是当前源码 diff 的 native 代码审查，不代表 CLI autoreview、测试或完整 CI 结果。",
+  "overall_confidence": 0.91
+}

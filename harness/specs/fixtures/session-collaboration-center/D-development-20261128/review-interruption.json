@@ -1,0 +1,94 @@
+{
+  "driven_by": "agent",
+  "reason": "Superseded by reviewed root-exit fix; preserve no verdict for old candidate",
+  "identities": [
+    {
+      "pid": 30916,
+      "createdAt": 1795858409.4264555,
+      "name": "ae-mcp-current.exe"
+    },
+    {
+      "pid": 27684,
+      "createdAt": 1795858409.4319882,
+      "name": "node_repl.exe"
+    },
+    {
+      "pid": 26312,
+      "createdAt": 1795858409.4341526,
+      "name": "node_repl.exe"
+    },
+    {
+      "pid": 29036,
+      "createdAt": 1795858409.435744,
+      "name": "cmd.exe"
+    },
+    {
+      "pid": 24104,
+      "createdAt": 1795858420.7033443,
+      "name": "codex-code-mode-host.exe"
+    },
+    {
+      "pid": 29068,
+      "createdAt": 1795858420.7064908,
+      "name": "conhost.exe"
+    },
+    {
+      "pid": 8568,
+      "createdAt": 1795858409.4382992,
+      "name": "conhost.exe"
+    },
+    {
+      "pid": 28772,
+      "createdAt": 1795858409.5713637,
+      "name": "node.exe"
+    },
+    {
+      "pid": 12268,
+      "createdAt": 1795858413.1246767,
+      "name": "cmd.exe"
+    },
+    {
+      "pid": 3496,
+      "createdAt": 1795858413.1455994,
+      "name": "node.exe"
+    },
+    {
+      "pid": 4564,
+      "createdAt": 1795858409.436685,
+      "name": "conhost.exe"
+    },
+    {
+      "pid": 26880,
+      "createdAt": 1795858409.4349291,
+      "name": "conhost.exe"
+    },
+    {
+      "pid": 6604,
+      "createdAt": 1795858409.4292855,
+      "name": "conhost.exe"
+    },
+    {
+      "pid": 23148,
+      "createdAt": 1795858408.4318964,
+      "name": "codex.exe"
+    }
+  ],
+  "stoppedAt": "2026-11-28T09:56:12.042060+00:00",
+  "remaining": [],
+  "exited": [
+    8568,
+    26312,
+    29068,
+    27684,
+    28772,
+    4564,
+    29036,
+    6604,
+    30916,
+    24104,
+    3496,
+    23148,
+    12268,
+    26880
+  ]
+}

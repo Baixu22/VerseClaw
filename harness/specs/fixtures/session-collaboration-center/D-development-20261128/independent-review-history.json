@@ -1,0 +1,11 @@
+{
+  "driven_by": "agent",
+  "model": "ccs-ai/gpt-6.1-sol",
+  "reports": [
+    {
+      "file": "independent-code-review-final.md",
+      "sha256": "eeb0490b2d393d485d59a264548e5e65e623336d24105292028667792103181d",
+      "report": "# D 最终独立代码审查\n\n审查日期：2026-11-28\n\n## 候选绑定\n\n- 工作树：D:/tmp/session-collaboration-mainline-20261126/E/source\n- HEAD/base：25118d45eb3bdedefbbe45f8250cec7a2e735b41\n- 暂存候选 tree：41c3eb09f5006803603e19c791b3e9eeddc33592\n- 审查范围：r1-r6 审查记录与当前候选的最终 PID 身份修复；没有重开全项目审查。\n\n## 代码结论\n\nr6 原始报告的唯一 finding 是 PID 复用期间资源可能归属到新进程。当前候选关闭该问题：supervisor 只在对应 ActiveRun 仍是当前记录且 adapter 明确报告 root 活跃时回填原始 creationToken；生命周期快照携带该 token 和 rootActive。child adapter 读取 exit/close 状态，pty adapter 读取 onExit 结果，所以 root 已退出但 wait 仍等待继承 stdio 或终止核验时，会立即按 inactive 处理。\n\n资源投影仅把活跃 supervisor run 的原始 PID/token 配成 ownedRoots；采样时再次比较 OS 捕获 token 和 owner token。句柄还需在采样前后保持稳定，Bash handle 必须与相同 runId、PID 的 supervisor root 对应。owner token 缺失、PID 被复用、句柄退出或样本不匹配都会得到 unknown，不会把新 PID incarnation 的指标认作原 owner。\n\n新增两项进程身份回归覆盖 root 退出而 containment 尚未完成，以及首次 creation sample 延迟返回且 root 已退出的情形；后者断言退出后的 token 不会回填。源文件中这组测试是本次代码修复的一部分。\n\nr1-r5 审查中记录的只读资源入口、材料最终预算、D5 指标完整性、D4 固定输入身份、fork 用量边界、原生对象 UTF-8 预算、成功回复 usage 缺失和 D4 最终持久回复绑定等 finding，均已在后续修订记录中处理。本次未重复审查这些既有范围；r6 PID 归属 finding 按当前 diff 和 owner/projection 调用链复核关闭。\n\n**当前候选代码审查结论：通过，无剩余 finding。**\n\n## 审查产物与验证边界\n\n- Native review JSON：raw/native-review-final.json，SHA-256 f136797ec03d305c6939be4b679a065589fd8e8ed168b8d56e9898ac47d5add8\n- Working diff dataset：raw/native-review-final-dataset.json，SHA-256 639cef6e8b88109602e3b7cf1e2f1c9fb5e630aa5d622e4f4a151c6035af2b22\n- Candidate receipt：raw/native-review-final-receipt.json，SHA-256 0e995f20e620f08783aef6b25187cc951ffcfd44851e89cc16a1c60f20354e2a\n- Dataset 的 workingPatch 按 git diff HEAD --binary、UTF-8 text 和末尾空白裁切生成；patch SHA-256 为 dad76aa2234ae9b3be3efe1c03421570e993d1f441a8f9cb4d72527062dbc8aa。\n- 审查前后 HEAD、index tree、index entries、工作区差异和未跟踪文件清单一致；sourceUnchanged 为 true。\n\n这是针对源码 diff 的 native subagent 代码审查，不是 CLI autoreview verdict。autoreview-r7 被终止且无 verdict；本报告不将其记作通过。unit-r9 与 pre-source-r9 尚待运行；完整 CI/typecheck/build 及真实 Electron/Gateway 执行按延期安排处理。"
+    }
+  ]
+}
