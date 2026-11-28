@@ -1,0 +1,45 @@
+{
+  "actor": "codex-rag-audit",
+  "driven_by": "agent",
+  "scope": "isolated-module-probe",
+  "provider": "scripted",
+  "networkCalls": 0,
+  "results": [
+    {
+      "root": "D:/ClawX",
+      "sourceSha256": "f7fa4f7515e7b423f555f3f7186c1b0c75b561161b5ee997e15d4ff8d57c96a5",
+      "status": "partial",
+      "returnedIds": [
+        "a",
+        "b"
+      ],
+      "filters": [],
+      "fallbackReasons": [
+        "rerank-failed:provider disconnected",
+        "rerank-unavailable"
+      ],
+      "revokedSourceRetained": true
+    },
+    {
+      "root": "D:/ClawX-work/g2-rag16-relay-20261119",
+      "sourceSha256": "a0f4ce359e9929f74267cd1e306511e3bccad49de1388792f586213df5685a49",
+      "status": "partial",
+      "returnedIds": [
+        "b"
+      ],
+      "filters": [
+        {
+          "namespaceId": "fixture",
+          "subjectId": "a",
+          "reason": "revoked"
+        }
+      ],
+      "fallbackReasons": [
+        "rerank-failed:provider disconnected",
+        "rerank-failed:owner-evidence-changed",
+        "rerank-unavailable"
+      ],
+      "revokedSourceRetained": false
+    }
+  ]
+}

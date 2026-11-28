@@ -1,6 +1,7 @@
 import { shell } from 'electron';
 import { createHash, randomUUID } from 'node:crypto';
 import { existsSync, readFileSync, type Dirent } from 'node:fs';
+import type { KnowledgeObservabilityResult, KnowledgePolicyPromotionPayload, KnowledgePolicyImportPayload, KnowledgePolicyRollbackPayload, KnowledgeRetrievalFeedbackPayload, RetrievalObservabilitySnapshotV1 } from '../../shared/knowledge/observability';
 import { mkdir, open as openFile, readFile, readdir, rename, rm, stat, lstat, unlink, writeFile, appendFile } from 'node:fs/promises';
 import { basename, dirname, extname, isAbsolute, join, relative, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -3549,7 +3550,8 @@ export function createKnowledgeApi({
         report('thinking');
         const result = await runKnowledgeModel(gatewayManager,
           buildKnowledgeQaPrompt({ question, history: input.history, sources: modelSelection.sources, answerMode }),
-          'Knowledge Librarian', modelRemaining(), sessionKey ? { sessionKey, workspaceId: readScope.identity.workspaceId, workspaceDir: readScope.identity.workspaceDir, references } : undefined);
+          'Knowledge Librarian', modelRemaining(), sessionKey ? { sessionKey, workspaceId: readScope.identity.workspaceId, workspaceDir: readScope.identity.workspaceDir, references,
+            retrievalRequestId: retrieval?.plan.requestId, ownerSessionId: readScope.identity.sessionId } : undefined);
         retainedEvidence = result.retainedEvidence;
         await assertKnowledgeReadScopeCurrent(gatewayManager, readScope);
         const after = await readEvidence(pinned);
@@ -3907,8 +3909,40 @@ export function createKnowledgeApi({
     } catch (error) { return { success: false, error: sanitizeUiErrorText(error) }; }
   };
 
+  const observabilityOperation = async (
+    operation: 'status' | 'feedback' | 'promote' | 'rollback',
+    input?: KnowledgePolicyPromotionPayload | KnowledgePolicyImportPayload | KnowledgePolicyRollbackPayload | KnowledgeRetrievalFeedbackPayload,
+  ): Promise<KnowledgeObservabilityResult> => {
+    try {
+      if (operation !== 'status' && (!input || typeof input !== 'object' || Array.isArray(input)
+        || JSON.stringify(input).length > 2 * 1024 * 1024)) throw new Error('Invalid retrieval diagnostics operation');
+      if (operation === 'promote') {
+        if (Object.keys(input!).some(key => key !== 'operationId')) throw new Error('Policy files are selected by the Main owner');
+        const { dialog } = await import('electron');
+        const selection = await dialog.showOpenDialog({ properties: ['openFile'], filters: [{ name: 'JSON', extensions: ['json'] }] });
+        if (selection.canceled || selection.filePaths.length !== 1) return { success: false, error: 'Policy import cancelled' };
+        const packagePath = selection.filePaths[0];
+        if ((await stat(packagePath)).size > 2 * 1024 * 1024)
+          throw new Error('Select a bounded offline policy manifest');
+        const bytes = await readFile(packagePath);
+        input = { operationId: input!.operationId, evidenceRoot: dirname(packagePath),
+          evidenceManifestName: basename(packagePath),
+          evidenceManifestDigest: 'sha256:' + createHash('sha256').update(bytes).digest('hex') };
+      }
+      const scope = await prepareKnowledgeReadScope(gatewayManager, {});
+      const observability = await rpc<RetrievalObservabilitySnapshotV1>(`wiki.observability.${operation}`,
+        { ...(input ? { input } : {}), readIdentity: scope.identity }, operation === 'promote' ? 150_000 : 12000);
+      await assertKnowledgeReadScopeCurrent(gatewayManager, scope);
+      return { success: true, observability };
+    } catch (error) { return { success: false, error: sanitizeUiErrorText(error) }; }
+  };
+
   return {
     ...researchApi,
+    observabilityStatus: () => observabilityOperation('status'),
+    retrievalFeedback: payload => observabilityOperation('feedback', payload),
+    policyPromote: payload => observabilityOperation('promote', payload),
+    policyRollback: payload => observabilityOperation('rollback', payload),
     operationsStatus: async () => {
       try {
         const scope = await prepareKnowledgeReadScope(gatewayManager, {});

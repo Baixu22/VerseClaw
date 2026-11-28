@@ -347,7 +347,9 @@ function validatePublishChunks(job: ProjectionIndexJob, chunks: KnowledgeChunkV2
       throw new Error("projection chunk quote does not match its line locator");
     }
     const next = chunks[index + 1];
-    if (next && next.source.locator.startLine !== locator.endLine + 1) {
+    // Oversized paragraphs may split inside a source line. Only a trailing
+    // newline advances the next fragment's raw line coordinate.
+    if (next && next.source.locator.startLine !== locator.endLine + Number(chunk.quote.endsWith("\n"))) {
       throw new Error("projection chunks do not cover adjacent source lines");
     }
     byteCursor = locator.endByteExclusive;

@@ -1,0 +1,4713 @@
+[
+  {
+    "id": "t-code-owner-version",
+    "familyId": "owner-version",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "real-source-repair",
+    "locale": "en",
+    "kind": "code-repair",
+    "title": "Repair isSourceRefV2",
+    "instruction": "Repair the regression in openclaw_runtime/src/runtime-core/knowledge-owner-read.ts :: isSourceRefV2. Preserve source declarations outside this symbol. The independent repository oracle checks normal, boundary and rejection behavior. Deliver the repaired source and a proof.json containing one exact owner citation for field repair.",
+    "outputPath": "subject.ts",
+    "proofPath": "proof.json",
+    "code": {
+      "programPath": "programs/t-code-owner-version.ts",
+      "symbol": "isSourceRefV2",
+      "originPath": "openclaw_runtime/src/runtime-core/knowledge-owner-read.ts",
+      "starterDigest": "sha256:080913ae11c8934660c22e74dc7e24adf250b18e58a36055c49e9da4d4a6fb94"
+    },
+    "requiredFields": [
+      "repair"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "outputSchema": {
+      "source": "repair subject.ts within the selected declaration",
+      "proofFile": "proof.json",
+      "proof": {
+        "schema": "ProjectRagTaskOutput/v1",
+        "taskId": "t-code-owner-version",
+        "kind": "code-repair",
+        "untouched": "unchanged copy of input.untouched",
+        "citations": "one field=repair/sourceId/quote/SourceRef-v2 citation",
+        "unknowns": "explicit array"
+      }
+    },
+    "input": {
+      "values": {},
+      "untouched": {
+        "requestId": "t-code-owner-version",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-owner-version-1",
+    "familyId": "owner-version",
+    "split": "calibration",
+    "profile": "research",
+    "cohort": "cross-source",
+    "locale": "en",
+    "kind": "cross-source-research",
+    "queryId": "q-owner-version-1-en",
+    "title": "cross-source-research: owner-version/coordinateSpace",
+    "instruction": "Which coordinate space must an owner citation use?\nWhich public SDK module supplies the shared owner-read types?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-owner-version-1.json",
+    "requiredFields": [
+      "coordinateSpace",
+      "endIsExclusive",
+      "publicOwnerTypesModule"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "coordinateSpace": null,
+        "endIsExclusive": null,
+        "publicOwnerTypesModule": null
+      },
+      "untouched": {
+        "requestId": "t-owner-version-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-owner-version-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "objective": "Select an implementable integration plan for owner-version using all source contracts and the stated resource constraints.",
+      "constraints": [
+        "preserve-source-owner-contracts",
+        "keep-frozen-default",
+        "require-measurement-before-capacity-expansion"
+      ],
+      "proposals": [
+        {
+          "id": "plan-1",
+          "commitments": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "endIsExclusive": true,
+            "publicOwnerTypesModule": "openclaw/plugin-sdk/memory-owner-read-types"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        },
+        {
+          "id": "plan-2",
+          "commitments": {
+            "coordinateSpace": "raw-source-utf8-v1-unsupported",
+            "endIsExclusive": true,
+            "publicOwnerTypesModule": "openclaw/plugin-sdk/memory-owner-read-types"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        },
+        {
+          "id": "plan-3",
+          "commitments": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "endIsExclusive": true,
+            "publicOwnerTypesModule": "openclaw/plugin-sdk/memory-owner-read-types-unsupported"
+          },
+          "changesDefault": true,
+          "requiresUnmeasuredCapacity": true
+        }
+      ],
+      "missingObservation": "measured-integration-capacity",
+      "availableResearchRounds": 3,
+      "instruction": "Compare every proposal across sources. Return analysis with selectedPlan, rejectedPlans (planId/violatedConstraints), evidenceGaps, and stopReason. Violations name the contradicted field or frozen-default/unmeasured-capacity. Stop with evidence-complete-capacity-unknown when contract comparison is complete and capacity remains unmeasured."
+    }
+  },
+  {
+    "id": "t-code-wiki-read-policy",
+    "familyId": "wiki-read-policy",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "real-source-repair",
+    "locale": "zh",
+    "kind": "code-repair",
+    "title": "Repair readMemoryWikiOwnerPolicy",
+    "instruction": "Repair the regression in openclaw_runtime/extensions/memory-wiki/src/owner-read.ts :: readMemoryWikiOwnerPolicy. Preserve source declarations outside this symbol. The independent repository oracle checks normal, boundary and rejection behavior. Deliver the repaired source and a proof.json containing one exact owner citation for field repair.",
+    "outputPath": "subject.ts",
+    "proofPath": "proof.json",
+    "code": {
+      "programPath": "programs/t-code-wiki-read-policy.ts",
+      "symbol": "readMemoryWikiOwnerPolicy",
+      "originPath": "openclaw_runtime/extensions/memory-wiki/src/owner-read.ts",
+      "starterDigest": "sha256:775a7cdb7c1099f32a9a5009e193ebcde8777fd41f8f420c191edafb08d2be9b"
+    },
+    "requiredFields": [
+      "repair"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "outputSchema": {
+      "source": "repair subject.ts within the selected declaration",
+      "proofFile": "proof.json",
+      "proof": {
+        "schema": "ProjectRagTaskOutput/v1",
+        "taskId": "t-code-wiki-read-policy",
+        "kind": "code-repair",
+        "untouched": "unchanged copy of input.untouched",
+        "citations": "one field=repair/sourceId/quote/SourceRef-v2 citation",
+        "unknowns": "explicit array"
+      }
+    },
+    "input": {
+      "values": {},
+      "untouched": {
+        "requestId": "t-code-wiki-read-policy",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-wiki-read-policy-1",
+    "familyId": "wiki-read-policy",
+    "split": "calibration",
+    "profile": "research",
+    "cohort": "cross-source",
+    "locale": "ja",
+    "kind": "cross-source-research",
+    "queryId": "q-wiki-read-policy-1-ja",
+    "title": "cross-source-research: wiki-read-policy/defaultStatus",
+    "instruction": "Wiki のメタデータに status がない場合、どの状態になりますか？\nページと owner snapshot を読み取る Wiki query エントリは何ですか？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-wiki-read-policy-1.json",
+    "requiredFields": [
+      "defaultStatus",
+      "readContextLifetimeMs",
+      "wikiPageReader"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "defaultStatus": null,
+        "readContextLifetimeMs": null,
+        "wikiPageReader": null
+      },
+      "untouched": {
+        "requestId": "t-wiki-read-policy-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-wiki-read-policy-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "objective": "Select an implementable integration plan for wiki-read-policy using all source contracts and the stated resource constraints.",
+      "constraints": [
+        "preserve-source-owner-contracts",
+        "keep-frozen-default",
+        "require-measurement-before-capacity-expansion"
+      ],
+      "proposals": [
+        {
+          "id": "plan-3",
+          "commitments": {
+            "defaultStatus": "active-unsupported",
+            "readContextLifetimeMs": 30000,
+            "wikiPageReader": "getMemoryWikiPage"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        },
+        {
+          "id": "plan-1",
+          "commitments": {
+            "defaultStatus": "active",
+            "readContextLifetimeMs": 30000,
+            "wikiPageReader": "getMemoryWikiPage-unsupported"
+          },
+          "changesDefault": true,
+          "requiresUnmeasuredCapacity": true
+        },
+        {
+          "id": "plan-2",
+          "commitments": {
+            "defaultStatus": "active",
+            "readContextLifetimeMs": 30000,
+            "wikiPageReader": "getMemoryWikiPage"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        }
+      ],
+      "missingObservation": "measured-integration-capacity",
+      "availableResearchRounds": 3,
+      "instruction": "Compare every proposal across sources. Return analysis with selectedPlan, rejectedPlans (planId/violatedConstraints), evidenceGaps, and stopReason. Violations name the contradicted field or frozen-default/unmeasured-capacity. Stop with evidence-complete-capacity-unknown when contract comparison is complete and capacity remains unmeasured."
+    }
+  },
+  {
+    "id": "t-code-host-knowledge-scope",
+    "familyId": "host-knowledge-scope",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "real-source-repair",
+    "locale": "ja",
+    "kind": "code-repair",
+    "title": "Repair captureKnowledgeReadScope",
+    "instruction": "Repair the regression in electron/services/knowledge-read-scope.ts :: captureKnowledgeReadScope. Preserve source declarations outside this symbol. The independent repository oracle checks normal, boundary and rejection behavior. Deliver the repaired source and a proof.json containing one exact owner citation for field repair.",
+    "outputPath": "subject.ts",
+    "proofPath": "proof.json",
+    "code": {
+      "programPath": "programs/t-code-host-knowledge-scope.ts",
+      "symbol": "captureKnowledgeReadScope",
+      "originPath": "electron/services/knowledge-read-scope.ts",
+      "starterDigest": "sha256:f336898b938232dd7bd31e117a28b238f9e269b87db07f722dfa516bc722efa4"
+    },
+    "requiredFields": [
+      "repair"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "outputSchema": {
+      "source": "repair subject.ts within the selected declaration",
+      "proofFile": "proof.json",
+      "proof": {
+        "schema": "ProjectRagTaskOutput/v1",
+        "taskId": "t-code-host-knowledge-scope",
+        "kind": "code-repair",
+        "untouched": "unchanged copy of input.untouched",
+        "citations": "one field=repair/sourceId/quote/SourceRef-v2 citation",
+        "unknowns": "explicit array"
+      }
+    },
+    "input": {
+      "values": {},
+      "untouched": {
+        "requestId": "t-code-host-knowledge-scope",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-host-knowledge-scope-1",
+    "familyId": "host-knowledge-scope",
+    "split": "calibration",
+    "profile": "research",
+    "cohort": "cross-source",
+    "locale": "en",
+    "kind": "cross-source-research",
+    "queryId": "q-host-knowledge-scope-1-en",
+    "title": "cross-source-research: host-knowledge-scope/generationLookupMethod",
+    "instruction": "Which Gateway method supplies the physical generation for a Host knowledge read?\nWhich scope preparation helper does Main chat use?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-host-knowledge-scope-1.json",
+    "requiredFields": [
+      "generationLookupMethod",
+      "materializeMethod",
+      "chatReadScopePreparation"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "generationLookupMethod": null,
+        "materializeMethod": null,
+        "chatReadScopePreparation": null
+      },
+      "untouched": {
+        "requestId": "t-host-knowledge-scope-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-host-knowledge-scope-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "objective": "Select an implementable integration plan for host-knowledge-scope using all source contracts and the stated resource constraints.",
+      "constraints": [
+        "preserve-source-owner-contracts",
+        "keep-frozen-default",
+        "require-measurement-before-capacity-expansion"
+      ],
+      "proposals": [
+        {
+          "id": "plan-2",
+          "commitments": {
+            "generationLookupMethod": "sessions.describe",
+            "materializeMethod": "sessions.create",
+            "chatReadScopePreparation": "prepareKnowledgeReadScope-unsupported"
+          },
+          "changesDefault": true,
+          "requiresUnmeasuredCapacity": true
+        },
+        {
+          "id": "plan-3",
+          "commitments": {
+            "generationLookupMethod": "sessions.describe",
+            "materializeMethod": "sessions.create",
+            "chatReadScopePreparation": "prepareKnowledgeReadScope"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        },
+        {
+          "id": "plan-1",
+          "commitments": {
+            "generationLookupMethod": "sessions.describe-unsupported",
+            "materializeMethod": "sessions.create",
+            "chatReadScopePreparation": "prepareKnowledgeReadScope"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        }
+      ],
+      "missingObservation": "measured-integration-capacity",
+      "availableResearchRounds": 3,
+      "instruction": "Compare every proposal across sources. Return analysis with selectedPlan, rejectedPlans (planId/violatedConstraints), evidenceGaps, and stopReason. Violations name the contradicted field or frozen-default/unmeasured-capacity. Stop with evidence-complete-capacity-unknown when contract comparison is complete and capacity remains unmeasured."
+    }
+  },
+  {
+    "id": "t-code-bounded-page-read",
+    "familyId": "bounded-page-read",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "real-source-repair",
+    "locale": "ru",
+    "kind": "code-repair",
+    "title": "Repair readBoundedKnowledgePage",
+    "instruction": "Repair the regression in electron/services/knowledge-source-set-answer.ts :: readBoundedKnowledgePage. Preserve source declarations outside this symbol. The independent repository oracle checks normal, boundary and rejection behavior. Deliver the repaired source and a proof.json containing one exact owner citation for field repair.",
+    "outputPath": "subject.ts",
+    "proofPath": "proof.json",
+    "code": {
+      "programPath": "programs/t-code-bounded-page-read.ts",
+      "symbol": "readBoundedKnowledgePage",
+      "originPath": "electron/services/knowledge-source-set-answer.ts",
+      "starterDigest": "sha256:f6b7cd32837000828152a30297a1251967003f86c8c1a17d36e65169ce17bea6"
+    },
+    "requiredFields": [
+      "repair"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "outputSchema": {
+      "source": "repair subject.ts within the selected declaration",
+      "proofFile": "proof.json",
+      "proof": {
+        "schema": "ProjectRagTaskOutput/v1",
+        "taskId": "t-code-bounded-page-read",
+        "kind": "code-repair",
+        "untouched": "unchanged copy of input.untouched",
+        "citations": "one field=repair/sourceId/quote/SourceRef-v2 citation",
+        "unknowns": "explicit array"
+      }
+    },
+    "input": {
+      "values": {},
+      "untouched": {
+        "requestId": "t-code-bounded-page-read",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-bounded-page-read-1",
+    "familyId": "bounded-page-read",
+    "split": "calibration",
+    "profile": "research",
+    "cohort": "cross-source",
+    "locale": "ja",
+    "kind": "cross-source-research",
+    "queryId": "q-bounded-page-read-1-ja",
+    "title": "cross-source-research: bounded-page-read/scanLineCeiling",
+    "instruction": "既存の有界 page reader が継続して読む最大行番号は何ですか？\nmodel-only Knowledge QA の出力を検証する helper は何ですか？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-bounded-page-read-1.json",
+    "requiredFields": [
+      "scanLineCeiling",
+      "scanCharacterCeiling",
+      "qaOutputValidator"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "scanLineCeiling": null,
+        "scanCharacterCeiling": null,
+        "qaOutputValidator": null
+      },
+      "untouched": {
+        "requestId": "t-bounded-page-read-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-bounded-page-read-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "objective": "Select an implementable integration plan for bounded-page-read using all source contracts and the stated resource constraints.",
+      "constraints": [
+        "preserve-source-owner-contracts",
+        "keep-frozen-default",
+        "require-measurement-before-capacity-expansion"
+      ],
+      "proposals": [
+        {
+          "id": "plan-1",
+          "commitments": {
+            "scanLineCeiling": 800,
+            "scanCharacterCeiling": 96000,
+            "qaOutputValidator": "validateKnowledgeQaOutput"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        },
+        {
+          "id": "plan-2",
+          "commitments": {
+            "scanLineCeiling": 801,
+            "scanCharacterCeiling": 96000,
+            "qaOutputValidator": "validateKnowledgeQaOutput"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        },
+        {
+          "id": "plan-3",
+          "commitments": {
+            "scanLineCeiling": 800,
+            "scanCharacterCeiling": 96000,
+            "qaOutputValidator": "validateKnowledgeQaOutput-unsupported"
+          },
+          "changesDefault": true,
+          "requiresUnmeasuredCapacity": true
+        }
+      ],
+      "missingObservation": "measured-integration-capacity",
+      "availableResearchRounds": 3,
+      "instruction": "Compare every proposal across sources. Return analysis with selectedPlan, rejectedPlans (planId/violatedConstraints), evidenceGaps, and stopReason. Violations name the contradicted field or frozen-default/unmeasured-capacity. Stop with evidence-complete-capacity-unknown when contract comparison is complete and capacity remains unmeasured."
+    }
+  },
+  {
+    "id": "t-code-source-set-limit",
+    "familyId": "source-set-limit",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "real-source-repair",
+    "locale": "en",
+    "kind": "code-repair",
+    "title": "Repair cosineSimilarity",
+    "instruction": "Repair the regression in openclaw_runtime/src/context-engine/source-set.ts :: cosineSimilarity. Preserve source declarations outside this symbol. The independent repository oracle checks normal, boundary and rejection behavior. Deliver the repaired source and a proof.json containing one exact owner citation for field repair.",
+    "outputPath": "subject.ts",
+    "proofPath": "proof.json",
+    "code": {
+      "programPath": "programs/t-code-source-set-limit.ts",
+      "symbol": "cosineSimilarity",
+      "originPath": "openclaw_runtime/src/context-engine/source-set.ts",
+      "starterDigest": "sha256:6f6d7624554b2b86c63cd45fd4155c7096217449a9e3bc6cef71ec30d6a5354e"
+    },
+    "requiredFields": [
+      "repair"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "outputSchema": {
+      "source": "repair subject.ts within the selected declaration",
+      "proofFile": "proof.json",
+      "proof": {
+        "schema": "ProjectRagTaskOutput/v1",
+        "taskId": "t-code-source-set-limit",
+        "kind": "code-repair",
+        "untouched": "unchanged copy of input.untouched",
+        "citations": "one field=repair/sourceId/quote/SourceRef-v2 citation",
+        "unknowns": "explicit array"
+      }
+    },
+    "input": {
+      "values": {},
+      "untouched": {
+        "requestId": "t-code-source-set-limit",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-source-set-limit-1",
+    "familyId": "source-set-limit",
+    "split": "calibration",
+    "profile": "research",
+    "cohort": "cross-source",
+    "locale": "en",
+    "kind": "cross-source-research",
+    "queryId": "q-source-set-limit-1-en",
+    "title": "cross-source-research: source-set-limit/defaultLimit",
+    "instruction": "What is the SourceSet retrieval limit when the caller omits it?\nWhich class owns the DCS assembly entry?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-source-set-limit-1.json",
+    "requiredFields": [
+      "defaultLimit",
+      "maximumLimit",
+      "dcsAssembler"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "defaultLimit": null,
+        "maximumLimit": null,
+        "dcsAssembler": null
+      },
+      "untouched": {
+        "requestId": "t-source-set-limit-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-source-set-limit-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "objective": "Select an implementable integration plan for source-set-limit using all source contracts and the stated resource constraints.",
+      "constraints": [
+        "preserve-source-owner-contracts",
+        "keep-frozen-default",
+        "require-measurement-before-capacity-expansion"
+      ],
+      "proposals": [
+        {
+          "id": "plan-3",
+          "commitments": {
+            "defaultLimit": 6,
+            "maximumLimit": 20,
+            "dcsAssembler": "Assembler"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        },
+        {
+          "id": "plan-1",
+          "commitments": {
+            "defaultLimit": 5,
+            "maximumLimit": 20,
+            "dcsAssembler": "Assembler-unsupported"
+          },
+          "changesDefault": true,
+          "requiresUnmeasuredCapacity": true
+        },
+        {
+          "id": "plan-2",
+          "commitments": {
+            "defaultLimit": 5,
+            "maximumLimit": 20,
+            "dcsAssembler": "Assembler"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        }
+      ],
+      "missingObservation": "measured-integration-capacity",
+      "availableResearchRounds": 3,
+      "instruction": "Compare every proposal across sources. Return analysis with selectedPlan, rejectedPlans (planId/violatedConstraints), evidenceGaps, and stopReason. Violations name the contradicted field or frozen-default/unmeasured-capacity. Stop with evidence-complete-capacity-unknown when contract comparison is complete and capacity remains unmeasured."
+    }
+  },
+  {
+    "id": "t-code-cjk-tokenizer",
+    "familyId": "cjk-tokenizer",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "real-source-repair",
+    "locale": "zh",
+    "kind": "code-repair",
+    "title": "Repair cjkBigrams",
+    "instruction": "Repair the regression in openclaw_runtime/src/runtime-core/memory-tokenization.ts :: cjkBigrams. Preserve source declarations outside this symbol. The independent repository oracle checks normal, boundary and rejection behavior. Deliver the repaired source and a proof.json containing one exact owner citation for field repair.",
+    "outputPath": "subject.ts",
+    "proofPath": "proof.json",
+    "code": {
+      "programPath": "programs/t-code-cjk-tokenizer.ts",
+      "symbol": "cjkBigrams",
+      "originPath": "openclaw_runtime/src/runtime-core/memory-tokenization.ts",
+      "starterDigest": "sha256:a59ec75644c0665a10206d12fa8fa1918d3ba6229d3728e6c2b2223fc4e46dda"
+    },
+    "requiredFields": [
+      "repair"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "outputSchema": {
+      "source": "repair subject.ts within the selected declaration",
+      "proofFile": "proof.json",
+      "proof": {
+        "schema": "ProjectRagTaskOutput/v1",
+        "taskId": "t-code-cjk-tokenizer",
+        "kind": "code-repair",
+        "untouched": "unchanged copy of input.untouched",
+        "citations": "one field=repair/sourceId/quote/SourceRef-v2 citation",
+        "unknowns": "explicit array"
+      }
+    },
+    "input": {
+      "values": {},
+      "untouched": {
+        "requestId": "t-code-cjk-tokenizer",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-cjk-tokenizer-1",
+    "familyId": "cjk-tokenizer",
+    "split": "calibration",
+    "profile": "research",
+    "cohort": "cross-source",
+    "locale": "ja",
+    "kind": "cross-source-research",
+    "queryId": "q-cjk-tokenizer-1-ja",
+    "title": "cross-source-research: cjk-tokenizer/grams",
+    "instruction": "現在の CJK bigram アルゴリズムで「中文测试」を処理した結果を順に示してください。\nmemory hybrid retrieval が使用する CJK fallback は何ですか？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-cjk-tokenizer-1.json",
+    "requiredFields": [
+      "grams",
+      "minimumHanRun",
+      "hybridCjkFallback"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "grams": null,
+        "minimumHanRun": null,
+        "hybridCjkFallback": null
+      },
+      "untouched": {
+        "requestId": "t-cjk-tokenizer-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-cjk-tokenizer-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "objective": "Select an implementable integration plan for cjk-tokenizer using all source contracts and the stated resource constraints.",
+      "constraints": [
+        "preserve-source-owner-contracts",
+        "keep-frozen-default",
+        "require-measurement-before-capacity-expansion"
+      ],
+      "proposals": [
+        {
+          "id": "plan-2",
+          "commitments": {
+            "grams": [
+              "中文",
+              "文测",
+              "测试"
+            ],
+            "minimumHanRun": 2,
+            "hybridCjkFallback": "cjkBigrams-unsupported"
+          },
+          "changesDefault": true,
+          "requiresUnmeasuredCapacity": true
+        },
+        {
+          "id": "plan-3",
+          "commitments": {
+            "grams": [
+              "中文",
+              "文测",
+              "测试"
+            ],
+            "minimumHanRun": 2,
+            "hybridCjkFallback": "cjkBigrams"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        },
+        {
+          "id": "plan-1",
+          "commitments": {
+            "grams": [
+              "文测",
+              "测试"
+            ],
+            "minimumHanRun": 2,
+            "hybridCjkFallback": "cjkBigrams"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        }
+      ],
+      "missingObservation": "measured-integration-capacity",
+      "availableResearchRounds": 3,
+      "instruction": "Compare every proposal across sources. Return analysis with selectedPlan, rejectedPlans (planId/violatedConstraints), evidenceGaps, and stopReason. Violations name the contradicted field or frozen-default/unmeasured-capacity. Stop with evidence-complete-capacity-unknown when contract comparison is complete and capacity remains unmeasured."
+    }
+  },
+  {
+    "id": "t-code-memory-temporal",
+    "familyId": "memory-temporal",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "real-source-repair",
+    "locale": "ja",
+    "kind": "code-repair",
+    "title": "Repair inferTemporalPolicyFromQuery",
+    "instruction": "Repair the regression in openclaw_runtime/src/runtime-core/memory-temporal-policy.ts :: inferTemporalPolicyFromQuery. Preserve source declarations outside this symbol. The independent repository oracle checks normal, boundary and rejection behavior. Deliver the repaired source and a proof.json containing one exact owner citation for field repair.",
+    "outputPath": "subject.ts",
+    "proofPath": "proof.json",
+    "code": {
+      "programPath": "programs/t-code-memory-temporal.ts",
+      "symbol": "inferTemporalPolicyFromQuery",
+      "originPath": "openclaw_runtime/src/runtime-core/memory-temporal-policy.ts",
+      "starterDigest": "sha256:a6cb26b24dbc7f5e3c433a830574d0281bc790381cbd59b68bdfc6ac0982018c"
+    },
+    "requiredFields": [
+      "repair"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "outputSchema": {
+      "source": "repair subject.ts within the selected declaration",
+      "proofFile": "proof.json",
+      "proof": {
+        "schema": "ProjectRagTaskOutput/v1",
+        "taskId": "t-code-memory-temporal",
+        "kind": "code-repair",
+        "untouched": "unchanged copy of input.untouched",
+        "citations": "one field=repair/sourceId/quote/SourceRef-v2 citation",
+        "unknowns": "explicit array"
+      }
+    },
+    "input": {
+      "values": {},
+      "untouched": {
+        "requestId": "t-code-memory-temporal",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-memory-temporal-1",
+    "familyId": "memory-temporal",
+    "split": "calibration",
+    "profile": "research",
+    "cohort": "cross-source",
+    "locale": "en",
+    "kind": "cross-source-research",
+    "queryId": "q-memory-temporal-1-en",
+    "title": "cross-source-research: memory-temporal/defaultTemporalPolicy",
+    "instruction": "What temporal policy does an empty memory query use?\nWhich function detects a query temporal mode?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-memory-temporal-1.json",
+    "requiredFields": [
+      "defaultTemporalPolicy",
+      "acceptedYearRange",
+      "queryTemporalDetector"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "defaultTemporalPolicy": null,
+        "acceptedYearRange": null,
+        "queryTemporalDetector": null
+      },
+      "untouched": {
+        "requestId": "t-memory-temporal-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-memory-temporal-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "objective": "Select an implementable integration plan for memory-temporal using all source contracts and the stated resource constraints.",
+      "constraints": [
+        "preserve-source-owner-contracts",
+        "keep-frozen-default",
+        "require-measurement-before-capacity-expansion"
+      ],
+      "proposals": [
+        {
+          "id": "plan-1",
+          "commitments": {
+            "defaultTemporalPolicy": "strict_current",
+            "acceptedYearRange": [
+              1900,
+              2100
+            ],
+            "queryTemporalDetector": "detectQueryTemporalMode"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        },
+        {
+          "id": "plan-2",
+          "commitments": {
+            "defaultTemporalPolicy": "strict_current-unsupported",
+            "acceptedYearRange": [
+              1900,
+              2100
+            ],
+            "queryTemporalDetector": "detectQueryTemporalMode"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        },
+        {
+          "id": "plan-3",
+          "commitments": {
+            "defaultTemporalPolicy": "strict_current",
+            "acceptedYearRange": [
+              1900,
+              2100
+            ],
+            "queryTemporalDetector": "detectQueryTemporalMode-unsupported"
+          },
+          "changesDefault": true,
+          "requiresUnmeasuredCapacity": true
+        }
+      ],
+      "missingObservation": "measured-integration-capacity",
+      "availableResearchRounds": 3,
+      "instruction": "Compare every proposal across sources. Return analysis with selectedPlan, rejectedPlans (planId/violatedConstraints), evidenceGaps, and stopReason. Violations name the contradicted field or frozen-default/unmeasured-capacity. Stop with evidence-complete-capacity-unknown when contract comparison is complete and capacity remains unmeasured."
+    }
+  },
+  {
+    "id": "t-code-host-deadline",
+    "familyId": "host-deadline",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "real-source-repair",
+    "locale": "ru",
+    "kind": "code-repair",
+    "title": "Repair clampHostTimeoutToDeadline",
+    "instruction": "Repair the regression in shared/host-api/host-deadline.ts :: clampHostTimeoutToDeadline. Preserve source declarations outside this symbol. The independent repository oracle checks normal, boundary and rejection behavior. Deliver the repaired source and a proof.json containing one exact owner citation for field repair.",
+    "outputPath": "subject.ts",
+    "proofPath": "proof.json",
+    "code": {
+      "programPath": "programs/t-code-host-deadline.ts",
+      "symbol": "clampHostTimeoutToDeadline",
+      "originPath": "shared/host-api/host-deadline.ts",
+      "starterDigest": "sha256:a7cb9c6b4ab8567e21e349adc3d81fc7b478a3b2f7310d1eff10003dc833bbf4"
+    },
+    "requiredFields": [
+      "repair"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "outputSchema": {
+      "source": "repair subject.ts within the selected declaration",
+      "proofFile": "proof.json",
+      "proof": {
+        "schema": "ProjectRagTaskOutput/v1",
+        "taskId": "t-code-host-deadline",
+        "kind": "code-repair",
+        "untouched": "unchanged copy of input.untouched",
+        "citations": "one field=repair/sourceId/quote/SourceRef-v2 citation",
+        "unknowns": "explicit array"
+      }
+    },
+    "input": {
+      "values": {},
+      "untouched": {
+        "requestId": "t-code-host-deadline",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-host-deadline-1",
+    "familyId": "host-deadline",
+    "split": "calibration",
+    "profile": "research",
+    "cohort": "cross-source",
+    "locale": "ja",
+    "kind": "cross-source-research",
+    "queryId": "q-host-deadline-1-ja",
+    "title": "cross-source-research: host-deadline/effectiveTimeoutMs",
+    "instruction": "ローカル上限が300 msで論理リクエストの残りが100 msの場合、実効タイムアウトは何msですか？\nrenderer Host client が使用する deadline factory は何ですか？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-host-deadline-1.json",
+    "requiredFields": [
+      "effectiveTimeoutMs",
+      "expiredRemainingMs",
+      "rendererDeadlineFactory"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "effectiveTimeoutMs": null,
+        "expiredRemainingMs": null,
+        "rendererDeadlineFactory": null
+      },
+      "untouched": {
+        "requestId": "t-host-deadline-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-host-deadline-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "objective": "Select an implementable integration plan for host-deadline using all source contracts and the stated resource constraints.",
+      "constraints": [
+        "preserve-source-owner-contracts",
+        "keep-frozen-default",
+        "require-measurement-before-capacity-expansion"
+      ],
+      "proposals": [
+        {
+          "id": "plan-3",
+          "commitments": {
+            "effectiveTimeoutMs": 101,
+            "expiredRemainingMs": 0,
+            "rendererDeadlineFactory": "createHostDeadline"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        },
+        {
+          "id": "plan-1",
+          "commitments": {
+            "effectiveTimeoutMs": 100,
+            "expiredRemainingMs": 0,
+            "rendererDeadlineFactory": "createHostDeadline-unsupported"
+          },
+          "changesDefault": true,
+          "requiresUnmeasuredCapacity": true
+        },
+        {
+          "id": "plan-2",
+          "commitments": {
+            "effectiveTimeoutMs": 100,
+            "expiredRemainingMs": 0,
+            "rendererDeadlineFactory": "createHostDeadline"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        }
+      ],
+      "missingObservation": "measured-integration-capacity",
+      "availableResearchRounds": 3,
+      "instruction": "Compare every proposal across sources. Return analysis with selectedPlan, rejectedPlans (planId/violatedConstraints), evidenceGaps, and stopReason. Violations name the contradicted field or frozen-default/unmeasured-capacity. Stop with evidence-complete-capacity-unknown when contract comparison is complete and capacity remains unmeasured."
+    }
+  },
+  {
+    "id": "t-code-host-action-timeouts",
+    "familyId": "host-action-timeouts",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "real-source-repair",
+    "locale": "en",
+    "kind": "code-repair",
+    "title": "Repair hostActionTimeoutMs",
+    "instruction": "Repair the regression in shared/host-api/host-action-timeouts.ts :: hostActionTimeoutMs. Preserve source declarations outside this symbol. The independent repository oracle checks normal, boundary and rejection behavior. Deliver the repaired source and a proof.json containing one exact owner citation for field repair.",
+    "outputPath": "subject.ts",
+    "proofPath": "proof.json",
+    "code": {
+      "programPath": "programs/t-code-host-action-timeouts.ts",
+      "symbol": "hostActionTimeoutMs",
+      "originPath": "shared/host-api/host-action-timeouts.ts",
+      "starterDigest": "sha256:cb4eb142bf2b3fa69badf469f32db5d2490e36d12d12dc095177e0f6f5eea8f9"
+    },
+    "requiredFields": [
+      "repair"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "outputSchema": {
+      "source": "repair subject.ts within the selected declaration",
+      "proofFile": "proof.json",
+      "proof": {
+        "schema": "ProjectRagTaskOutput/v1",
+        "taskId": "t-code-host-action-timeouts",
+        "kind": "code-repair",
+        "untouched": "unchanged copy of input.untouched",
+        "citations": "one field=repair/sourceId/quote/SourceRef-v2 citation",
+        "unknowns": "explicit array"
+      }
+    },
+    "input": {
+      "values": {},
+      "untouched": {
+        "requestId": "t-code-host-action-timeouts",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-host-action-timeouts-1",
+    "familyId": "host-action-timeouts",
+    "split": "calibration",
+    "profile": "research",
+    "cohort": "cross-source",
+    "locale": "en",
+    "kind": "cross-source-research",
+    "queryId": "q-host-action-timeouts-1-en",
+    "title": "cross-source-research: host-action-timeouts/defaultTimeoutMs",
+    "instruction": "What is the default Host action timeout in milliseconds?\nWhich typed IPC channel carries Main Host invocation?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-host-action-timeouts-1.json",
+    "requiredFields": [
+      "defaultTimeoutMs",
+      "longTimeoutMs",
+      "typedHostChannel"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "defaultTimeoutMs": null,
+        "longTimeoutMs": null,
+        "typedHostChannel": null
+      },
+      "untouched": {
+        "requestId": "t-host-action-timeouts-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-host-action-timeouts-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "objective": "Select an implementable integration plan for host-action-timeouts using all source contracts and the stated resource constraints.",
+      "constraints": [
+        "preserve-source-owner-contracts",
+        "keep-frozen-default",
+        "require-measurement-before-capacity-expansion"
+      ],
+      "proposals": [
+        {
+          "id": "plan-2",
+          "commitments": {
+            "defaultTimeoutMs": 60000,
+            "longTimeoutMs": 900000,
+            "typedHostChannel": "host:invoke-unsupported"
+          },
+          "changesDefault": true,
+          "requiresUnmeasuredCapacity": true
+        },
+        {
+          "id": "plan-3",
+          "commitments": {
+            "defaultTimeoutMs": 60000,
+            "longTimeoutMs": 900000,
+            "typedHostChannel": "host:invoke"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        },
+        {
+          "id": "plan-1",
+          "commitments": {
+            "defaultTimeoutMs": 60001,
+            "longTimeoutMs": 900000,
+            "typedHostChannel": "host:invoke"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        }
+      ],
+      "missingObservation": "measured-integration-capacity",
+      "availableResearchRounds": 3,
+      "instruction": "Compare every proposal across sources. Return analysis with selectedPlan, rejectedPlans (planId/violatedConstraints), evidenceGaps, and stopReason. Violations name the contradicted field or frozen-default/unmeasured-capacity. Stop with evidence-complete-capacity-unknown when contract comparison is complete and capacity remains unmeasured."
+    }
+  },
+  {
+    "id": "t-code-development-commands",
+    "familyId": "development-commands",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "real-source-repair",
+    "locale": "zh",
+    "kind": "code-repair",
+    "title": "Repair stages",
+    "instruction": "Repair the regression in scripts/harness-ci.mjs :: stages. Preserve source declarations outside this symbol. The independent repository oracle checks normal, boundary and rejection behavior. Deliver the repaired source and a proof.json containing one exact owner citation for field repair.",
+    "outputPath": "subject.ts",
+    "proofPath": "proof.json",
+    "code": {
+      "programPath": "programs/t-code-development-commands.ts",
+      "symbol": "stages",
+      "originPath": "scripts/harness-ci.mjs",
+      "starterDigest": "sha256:09f7373ca547e2bd0fb01581ee6a4a1ab7f6a4f763daf079308fea9294659339"
+    },
+    "requiredFields": [
+      "repair"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "outputSchema": {
+      "source": "repair subject.ts within the selected declaration",
+      "proofFile": "proof.json",
+      "proof": {
+        "schema": "ProjectRagTaskOutput/v1",
+        "taskId": "t-code-development-commands",
+        "kind": "code-repair",
+        "untouched": "unchanged copy of input.untouched",
+        "citations": "one field=repair/sourceId/quote/SourceRef-v2 citation",
+        "unknowns": "explicit array"
+      }
+    },
+    "input": {
+      "values": {},
+      "untouched": {
+        "requestId": "t-code-development-commands",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-development-commands-1",
+    "familyId": "development-commands",
+    "split": "calibration",
+    "profile": "research",
+    "cohort": "cross-source",
+    "locale": "ja",
+    "kind": "cross-source-research",
+    "queryId": "q-development-commands-1-ja",
+    "title": "cross-source-research: development-commands/runtimeBuildCommand",
+    "instruction": "embedded runtime を再ビルドし Gateway 起動を確認する開発コマンドは何ですか？\n順次 Harness runner が宣言する baseline CI stages は何個ですか？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-development-commands-1.json",
+    "requiredFields": [
+      "runtimeBuildCommand",
+      "fullTypecheckProjects",
+      "harnessStageCount"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "runtimeBuildCommand": null,
+        "fullTypecheckProjects": null,
+        "harnessStageCount": null
+      },
+      "untouched": {
+        "requestId": "t-development-commands-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-development-commands-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "objective": "Select an implementable integration plan for development-commands using all source contracts and the stated resource constraints.",
+      "constraints": [
+        "preserve-source-owner-contracts",
+        "keep-frozen-default",
+        "require-measurement-before-capacity-expansion"
+      ],
+      "proposals": [
+        {
+          "id": "plan-1",
+          "commitments": {
+            "runtimeBuildCommand": "pnpm run build:runtime",
+            "fullTypecheckProjects": [
+              "node",
+              "web",
+              "test"
+            ],
+            "harnessStageCount": 12
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        },
+        {
+          "id": "plan-2",
+          "commitments": {
+            "runtimeBuildCommand": "pnpm run build:runtime-unsupported",
+            "fullTypecheckProjects": [
+              "node",
+              "web",
+              "test"
+            ],
+            "harnessStageCount": 12
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        },
+        {
+          "id": "plan-3",
+          "commitments": {
+            "runtimeBuildCommand": "pnpm run build:runtime",
+            "fullTypecheckProjects": [
+              "node",
+              "web",
+              "test"
+            ],
+            "harnessStageCount": 13
+          },
+          "changesDefault": true,
+          "requiresUnmeasuredCapacity": true
+        }
+      ],
+      "missingObservation": "measured-integration-capacity",
+      "availableResearchRounds": 3,
+      "instruction": "Compare every proposal across sources. Return analysis with selectedPlan, rejectedPlans (planId/violatedConstraints), evidenceGaps, and stopReason. Violations name the contradicted field or frozen-default/unmeasured-capacity. Stop with evidence-complete-capacity-unknown when contract comparison is complete and capacity remains unmeasured."
+    }
+  },
+  {
+    "id": "t-code-session-continuity",
+    "familyId": "session-continuity",
+    "split": "validation",
+    "profile": "local",
+    "cohort": "real-source-repair",
+    "locale": "ja",
+    "kind": "code-repair",
+    "title": "Repair extractChatHistoryMaxChars",
+    "instruction": "Repair the regression in src/stores/chat/history-rpc-params.ts :: extractChatHistoryMaxChars. Preserve source declarations outside this symbol. The independent repository oracle checks normal, boundary and rejection behavior. Deliver the repaired source and a proof.json containing one exact owner citation for field repair.",
+    "outputPath": "subject.ts",
+    "proofPath": "proof.json",
+    "code": {
+      "programPath": "programs/t-code-session-continuity.ts",
+      "symbol": "extractChatHistoryMaxChars",
+      "originPath": "src/stores/chat/history-rpc-params.ts",
+      "starterDigest": "sha256:8d88fd66c3c2f7fcb27ee9cf3a60901531cac9506861cccb8784d280fa1af01b"
+    },
+    "requiredFields": [
+      "repair"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "outputSchema": {
+      "source": "repair subject.ts within the selected declaration",
+      "proofFile": "proof.json",
+      "proof": {
+        "schema": "ProjectRagTaskOutput/v1",
+        "taskId": "t-code-session-continuity",
+        "kind": "code-repair",
+        "untouched": "unchanged copy of input.untouched",
+        "citations": "one field=repair/sourceId/quote/SourceRef-v2 citation",
+        "unknowns": "explicit array"
+      }
+    },
+    "input": {
+      "values": {},
+      "untouched": {
+        "requestId": "t-code-session-continuity",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-session-continuity-2",
+    "familyId": "session-continuity",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "zh",
+    "kind": "diagnostic-report",
+    "queryId": "q-session-continuity-2-zh",
+    "title": "diagnostic-report: session-continuity/rendererHistoryLimits",
+    "instruction": "报告 renderer 的消息保留数、加载批量和同时 DOM 渲染上限。",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-session-continuity-2.json",
+    "requiredFields": [
+      "mainSessionKey",
+      "rendererHistoryLimits"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "mainSessionKey": null,
+        "rendererHistoryLimits": null
+      },
+      "untouched": {
+        "requestId": "t-session-continuity-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-session-continuity-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "incident": "The renderer keeps 900 messages, loads 500 and mounts all 900 rows; navigation becomes slow.",
+      "hypotheses": [
+        "provider-temporary-unavailability",
+        "insufficient-project-evidence",
+        "unbounded-history-view"
+      ],
+      "actions": [
+        "increase-all-budgets-and-retry",
+        "change-the-frozen-product-default",
+        "restore-history-bounds"
+      ],
+      "verification": [
+        {
+          "probeId": "verify-mainSessionKey",
+          "request": "Predict the correct documented behavior for mainSessionKey after the repair."
+        },
+        {
+          "probeId": "verify-rendererHistoryLimits",
+          "request": "Predict the correct documented behavior for rendererHistoryLimits after the repair."
+        }
+      ],
+      "missingObservation": "post-repair-runtime-trace",
+      "instruction": "Diagnose the incident causally, select a hypothesis and corrective action, predict every verification result from the source contracts, and name the missing runtime observation. Return analysis with diagnosis, action, predictions (probeId/result), and evidenceGaps. Filling values alone is incomplete."
+    }
+  },
+  {
+    "id": "t-code-workspace-preflight",
+    "familyId": "workspace-preflight",
+    "split": "validation",
+    "profile": "local",
+    "cohort": "real-source-repair",
+    "locale": "ru",
+    "kind": "code-repair",
+    "title": "Repair normalizeWorkspacePermissionMode",
+    "instruction": "Repair the regression in shared/types/workspace.ts :: normalizeWorkspacePermissionMode. Preserve source declarations outside this symbol. The independent repository oracle checks normal, boundary and rejection behavior. Deliver the repaired source and a proof.json containing one exact owner citation for field repair.",
+    "outputPath": "subject.ts",
+    "proofPath": "proof.json",
+    "code": {
+      "programPath": "programs/t-code-workspace-preflight.ts",
+      "symbol": "normalizeWorkspacePermissionMode",
+      "originPath": "shared/types/workspace.ts",
+      "starterDigest": "sha256:df6ee2641296d1a6296f1b0d9079039f9d56c4243e5738fafdd2e5b1e88d59c5"
+    },
+    "requiredFields": [
+      "repair"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "outputSchema": {
+      "source": "repair subject.ts within the selected declaration",
+      "proofFile": "proof.json",
+      "proof": {
+        "schema": "ProjectRagTaskOutput/v1",
+        "taskId": "t-code-workspace-preflight",
+        "kind": "code-repair",
+        "untouched": "unchanged copy of input.untouched",
+        "citations": "one field=repair/sourceId/quote/SourceRef-v2 citation",
+        "unknowns": "explicit array"
+      }
+    },
+    "input": {
+      "values": {},
+      "untouched": {
+        "requestId": "t-code-workspace-preflight",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-workspace-preflight-2",
+    "familyId": "workspace-preflight",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "ru",
+    "kind": "diagnostic-report",
+    "queryId": "q-workspace-preflight-2-ru",
+    "title": "diagnostic-report: workspace-preflight/gitIsRequired",
+    "instruction": "Обязан ли каталог быть Git-репозиторием, чтобы стать Workspace?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-workspace-preflight-2.json",
+    "requiredFields": [
+      "unwritableFallback",
+      "gitIsRequired"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "unwritableFallback": null,
+        "gitIsRequired": null
+      },
+      "untouched": {
+        "requestId": "t-workspace-preflight-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-workspace-preflight-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "incident": "A readable plain directory with no Git metadata is rejected; a readable but unwritable directory requests fullAccess.",
+      "hypotheses": [
+        "insufficient-project-evidence",
+        "preflight-permission-mismatch",
+        "provider-temporary-unavailability"
+      ],
+      "actions": [
+        "change-the-frozen-product-default",
+        "apply-readable-workspace-policy",
+        "increase-all-budgets-and-retry"
+      ],
+      "verification": [
+        {
+          "probeId": "verify-unwritableFallback",
+          "request": "Predict the correct documented behavior for unwritableFallback after the repair."
+        },
+        {
+          "probeId": "verify-gitIsRequired",
+          "request": "Predict the correct documented behavior for gitIsRequired after the repair."
+        }
+      ],
+      "missingObservation": "post-repair-runtime-trace",
+      "instruction": "Diagnose the incident causally, select a hypothesis and corrective action, predict every verification result from the source contracts, and name the missing runtime observation. Return analysis with diagnosis, action, predictions (probeId/result), and evidenceGaps. Filling values alone is incomplete."
+    }
+  },
+  {
+    "id": "t-code-provider-accounts",
+    "familyId": "provider-accounts",
+    "split": "validation",
+    "profile": "local",
+    "cohort": "real-source-repair",
+    "locale": "en",
+    "kind": "code-repair",
+    "title": "Repair getProviderDocsUrl",
+    "instruction": "Repair the regression in src/lib/providers.ts :: getProviderDocsUrl. Preserve source declarations outside this symbol. The independent repository oracle checks normal, boundary and rejection behavior. Deliver the repaired source and a proof.json containing one exact owner citation for field repair.",
+    "outputPath": "subject.ts",
+    "proofPath": "proof.json",
+    "code": {
+      "programPath": "programs/t-code-provider-accounts.ts",
+      "symbol": "getProviderDocsUrl",
+      "originPath": "src/lib/providers.ts",
+      "starterDigest": "sha256:906878ccb22870e438818524dc3bf6504cfd01b2909ba0b32aa50a790d36ff1f"
+    },
+    "requiredFields": [
+      "repair"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "outputSchema": {
+      "source": "repair subject.ts within the selected declaration",
+      "proofFile": "proof.json",
+      "proof": {
+        "schema": "ProjectRagTaskOutput/v1",
+        "taskId": "t-code-provider-accounts",
+        "kind": "code-repair",
+        "untouched": "unchanged copy of input.untouched",
+        "citations": "one field=repair/sourceId/quote/SourceRef-v2 citation",
+        "unknowns": "explicit array"
+      }
+    },
+    "input": {
+      "values": {},
+      "untouched": {
+        "requestId": "t-code-provider-accounts",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-provider-accounts-2",
+    "familyId": "provider-accounts",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "zh",
+    "kind": "diagnostic-report",
+    "queryId": "q-provider-accounts-2-zh",
+    "title": "diagnostic-report: provider-accounts/rendererSecrets",
+    "instruction": "renderer 允许看到哪种形式的 provider 密钥？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-provider-accounts-2.json",
+    "requiredFields": [
+      "modelsSettingsRoute",
+      "rendererSecrets"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "modelsSettingsRoute": null,
+        "rendererSecrets": null
+      },
+      "untouched": {
+        "requestId": "t-provider-accounts-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-provider-accounts-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "incident": "The compatibility models URL stops at a missing page and a renderer response contains an unmasked provider secret.",
+      "hypotheses": [
+        "provider-route-and-secret-boundary",
+        "provider-temporary-unavailability",
+        "insufficient-project-evidence"
+      ],
+      "actions": [
+        "restore-route-and-masked-projection",
+        "increase-all-budgets-and-retry",
+        "change-the-frozen-product-default"
+      ],
+      "verification": [
+        {
+          "probeId": "verify-modelsSettingsRoute",
+          "request": "Predict the correct documented behavior for modelsSettingsRoute after the repair."
+        },
+        {
+          "probeId": "verify-rendererSecrets",
+          "request": "Predict the correct documented behavior for rendererSecrets after the repair."
+        }
+      ],
+      "missingObservation": "post-repair-runtime-trace",
+      "instruction": "Diagnose the incident causally, select a hypothesis and corrective action, predict every verification result from the source contracts, and name the missing runtime observation. Return analysis with diagnosis, action, predictions (probeId/result), and evidenceGaps. Filling values alone is incomplete."
+    }
+  },
+  {
+    "id": "t-code-usage-aggregation",
+    "familyId": "usage-aggregation",
+    "split": "validation",
+    "profile": "local",
+    "cohort": "real-source-repair",
+    "locale": "zh",
+    "kind": "code-repair",
+    "title": "Repair readAggregateWindow",
+    "instruction": "Repair the regression in electron/services/usage-api.ts :: readAggregateWindow. Preserve source declarations outside this symbol. The independent repository oracle checks normal, boundary and rejection behavior. Deliver the repaired source and a proof.json containing one exact owner citation for field repair.",
+    "outputPath": "subject.ts",
+    "proofPath": "proof.json",
+    "code": {
+      "programPath": "programs/t-code-usage-aggregation.ts",
+      "symbol": "readAggregateWindow",
+      "originPath": "electron/services/usage-api.ts",
+      "starterDigest": "sha256:a74d89e1f314aff284ca261233cfb8649f9832b61fc8f327c833129024045bd8"
+    },
+    "requiredFields": [
+      "repair"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "outputSchema": {
+      "source": "repair subject.ts within the selected declaration",
+      "proofFile": "proof.json",
+      "proof": {
+        "schema": "ProjectRagTaskOutput/v1",
+        "taskId": "t-code-usage-aggregation",
+        "kind": "code-repair",
+        "untouched": "unchanged copy of input.untouched",
+        "citations": "one field=repair/sourceId/quote/SourceRef-v2 citation",
+        "unknowns": "explicit array"
+      }
+    },
+    "input": {
+      "values": {},
+      "untouched": {
+        "requestId": "t-code-usage-aggregation",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-usage-aggregation-2",
+    "familyId": "usage-aggregation",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "ru",
+    "kind": "diagnostic-report",
+    "queryId": "q-usage-aggregation-2-ru",
+    "title": "diagnostic-report: usage-aggregation/riskLedgerLimit",
+    "instruction": "Сколько записей риска prompt-cache может хранить ledger?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-usage-aggregation-2.json",
+    "requiredFields": [
+      "defaultUsageWindow",
+      "riskLedgerLimit"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "defaultUsageWindow": null,
+        "riskLedgerLimit": null
+      },
+      "untouched": {
+        "requestId": "t-usage-aggregation-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-usage-aggregation-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "incident": "An invalid aggregate window is accepted and the prompt-cache risk ledger grows without a ceiling.",
+      "hypotheses": [
+        "provider-temporary-unavailability",
+        "insufficient-project-evidence",
+        "usage-input-and-retention-regression"
+      ],
+      "actions": [
+        "increase-all-budgets-and-retry",
+        "change-the-frozen-product-default",
+        "restore-default-and-ledger-bound"
+      ],
+      "verification": [
+        {
+          "probeId": "verify-defaultUsageWindow",
+          "request": "Predict the correct documented behavior for defaultUsageWindow after the repair."
+        },
+        {
+          "probeId": "verify-riskLedgerLimit",
+          "request": "Predict the correct documented behavior for riskLedgerLimit after the repair."
+        }
+      ],
+      "missingObservation": "post-repair-runtime-trace",
+      "instruction": "Diagnose the incident causally, select a hypothesis and corrective action, predict every verification result from the source contracts, and name the missing runtime observation. Return analysis with diagnosis, action, predictions (probeId/result), and evidenceGaps. Filling values alone is incomplete."
+    }
+  },
+  {
+    "id": "t-code-knowledge-governance",
+    "familyId": "knowledge-governance",
+    "split": "validation",
+    "profile": "local",
+    "cohort": "real-source-repair",
+    "locale": "ja",
+    "kind": "code-repair",
+    "title": "Repair getRouteSearchRows",
+    "instruction": "Repair the regression in electron/services/knowledge-api.ts :: getRouteSearchRows. Preserve source declarations outside this symbol. The independent repository oracle checks normal, boundary and rejection behavior. Deliver the repaired source and a proof.json containing one exact owner citation for field repair.",
+    "outputPath": "subject.ts",
+    "proofPath": "proof.json",
+    "code": {
+      "programPath": "programs/t-code-knowledge-governance.ts",
+      "symbol": "getRouteSearchRows",
+      "originPath": "electron/services/knowledge-api.ts",
+      "starterDigest": "sha256:274b0581ddc9205de8dbd1c7ec8313f88cfa4b4bc752249d3c381f6cea7ffafe"
+    },
+    "requiredFields": [
+      "repair"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "outputSchema": {
+      "source": "repair subject.ts within the selected declaration",
+      "proofFile": "proof.json",
+      "proof": {
+        "schema": "ProjectRagTaskOutput/v1",
+        "taskId": "t-code-knowledge-governance",
+        "kind": "code-repair",
+        "untouched": "unchanged copy of input.untouched",
+        "citations": "one field=repair/sourceId/quote/SourceRef-v2 citation",
+        "unknowns": "explicit array"
+      }
+    },
+    "input": {
+      "values": {},
+      "untouched": {
+        "requestId": "t-code-knowledge-governance",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-knowledge-governance-2",
+    "familyId": "knowledge-governance",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "zh",
+    "kind": "diagnostic-report",
+    "queryId": "q-knowledge-governance-2-zh",
+    "title": "diagnostic-report: knowledge-governance/durableSequence",
+    "instruction": "按顺序列出从 Knowledge Inbox 到 durable Wiki page 的治理步骤。",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-knowledge-governance-2.json",
+    "requiredFields": [
+      "primaryTabs",
+      "durableSequence"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "primaryTabs": null,
+        "durableSequence": null
+      },
+      "untouched": {
+        "requestId": "t-knowledge-governance-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-knowledge-governance-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "incident": "A captured draft is written directly into a durable Wiki page without review or an explicit apply.",
+      "hypotheses": [
+        "insufficient-project-evidence",
+        "governance-stage-bypass",
+        "provider-temporary-unavailability"
+      ],
+      "actions": [
+        "change-the-frozen-product-default",
+        "resume-governed-change-proposal",
+        "increase-all-budgets-and-retry"
+      ],
+      "verification": [
+        {
+          "probeId": "verify-primaryTabs",
+          "request": "Predict the correct documented behavior for primaryTabs after the repair."
+        },
+        {
+          "probeId": "verify-durableSequence",
+          "request": "Predict the correct documented behavior for durableSequence after the repair."
+        }
+      ],
+      "missingObservation": "post-repair-runtime-trace",
+      "instruction": "Diagnose the incident causally, select a hypothesis and corrective action, predict every verification result from the source contracts, and name the missing runtime observation. Return analysis with diagnosis, action, predictions (probeId/result), and evidenceGaps. Filling values alone is incomplete."
+    }
+  },
+  {
+    "id": "t-code-local-embedding-model",
+    "familyId": "local-embedding-model",
+    "split": "validation",
+    "profile": "local",
+    "cohort": "real-source-repair",
+    "locale": "ru",
+    "kind": "code-repair",
+    "title": "Repair DEFAULT_LOCAL_MODEL",
+    "instruction": "Repair the regression in openclaw_runtime/src/memory-host-sdk/host/embedding-defaults.ts :: DEFAULT_LOCAL_MODEL. Preserve source declarations outside this symbol. The independent repository oracle checks normal, boundary and rejection behavior. Deliver the repaired source and a proof.json containing one exact owner citation for field repair.",
+    "outputPath": "subject.ts",
+    "proofPath": "proof.json",
+    "code": {
+      "programPath": "programs/t-code-local-embedding-model.ts",
+      "symbol": "DEFAULT_LOCAL_MODEL",
+      "originPath": "openclaw_runtime/src/memory-host-sdk/host/embedding-defaults.ts",
+      "starterDigest": "sha256:f307e8baed18785ff37bcc06e59d4c70d25c34bf5b40dce39f168c279cbaffb8"
+    },
+    "requiredFields": [
+      "repair"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "outputSchema": {
+      "source": "repair subject.ts within the selected declaration",
+      "proofFile": "proof.json",
+      "proof": {
+        "schema": "ProjectRagTaskOutput/v1",
+        "taskId": "t-code-local-embedding-model",
+        "kind": "code-repair",
+        "untouched": "unchanged copy of input.untouched",
+        "citations": "one field=repair/sourceId/quote/SourceRef-v2 citation",
+        "unknowns": "explicit array"
+      }
+    },
+    "input": {
+      "values": {},
+      "untouched": {
+        "requestId": "t-code-local-embedding-model",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-local-embedding-model-2",
+    "familyId": "local-embedding-model",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "ru",
+    "kind": "diagnostic-report",
+    "queryId": "q-local-embedding-model-2-ru",
+    "title": "diagnostic-report: local-embedding-model/quantization",
+    "instruction": "Какая квантизация указана в имени стандартного локального embedding artifact?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-local-embedding-model-2.json",
+    "requiredFields": [
+      "localModel",
+      "quantization"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "localModel": null,
+        "quantization": null
+      },
+      "untouched": {
+        "requestId": "t-local-embedding-model-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-local-embedding-model-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "incident": "Offline startup attempts to load a Q4_0 artifact while the configured default artifact is unavailable.",
+      "hypotheses": [
+        "embedding-artifact-mismatch",
+        "provider-temporary-unavailability",
+        "insufficient-project-evidence"
+      ],
+      "actions": [
+        "resolve-the-documented-artifact",
+        "increase-all-budgets-and-retry",
+        "change-the-frozen-product-default"
+      ],
+      "verification": [
+        {
+          "probeId": "verify-localModel",
+          "request": "Predict the correct documented behavior for localModel after the repair."
+        },
+        {
+          "probeId": "verify-quantization",
+          "request": "Predict the correct documented behavior for quantization after the repair."
+        }
+      ],
+      "missingObservation": "post-repair-runtime-trace",
+      "instruction": "Diagnose the incident causally, select a hypothesis and corrective action, predict every verification result from the source contracts, and name the missing runtime observation. Return analysis with diagnosis, action, predictions (probeId/result), and evidenceGaps. Filling values alone is incomplete."
+    }
+  },
+  {
+    "id": "t-code-existing-semantic-provider",
+    "familyId": "existing-semantic-provider",
+    "split": "validation",
+    "profile": "local",
+    "cohort": "real-source-repair",
+    "locale": "en",
+    "kind": "code-repair",
+    "title": "Repair resolveEmbeddingDeadlineMs",
+    "instruction": "Repair the regression in electron/services/knowledge-embedding-provider.ts :: resolveEmbeddingDeadlineMs. Preserve source declarations outside this symbol. The independent repository oracle checks normal, boundary and rejection behavior. Deliver the repaired source and a proof.json containing one exact owner citation for field repair.",
+    "outputPath": "subject.ts",
+    "proofPath": "proof.json",
+    "code": {
+      "programPath": "programs/t-code-existing-semantic-provider.ts",
+      "symbol": "resolveEmbeddingDeadlineMs",
+      "originPath": "electron/services/knowledge-embedding-provider.ts",
+      "starterDigest": "sha256:51a0b7fe277543ef1a185e65a4c3f4735c594db654557a0ecad8901946e52009"
+    },
+    "requiredFields": [
+      "repair"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "outputSchema": {
+      "source": "repair subject.ts within the selected declaration",
+      "proofFile": "proof.json",
+      "proof": {
+        "schema": "ProjectRagTaskOutput/v1",
+        "taskId": "t-code-existing-semantic-provider",
+        "kind": "code-repair",
+        "untouched": "unchanged copy of input.untouched",
+        "citations": "one field=repair/sourceId/quote/SourceRef-v2 citation",
+        "unknowns": "explicit array"
+      }
+    },
+    "input": {
+      "values": {},
+      "untouched": {
+        "requestId": "t-code-existing-semantic-provider",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-existing-semantic-provider-2",
+    "familyId": "existing-semantic-provider",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "zh",
+    "kind": "diagnostic-report",
+    "queryId": "q-existing-semantic-provider-2-zh",
+    "title": "diagnostic-report: existing-semantic-provider/embeddingTimeoutsMs",
+    "instruction": "分别报告每批超时和完整 embedding operation 期限，单位毫秒。",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-existing-semantic-provider-2.json",
+    "requiredFields": [
+      "maximumBatchSize",
+      "embeddingTimeoutsMs"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "maximumBatchSize": null,
+        "embeddingTimeoutsMs": null
+      },
+      "untouched": {
+        "requestId": "t-existing-semantic-provider-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-existing-semantic-provider-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "incident": "A selected-source embedding request sends 32 texts in one batch and gives every retry a new operation deadline.",
+      "hypotheses": [
+        "provider-temporary-unavailability",
+        "insufficient-project-evidence",
+        "embedding-batch-and-deadline-regression"
+      ],
+      "actions": [
+        "increase-all-budgets-and-retry",
+        "change-the-frozen-product-default",
+        "bound-batches-and-share-operation-deadline"
+      ],
+      "verification": [
+        {
+          "probeId": "verify-maximumBatchSize",
+          "request": "Predict the correct documented behavior for maximumBatchSize after the repair."
+        },
+        {
+          "probeId": "verify-embeddingTimeoutsMs",
+          "request": "Predict the correct documented behavior for embeddingTimeoutsMs after the repair."
+        }
+      ],
+      "missingObservation": "post-repair-runtime-trace",
+      "instruction": "Diagnose the incident causally, select a hypothesis and corrective action, predict every verification result from the source contracts, and name the missing runtime observation. Return analysis with diagnosis, action, predictions (probeId/result), and evidenceGaps. Filling values alone is incomplete."
+    }
+  },
+  {
+    "id": "t-code-role-memory-store",
+    "familyId": "role-memory-store",
+    "split": "validation",
+    "profile": "local",
+    "cohort": "real-source-repair",
+    "locale": "zh",
+    "kind": "code-repair",
+    "title": "Repair parseJsonArray",
+    "instruction": "Repair the regression in openclaw_runtime/src/memory/memory-store.ts :: parseJsonArray. Preserve source declarations outside this symbol. The independent repository oracle checks normal, boundary and rejection behavior. Deliver the repaired source and a proof.json containing one exact owner citation for field repair.",
+    "outputPath": "subject.ts",
+    "proofPath": "proof.json",
+    "code": {
+      "programPath": "programs/t-code-role-memory-store.ts",
+      "symbol": "parseJsonArray",
+      "originPath": "openclaw_runtime/src/memory/memory-store.ts",
+      "starterDigest": "sha256:1982a2b8ce88c781df73cf47d6418334957dafac5cd090c1c11bff8cfd6e304f"
+    },
+    "requiredFields": [
+      "repair"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "outputSchema": {
+      "source": "repair subject.ts within the selected declaration",
+      "proofFile": "proof.json",
+      "proof": {
+        "schema": "ProjectRagTaskOutput/v1",
+        "taskId": "t-code-role-memory-store",
+        "kind": "code-repair",
+        "untouched": "unchanged copy of input.untouched",
+        "citations": "one field=repair/sourceId/quote/SourceRef-v2 citation",
+        "unknowns": "explicit array"
+      }
+    },
+    "input": {
+      "values": {},
+      "untouched": {
+        "requestId": "t-code-role-memory-store",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-role-memory-store-2",
+    "familyId": "role-memory-store",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "ru",
+    "kind": "diagnostic-report",
+    "queryId": "q-role-memory-store-2-ru",
+    "title": "diagnostic-report: role-memory-store/sameAsNativeMemory",
+    "instruction": "Является ли structured role-card store тем же authority, что memorySearch/QMD/MEMORY.md?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-role-memory-store-2.json",
+    "requiredFields": [
+      "roleStoreFilename",
+      "sameAsNativeMemory"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "roleStoreFilename": null,
+        "sameAsNativeMemory": null
+      },
+      "untouched": {
+        "requestId": "t-role-memory-store-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-role-memory-store-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "incident": "A role-card repair overwrites MEMORY.md because both stores are assumed to be one authority.",
+      "hypotheses": [
+        "insufficient-project-evidence",
+        "memory-authority-conflation",
+        "provider-temporary-unavailability"
+      ],
+      "actions": [
+        "change-the-frozen-product-default",
+        "repair-only-role-store",
+        "increase-all-budgets-and-retry"
+      ],
+      "verification": [
+        {
+          "probeId": "verify-roleStoreFilename",
+          "request": "Predict the correct documented behavior for roleStoreFilename after the repair."
+        },
+        {
+          "probeId": "verify-sameAsNativeMemory",
+          "request": "Predict the correct documented behavior for sameAsNativeMemory after the repair."
+        }
+      ],
+      "missingObservation": "post-repair-runtime-trace",
+      "instruction": "Diagnose the incident causally, select a hypothesis and corrective action, predict every verification result from the source contracts, and name the missing runtime observation. Return analysis with diagnosis, action, predictions (probeId/result), and evidenceGaps. Filling values alone is incomplete."
+    }
+  },
+  {
+    "id": "t-code-file-path-boundary",
+    "familyId": "file-path-boundary",
+    "split": "validation",
+    "profile": "local",
+    "cohort": "real-source-repair",
+    "locale": "ja",
+    "kind": "code-repair",
+    "title": "Repair isPathInsideWorkspaceLexical",
+    "instruction": "Repair the regression in electron/services/path-broker.ts :: isPathInsideWorkspaceLexical. Preserve source declarations outside this symbol. The independent repository oracle checks normal, boundary and rejection behavior. Deliver the repaired source and a proof.json containing one exact owner citation for field repair.",
+    "outputPath": "subject.ts",
+    "proofPath": "proof.json",
+    "code": {
+      "programPath": "programs/t-code-file-path-boundary.ts",
+      "symbol": "isPathInsideWorkspaceLexical",
+      "originPath": "electron/services/path-broker.ts",
+      "starterDigest": "sha256:db95e1fc4397e5ac836f74c5f4955b448e220abadfb4f3be881d10fe8eb2bcd5"
+    },
+    "requiredFields": [
+      "repair"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "outputSchema": {
+      "source": "repair subject.ts within the selected declaration",
+      "proofFile": "proof.json",
+      "proof": {
+        "schema": "ProjectRagTaskOutput/v1",
+        "taskId": "t-code-file-path-boundary",
+        "kind": "code-repair",
+        "untouched": "unchanged copy of input.untouched",
+        "citations": "one field=repair/sourceId/quote/SourceRef-v2 citation",
+        "unknowns": "explicit array"
+      }
+    },
+    "input": {
+      "values": {},
+      "untouched": {
+        "requestId": "t-code-file-path-boundary",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-file-path-boundary-2",
+    "familyId": "file-path-boundary",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "zh",
+    "kind": "diagnostic-report",
+    "queryId": "q-file-path-boundary-2-zh",
+    "title": "diagnostic-report: file-path-boundary/uncAllowed",
+    "instruction": "UNC/SMB 路径能通过 assertSafeHostFilePath 吗？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-file-path-boundary-2.json",
+    "requiredFields": [
+      "maximumPathCharacters",
+      "uncAllowed"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "maximumPathCharacters": null,
+        "uncAllowed": null
+      },
+      "untouched": {
+        "requestId": "t-file-path-boundary-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-file-path-boundary-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "incident": "A broker accepts a 5000-character path and a UNC path, then fails while opening a network share.",
+      "hypotheses": [
+        "unsafe-file-broker-input",
+        "provider-temporary-unavailability",
+        "insufficient-project-evidence"
+      ],
+      "actions": [
+        "reject-invalid-path-before-io",
+        "increase-all-budgets-and-retry",
+        "change-the-frozen-product-default"
+      ],
+      "verification": [
+        {
+          "probeId": "verify-maximumPathCharacters",
+          "request": "Predict the correct documented behavior for maximumPathCharacters after the repair."
+        },
+        {
+          "probeId": "verify-uncAllowed",
+          "request": "Predict the correct documented behavior for uncAllowed after the repair."
+        }
+      ],
+      "missingObservation": "post-repair-runtime-trace",
+      "instruction": "Diagnose the incident causally, select a hypothesis and corrective action, predict every verification result from the source contracts, and name the missing runtime observation. Return analysis with diagnosis, action, predictions (probeId/result), and evidenceGaps. Filling values alone is incomplete."
+    }
+  },
+  {
+    "id": "t-code-task-working-context",
+    "familyId": "task-working-context",
+    "split": "validation",
+    "profile": "local",
+    "cohort": "real-source-repair",
+    "locale": "ru",
+    "kind": "code-repair",
+    "title": "Repair TASK_LEDGER_WORKING_CONTEXT_FIELDS",
+    "instruction": "Repair the regression in shared/types/task-ledger.ts :: TASK_LEDGER_WORKING_CONTEXT_FIELDS. Preserve source declarations outside this symbol. The independent repository oracle checks normal, boundary and rejection behavior. Deliver the repaired source and a proof.json containing one exact owner citation for field repair.",
+    "outputPath": "subject.ts",
+    "proofPath": "proof.json",
+    "code": {
+      "programPath": "programs/t-code-task-working-context.ts",
+      "symbol": "TASK_LEDGER_WORKING_CONTEXT_FIELDS",
+      "originPath": "shared/types/task-ledger.ts",
+      "starterDigest": "sha256:aa2cec28ed105537e094d8be30d87b05898e9e507a82a0c22db00c4606c7c356"
+    },
+    "requiredFields": [
+      "repair"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "outputSchema": {
+      "source": "repair subject.ts within the selected declaration",
+      "proofFile": "proof.json",
+      "proof": {
+        "schema": "ProjectRagTaskOutput/v1",
+        "taskId": "t-code-task-working-context",
+        "kind": "code-repair",
+        "untouched": "unchanged copy of input.untouched",
+        "citations": "one field=repair/sourceId/quote/SourceRef-v2 citation",
+        "unknowns": "explicit array"
+      }
+    },
+    "input": {
+      "values": {},
+      "untouched": {
+        "requestId": "t-code-task-working-context",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-task-working-context-2",
+    "familyId": "task-working-context",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "ru",
+    "kind": "diagnostic-report",
+    "queryId": "q-task-working-context-2-ru",
+    "title": "diagnostic-report: task-working-context/nodeStatuses",
+    "instruction": "Какие статусы допустимы для узлов Task Ledger?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-task-working-context-2.json",
+    "requiredFields": [
+      "workingContextFields",
+      "nodeStatuses"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "workingContextFields": null,
+        "nodeStatuses": null
+      },
+      "untouched": {
+        "requestId": "t-task-working-context-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-task-working-context-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "incident": "A task importer emits node status pending and silently removes Evidence from Working Context.",
+      "hypotheses": [
+        "provider-temporary-unavailability",
+        "insufficient-project-evidence",
+        "task-ledger-contract-drift"
+      ],
+      "actions": [
+        "increase-all-budgets-and-retry",
+        "change-the-frozen-product-default",
+        "restore-context-and-status-schema"
+      ],
+      "verification": [
+        {
+          "probeId": "verify-workingContextFields",
+          "request": "Predict the correct documented behavior for workingContextFields after the repair."
+        },
+        {
+          "probeId": "verify-nodeStatuses",
+          "request": "Predict the correct documented behavior for nodeStatuses after the repair."
+        }
+      ],
+      "missingObservation": "post-repair-runtime-trace",
+      "instruction": "Diagnose the incident causally, select a hypothesis and corrective action, predict every verification result from the source contracts, and name the missing runtime observation. Return analysis with diagnosis, action, predictions (probeId/result), and evidenceGaps. Filling values alone is incomplete."
+    }
+  },
+  {
+    "id": "t-dcs-turn-budget-1",
+    "familyId": "dcs-turn-budget",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "cross-source",
+    "locale": "en",
+    "kind": "cross-source-research",
+    "queryId": "q-dcs-turn-budget-1-en",
+    "title": "cross-source-research: dcs-turn-budget/turnCharacterBudget",
+    "instruction": "What is the shared turn injection character budget?\nWhich configuration field supplies the turn character limit?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-dcs-turn-budget-1.json",
+    "requiredFields": [
+      "turnCharacterBudget",
+      "dropAlertRatio",
+      "budgetConfigKey"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "turnCharacterBudget": null,
+        "dropAlertRatio": null,
+        "budgetConfigKey": null
+      },
+      "untouched": {
+        "requestId": "t-dcs-turn-budget-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-dcs-turn-budget-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "objective": "Select an implementable integration plan for dcs-turn-budget using all source contracts and the stated resource constraints.",
+      "constraints": [
+        "preserve-source-owner-contracts",
+        "keep-frozen-default",
+        "require-measurement-before-capacity-expansion"
+      ],
+      "proposals": [
+        {
+          "id": "plan-2",
+          "commitments": {
+            "turnCharacterBudget": 6000,
+            "dropAlertRatio": 0.1,
+            "budgetConfigKey": "totalChars-unsupported"
+          },
+          "changesDefault": true,
+          "requiresUnmeasuredCapacity": true
+        },
+        {
+          "id": "plan-3",
+          "commitments": {
+            "turnCharacterBudget": 6000,
+            "dropAlertRatio": 0.1,
+            "budgetConfigKey": "totalChars"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        },
+        {
+          "id": "plan-1",
+          "commitments": {
+            "turnCharacterBudget": 6001,
+            "dropAlertRatio": 0.1,
+            "budgetConfigKey": "totalChars"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        }
+      ],
+      "missingObservation": "measured-integration-capacity",
+      "availableResearchRounds": 3,
+      "instruction": "Compare every proposal across sources. Return analysis with selectedPlan, rejectedPlans (planId/violatedConstraints), evidenceGaps, and stopReason. Violations name the contradicted field or frozen-default/unmeasured-capacity. Stop with evidence-complete-capacity-unknown when contract comparison is complete and capacity remains unmeasured."
+    }
+  },
+  {
+    "id": "t-dcs-turn-budget-2",
+    "familyId": "dcs-turn-budget",
+    "split": "held-out",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "zh",
+    "kind": "diagnostic-report",
+    "queryId": "q-dcs-turn-budget-2-zh",
+    "title": "diagnostic-report: dcs-turn-budget/dropAlertRatio",
+    "instruction": "turn-injection 丢弃预算占比达到多少时触发告警阈值？\n哪个配置字段提供 turn 字符上限？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-dcs-turn-budget-2.json",
+    "requiredFields": [
+      "turnCharacterBudget",
+      "dropAlertRatio",
+      "budgetConfigKey"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "turnCharacterBudget": null,
+        "dropAlertRatio": null,
+        "budgetConfigKey": null
+      },
+      "untouched": {
+        "requestId": "t-dcs-turn-budget-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-dcs-turn-budget-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "incident": "Two injection handlers each spend the full turn limit, so their combined injected text exceeds the shared ceiling.",
+      "hypotheses": [
+        "insufficient-project-evidence",
+        "double-spent-turn-budget",
+        "provider-temporary-unavailability"
+      ],
+      "actions": [
+        "change-the-frozen-product-default",
+        "share-the-turn-budget-owner",
+        "increase-all-budgets-and-retry"
+      ],
+      "verification": [
+        {
+          "probeId": "verify-turnCharacterBudget",
+          "request": "Predict the correct documented behavior for turnCharacterBudget after the repair."
+        },
+        {
+          "probeId": "verify-dropAlertRatio",
+          "request": "Predict the correct documented behavior for dropAlertRatio after the repair."
+        },
+        {
+          "probeId": "verify-budgetConfigKey",
+          "request": "Predict the correct documented behavior for budgetConfigKey after the repair."
+        }
+      ],
+      "missingObservation": "post-repair-runtime-trace",
+      "instruction": "Diagnose the incident causally, select a hypothesis and corrective action, predict every verification result from the source contracts, and name the missing runtime observation. Return analysis with diagnosis, action, predictions (probeId/result), and evidenceGaps. Filling values alone is incomplete."
+    }
+  },
+  {
+    "id": "t-context-candidates-1",
+    "familyId": "context-candidates",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "cross-source",
+    "locale": "ja",
+    "kind": "cross-source-research",
+    "queryId": "q-context-candidates-1-ja",
+    "title": "cross-source-research: context-candidates/candidateSchema",
+    "instruction": "Context Orchestrator candidate の schema は何ですか？\norchestrator がインポートする candidate projector は何ですか？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-context-candidates-1.json",
+    "requiredFields": [
+      "candidateSchema",
+      "candidateTargets",
+      "orchestratorProjector"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "candidateSchema": null,
+        "candidateTargets": null,
+        "orchestratorProjector": null
+      },
+      "untouched": {
+        "requestId": "t-context-candidates-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-context-candidates-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "objective": "Select an implementable integration plan for context-candidates using all source contracts and the stated resource constraints.",
+      "constraints": [
+        "preserve-source-owner-contracts",
+        "keep-frozen-default",
+        "require-measurement-before-capacity-expansion"
+      ],
+      "proposals": [
+        {
+          "id": "plan-1",
+          "commitments": {
+            "candidateSchema": "ContextCandidate/v1",
+            "candidateTargets": [
+              "system_prompt",
+              "message",
+              "message_replacement"
+            ],
+            "orchestratorProjector": "projectContextCandidates"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        },
+        {
+          "id": "plan-2",
+          "commitments": {
+            "candidateSchema": "ContextCandidate/v1-unsupported",
+            "candidateTargets": [
+              "system_prompt",
+              "message",
+              "message_replacement"
+            ],
+            "orchestratorProjector": "projectContextCandidates"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        },
+        {
+          "id": "plan-3",
+          "commitments": {
+            "candidateSchema": "ContextCandidate/v1",
+            "candidateTargets": [
+              "system_prompt",
+              "message",
+              "message_replacement"
+            ],
+            "orchestratorProjector": "projectContextCandidates-unsupported"
+          },
+          "changesDefault": true,
+          "requiresUnmeasuredCapacity": true
+        }
+      ],
+      "missingObservation": "measured-integration-capacity",
+      "availableResearchRounds": 3,
+      "instruction": "Compare every proposal across sources. Return analysis with selectedPlan, rejectedPlans (planId/violatedConstraints), evidenceGaps, and stopReason. Violations name the contradicted field or frozen-default/unmeasured-capacity. Stop with evidence-complete-capacity-unknown when contract comparison is complete and capacity remains unmeasured."
+    }
+  },
+  {
+    "id": "t-context-candidates-2",
+    "familyId": "context-candidates",
+    "split": "held-out",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "ru",
+    "kind": "diagnostic-report",
+    "queryId": "q-context-candidates-2-ru",
+    "title": "diagnostic-report: context-candidates/candidateTargets",
+    "instruction": "В какие target может проецироваться context candidate?\nКакой candidate projector импортирует orchestrator?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-context-candidates-2.json",
+    "requiredFields": [
+      "candidateSchema",
+      "candidateTargets",
+      "orchestratorProjector"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "candidateSchema": null,
+        "candidateTargets": null,
+        "orchestratorProjector": null
+      },
+      "untouched": {
+        "requestId": "t-context-candidates-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-context-candidates-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "incident": "An adapter invents an attachment target and bypasses the candidate projector to assemble prompt text.",
+      "hypotheses": [
+        "candidate-projection-bypass",
+        "provider-temporary-unavailability",
+        "insufficient-project-evidence"
+      ],
+      "actions": [
+        "restore-canonical-projection",
+        "increase-all-budgets-and-retry",
+        "change-the-frozen-product-default"
+      ],
+      "verification": [
+        {
+          "probeId": "verify-candidateSchema",
+          "request": "Predict the correct documented behavior for candidateSchema after the repair."
+        },
+        {
+          "probeId": "verify-candidateTargets",
+          "request": "Predict the correct documented behavior for candidateTargets after the repair."
+        },
+        {
+          "probeId": "verify-orchestratorProjector",
+          "request": "Predict the correct documented behavior for orchestratorProjector after the repair."
+        }
+      ],
+      "missingObservation": "post-repair-runtime-trace",
+      "instruction": "Diagnose the incident causally, select a hypothesis and corrective action, predict every verification result from the source contracts, and name the missing runtime observation. Return analysis with diagnosis, action, predictions (probeId/result), and evidenceGaps. Filling values alone is incomplete."
+    }
+  },
+  {
+    "id": "t-context-resource-contract-1",
+    "familyId": "context-resource-contract",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "cross-source",
+    "locale": "en",
+    "kind": "cross-source-research",
+    "queryId": "q-context-resource-contract-1-en",
+    "title": "cross-source-research: context-resource-contract/bundleSchemaVersion",
+    "instruction": "What schemaVersion does the PromptBundle type require?\nWhich pipeline superseded the removed orphan codebase index?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-context-resource-contract-1.json",
+    "requiredFields": [
+      "bundleSchemaVersion",
+      "compactViewsNavigationOnly",
+      "codebaseIndexReplacement"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "bundleSchemaVersion": null,
+        "compactViewsNavigationOnly": null,
+        "codebaseIndexReplacement": null
+      },
+      "untouched": {
+        "requestId": "t-context-resource-contract-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-context-resource-contract-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "objective": "Select an implementable integration plan for context-resource-contract using all source contracts and the stated resource constraints.",
+      "constraints": [
+        "preserve-source-owner-contracts",
+        "keep-frozen-default",
+        "require-measurement-before-capacity-expansion"
+      ],
+      "proposals": [
+        {
+          "id": "plan-3",
+          "commitments": {
+            "bundleSchemaVersion": 2,
+            "compactViewsNavigationOnly": true,
+            "codebaseIndexReplacement": "FactStore"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        },
+        {
+          "id": "plan-1",
+          "commitments": {
+            "bundleSchemaVersion": 1,
+            "compactViewsNavigationOnly": true,
+            "codebaseIndexReplacement": "FactStore-unsupported"
+          },
+          "changesDefault": true,
+          "requiresUnmeasuredCapacity": true
+        },
+        {
+          "id": "plan-2",
+          "commitments": {
+            "bundleSchemaVersion": 1,
+            "compactViewsNavigationOnly": true,
+            "codebaseIndexReplacement": "FactStore"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        }
+      ],
+      "missingObservation": "measured-integration-capacity",
+      "availableResearchRounds": 3,
+      "instruction": "Compare every proposal across sources. Return analysis with selectedPlan, rejectedPlans (planId/violatedConstraints), evidenceGaps, and stopReason. Violations name the contradicted field or frozen-default/unmeasured-capacity. Stop with evidence-complete-capacity-unknown when contract comparison is complete and capacity remains unmeasured."
+    }
+  },
+  {
+    "id": "t-context-resource-contract-2",
+    "familyId": "context-resource-contract",
+    "split": "held-out",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "zh",
+    "kind": "diagnostic-report",
+    "queryId": "q-context-resource-contract-2-zh",
+    "title": "diagnostic-report: context-resource-contract/compactViewsNavigationOnly",
+    "instruction": "CompactView 是否仅用于导航？请用 compactViewsNavigationOnly 表达。\n哪个 pipeline 取代了已移除的孤立 codebase index？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-context-resource-contract-2.json",
+    "requiredFields": [
+      "bundleSchemaVersion",
+      "compactViewsNavigationOnly",
+      "codebaseIndexReplacement"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "bundleSchemaVersion": null,
+        "compactViewsNavigationOnly": null,
+        "codebaseIndexReplacement": null
+      },
+      "untouched": {
+        "requestId": "t-context-resource-contract-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-context-resource-contract-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "incident": "A compact navigation entry is used as complete claim support; a removed orphan index is treated as current.",
+      "hypotheses": [
+        "provider-temporary-unavailability",
+        "insufficient-project-evidence",
+        "navigation-promoted-to-evidence"
+      ],
+      "actions": [
+        "increase-all-budgets-and-retry",
+        "change-the-frozen-product-default",
+        "expand-evidence-through-current-owner"
+      ],
+      "verification": [
+        {
+          "probeId": "verify-bundleSchemaVersion",
+          "request": "Predict the correct documented behavior for bundleSchemaVersion after the repair."
+        },
+        {
+          "probeId": "verify-compactViewsNavigationOnly",
+          "request": "Predict the correct documented behavior for compactViewsNavigationOnly after the repair."
+        },
+        {
+          "probeId": "verify-codebaseIndexReplacement",
+          "request": "Predict the correct documented behavior for codebaseIndexReplacement after the repair."
+        }
+      ],
+      "missingObservation": "post-repair-runtime-trace",
+      "instruction": "Diagnose the incident causally, select a hypothesis and corrective action, predict every verification result from the source contracts, and name the missing runtime observation. Return analysis with diagnosis, action, predictions (probeId/result), and evidenceGaps. Filling values alone is incomplete."
+    }
+  },
+  {
+    "id": "t-background-admission-1",
+    "familyId": "background-admission",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "cross-source",
+    "locale": "ja",
+    "kind": "cross-source-research",
+    "queryId": "q-background-admission-1-ja",
+    "title": "cross-source-research: background-admission/queueWatermarks",
+    "instruction": "デフォルトのキュー high/low watermarks と最小 dwell 時間を示してください。\nbackground gate で foreground リクエストを表す priority は何ですか？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-background-admission-1.json",
+    "requiredFields": [
+      "queueWatermarks",
+      "foregroundDeferred",
+      "foregroundPriority"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "queueWatermarks": null,
+        "foregroundDeferred": null,
+        "foregroundPriority": null
+      },
+      "untouched": {
+        "requestId": "t-background-admission-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-background-admission-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "objective": "Select an implementable integration plan for background-admission using all source contracts and the stated resource constraints.",
+      "constraints": [
+        "preserve-source-owner-contracts",
+        "keep-frozen-default",
+        "require-measurement-before-capacity-expansion"
+      ],
+      "proposals": [
+        {
+          "id": "plan-2",
+          "commitments": {
+            "queueWatermarks": {
+              "high": 16,
+              "low": 4,
+              "minDwellMs": 10000
+            },
+            "foregroundDeferred": false,
+            "foregroundPriority": "foreground-unsupported"
+          },
+          "changesDefault": true,
+          "requiresUnmeasuredCapacity": true
+        },
+        {
+          "id": "plan-3",
+          "commitments": {
+            "queueWatermarks": {
+              "high": 16,
+              "low": 4,
+              "minDwellMs": 10000
+            },
+            "foregroundDeferred": false,
+            "foregroundPriority": "foreground"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        },
+        {
+          "id": "plan-1",
+          "commitments": {
+            "queueWatermarks": {
+              "high": 17,
+              "low": 4,
+              "minDwellMs": 10000
+            },
+            "foregroundDeferred": false,
+            "foregroundPriority": "foreground"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        }
+      ],
+      "missingObservation": "measured-integration-capacity",
+      "availableResearchRounds": 3,
+      "instruction": "Compare every proposal across sources. Return analysis with selectedPlan, rejectedPlans (planId/violatedConstraints), evidenceGaps, and stopReason. Violations name the contradicted field or frozen-default/unmeasured-capacity. Stop with evidence-complete-capacity-unknown when contract comparison is complete and capacity remains unmeasured."
+    }
+  },
+  {
+    "id": "t-background-admission-2",
+    "familyId": "background-admission",
+    "split": "held-out",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "ru",
+    "kind": "diagnostic-report",
+    "queryId": "q-background-admission-2-ru",
+    "title": "diagnostic-report: background-admission/foregroundDeferred",
+    "instruction": "Откладывает ли BackgroundWorkGate foreground работу при shedding?\nКакое значение priority обозначает foreground запросы background gate?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-background-admission-2.json",
+    "requiredFields": [
+      "queueWatermarks",
+      "foregroundDeferred",
+      "foregroundPriority"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "queueWatermarks": null,
+        "foregroundDeferred": null,
+        "foregroundPriority": null
+      },
+      "untouched": {
+        "requestId": "t-background-admission-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-background-admission-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "incident": "Queue pressure is high, and the scheduler defers an interactive foreground request together with background work.",
+      "hypotheses": [
+        "insufficient-project-evidence",
+        "foreground-shed-as-background",
+        "provider-temporary-unavailability"
+      ],
+      "actions": [
+        "change-the-frozen-product-default",
+        "admit-foreground-with-shared-watermarks",
+        "increase-all-budgets-and-retry"
+      ],
+      "verification": [
+        {
+          "probeId": "verify-queueWatermarks",
+          "request": "Predict the correct documented behavior for queueWatermarks after the repair."
+        },
+        {
+          "probeId": "verify-foregroundDeferred",
+          "request": "Predict the correct documented behavior for foregroundDeferred after the repair."
+        },
+        {
+          "probeId": "verify-foregroundPriority",
+          "request": "Predict the correct documented behavior for foregroundPriority after the repair."
+        }
+      ],
+      "missingObservation": "post-repair-runtime-trace",
+      "instruction": "Diagnose the incident causally, select a hypothesis and corrective action, predict every verification result from the source contracts, and name the missing runtime observation. Return analysis with diagnosis, action, predictions (probeId/result), and evidenceGaps. Filling values alone is incomplete."
+    }
+  },
+  {
+    "id": "t-bounded-cache-1",
+    "familyId": "bounded-cache",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "cross-source",
+    "locale": "en",
+    "kind": "cross-source-research",
+    "queryId": "q-bounded-cache-1-en",
+    "title": "cross-source-research: bounded-cache/getRefreshesTtl",
+    "instruction": "Does getting an entry implicitly refresh its absolute TTL?\nWhich resource primitive coalesces same-key concurrent requests?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-bounded-cache-1.json",
+    "requiredFields": [
+      "getRefreshesTtl",
+      "expiresAtBoundaryIsExpired",
+      "requestCoalescer"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "getRefreshesTtl": null,
+        "expiresAtBoundaryIsExpired": null,
+        "requestCoalescer": null
+      },
+      "untouched": {
+        "requestId": "t-bounded-cache-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-bounded-cache-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "objective": "Select an implementable integration plan for bounded-cache using all source contracts and the stated resource constraints.",
+      "constraints": [
+        "preserve-source-owner-contracts",
+        "keep-frozen-default",
+        "require-measurement-before-capacity-expansion"
+      ],
+      "proposals": [
+        {
+          "id": "plan-1",
+          "commitments": {
+            "getRefreshesTtl": false,
+            "expiresAtBoundaryIsExpired": true,
+            "requestCoalescer": "Singleflight"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        },
+        {
+          "id": "plan-2",
+          "commitments": {
+            "getRefreshesTtl": true,
+            "expiresAtBoundaryIsExpired": true,
+            "requestCoalescer": "Singleflight"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        },
+        {
+          "id": "plan-3",
+          "commitments": {
+            "getRefreshesTtl": false,
+            "expiresAtBoundaryIsExpired": true,
+            "requestCoalescer": "Singleflight-unsupported"
+          },
+          "changesDefault": true,
+          "requiresUnmeasuredCapacity": true
+        }
+      ],
+      "missingObservation": "measured-integration-capacity",
+      "availableResearchRounds": 3,
+      "instruction": "Compare every proposal across sources. Return analysis with selectedPlan, rejectedPlans (planId/violatedConstraints), evidenceGaps, and stopReason. Violations name the contradicted field or frozen-default/unmeasured-capacity. Stop with evidence-complete-capacity-unknown when contract comparison is complete and capacity remains unmeasured."
+    }
+  },
+  {
+    "id": "t-bounded-cache-2",
+    "familyId": "bounded-cache",
+    "split": "held-out",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "zh",
+    "kind": "diagnostic-report",
+    "queryId": "q-bounded-cache-2-zh",
+    "title": "diagnostic-report: bounded-cache/expiresAtBoundaryIsExpired",
+    "instruction": "now 等于 expiresAt 时，缓存项是否已过期？\n哪个资源原语合并同 key 的并发请求？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-bounded-cache-2.json",
+    "requiredFields": [
+      "getRefreshesTtl",
+      "expiresAtBoundaryIsExpired",
+      "requestCoalescer"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "getRefreshesTtl": null,
+        "expiresAtBoundaryIsExpired": null,
+        "requestCoalescer": null
+      },
+      "untouched": {
+        "requestId": "t-bounded-cache-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-bounded-cache-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "incident": "Reading an entry extends its absolute TTL; at exactly expiresAt the caller still receives the cached value.",
+      "hypotheses": [
+        "cache-expiry-regression",
+        "provider-temporary-unavailability",
+        "insufficient-project-evidence"
+      ],
+      "actions": [
+        "expire-at-boundary-without-read-refresh",
+        "increase-all-budgets-and-retry",
+        "change-the-frozen-product-default"
+      ],
+      "verification": [
+        {
+          "probeId": "verify-getRefreshesTtl",
+          "request": "Predict the correct documented behavior for getRefreshesTtl after the repair."
+        },
+        {
+          "probeId": "verify-expiresAtBoundaryIsExpired",
+          "request": "Predict the correct documented behavior for expiresAtBoundaryIsExpired after the repair."
+        },
+        {
+          "probeId": "verify-requestCoalescer",
+          "request": "Predict the correct documented behavior for requestCoalescer after the repair."
+        }
+      ],
+      "missingObservation": "post-repair-runtime-trace",
+      "instruction": "Diagnose the incident causally, select a hypothesis and corrective action, predict every verification result from the source contracts, and name the missing runtime observation. Return analysis with diagnosis, action, predictions (probeId/result), and evidenceGaps. Filling values alone is incomplete."
+    }
+  },
+  {
+    "id": "t-provider-outbound-quota-1",
+    "familyId": "provider-outbound-quota",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "cross-source",
+    "locale": "ja",
+    "kind": "cross-source-research",
+    "queryId": "q-provider-outbound-quota-1-ja",
+    "title": "cross-source-research: provider-outbound-quota/quotaOwner",
+    "instruction": "物理 provider リクエストの並行数を管理する owner 名は何ですか？\noutbound quota が管理する計測単位は何ですか？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-provider-outbound-quota-1.json",
+    "requiredFields": [
+      "quotaOwner",
+      "busyOnActiveAliasRebind",
+      "budgetUnit"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "quotaOwner": null,
+        "busyOnActiveAliasRebind": null,
+        "budgetUnit": null
+      },
+      "untouched": {
+        "requestId": "t-provider-outbound-quota-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-provider-outbound-quota-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "objective": "Select an implementable integration plan for provider-outbound-quota using all source contracts and the stated resource constraints.",
+      "constraints": [
+        "preserve-source-owner-contracts",
+        "keep-frozen-default",
+        "require-measurement-before-capacity-expansion"
+      ],
+      "proposals": [
+        {
+          "id": "plan-3",
+          "commitments": {
+            "quotaOwner": "provider-outbound-budget-unsupported",
+            "busyOnActiveAliasRebind": true,
+            "budgetUnit": "physical-request-concurrency"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        },
+        {
+          "id": "plan-1",
+          "commitments": {
+            "quotaOwner": "provider-outbound-budget",
+            "busyOnActiveAliasRebind": true,
+            "budgetUnit": "physical-request-concurrency-unsupported"
+          },
+          "changesDefault": true,
+          "requiresUnmeasuredCapacity": true
+        },
+        {
+          "id": "plan-2",
+          "commitments": {
+            "quotaOwner": "provider-outbound-budget",
+            "busyOnActiveAliasRebind": true,
+            "budgetUnit": "physical-request-concurrency"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        }
+      ],
+      "missingObservation": "measured-integration-capacity",
+      "availableResearchRounds": 3,
+      "instruction": "Compare every proposal across sources. Return analysis with selectedPlan, rejectedPlans (planId/violatedConstraints), evidenceGaps, and stopReason. Violations name the contradicted field or frozen-default/unmeasured-capacity. Stop with evidence-complete-capacity-unknown when contract comparison is complete and capacity remains unmeasured."
+    }
+  },
+  {
+    "id": "t-provider-outbound-quota-2",
+    "familyId": "provider-outbound-quota",
+    "split": "held-out",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "ru",
+    "kind": "diagnostic-report",
+    "queryId": "q-provider-outbound-quota-2-ru",
+    "title": "diagnostic-report: provider-outbound-quota/busyOnActiveAliasRebind",
+    "instruction": "Нужно ли возвращать busy при перепривязке занятого alias provider quota?\nКакую измеряемую единицу ограничивает outbound quota?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-provider-outbound-quota-2.json",
+    "requiredFields": [
+      "quotaOwner",
+      "busyOnActiveAliasRebind",
+      "budgetUnit"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "quotaOwner": null,
+        "busyOnActiveAliasRebind": null,
+        "budgetUnit": null
+      },
+      "untouched": {
+        "requestId": "t-provider-outbound-quota-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-provider-outbound-quota-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "incident": "An occupied quota alias is rebound during a physical provider request; the UI reports token quota exhaustion.",
+      "hypotheses": [
+        "provider-temporary-unavailability",
+        "insufficient-project-evidence",
+        "physical-request-owner-rebind"
+      ],
+      "actions": [
+        "increase-all-budgets-and-retry",
+        "change-the-frozen-product-default",
+        "report-busy-and-preserve-occupied-binding"
+      ],
+      "verification": [
+        {
+          "probeId": "verify-quotaOwner",
+          "request": "Predict the correct documented behavior for quotaOwner after the repair."
+        },
+        {
+          "probeId": "verify-busyOnActiveAliasRebind",
+          "request": "Predict the correct documented behavior for busyOnActiveAliasRebind after the repair."
+        },
+        {
+          "probeId": "verify-budgetUnit",
+          "request": "Predict the correct documented behavior for budgetUnit after the repair."
+        }
+      ],
+      "missingObservation": "post-repair-runtime-trace",
+      "instruction": "Diagnose the incident causally, select a hypothesis and corrective action, predict every verification result from the source contracts, and name the missing runtime observation. Return analysis with diagnosis, action, predictions (probeId/result), and evidenceGaps. Filling values alone is incomplete."
+    }
+  },
+  {
+    "id": "t-backup-restore-1",
+    "familyId": "backup-restore",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "cross-source",
+    "locale": "en",
+    "kind": "cross-source-research",
+    "queryId": "q-backup-restore-1-en",
+    "title": "cross-source-research: backup-restore/overwriteExisting",
+    "instruction": "May a restore overwrite an existing target file?\nWhich archive file describes the backed-up assets?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-backup-restore-1.json",
+    "requiredFields": [
+      "overwriteExisting",
+      "failureRollbackScope",
+      "archiveManifest"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "overwriteExisting": null,
+        "failureRollbackScope": null,
+        "archiveManifest": null
+      },
+      "untouched": {
+        "requestId": "t-backup-restore-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-backup-restore-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "objective": "Select an implementable integration plan for backup-restore using all source contracts and the stated resource constraints.",
+      "constraints": [
+        "preserve-source-owner-contracts",
+        "keep-frozen-default",
+        "require-measurement-before-capacity-expansion"
+      ],
+      "proposals": [
+        {
+          "id": "plan-2",
+          "commitments": {
+            "overwriteExisting": false,
+            "failureRollbackScope": "files-created-this-restore",
+            "archiveManifest": "manifest.json-unsupported"
+          },
+          "changesDefault": true,
+          "requiresUnmeasuredCapacity": true
+        },
+        {
+          "id": "plan-3",
+          "commitments": {
+            "overwriteExisting": false,
+            "failureRollbackScope": "files-created-this-restore",
+            "archiveManifest": "manifest.json"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        },
+        {
+          "id": "plan-1",
+          "commitments": {
+            "overwriteExisting": true,
+            "failureRollbackScope": "files-created-this-restore",
+            "archiveManifest": "manifest.json"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        }
+      ],
+      "missingObservation": "measured-integration-capacity",
+      "availableResearchRounds": 3,
+      "instruction": "Compare every proposal across sources. Return analysis with selectedPlan, rejectedPlans (planId/violatedConstraints), evidenceGaps, and stopReason. Violations name the contradicted field or frozen-default/unmeasured-capacity. Stop with evidence-complete-capacity-unknown when contract comparison is complete and capacity remains unmeasured."
+    }
+  },
+  {
+    "id": "t-backup-restore-2",
+    "familyId": "backup-restore",
+    "split": "held-out",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "zh",
+    "kind": "diagnostic-report",
+    "queryId": "q-backup-restore-2-zh",
+    "title": "diagnostic-report: backup-restore/failureRollbackScope",
+    "instruction": "后续 archive entry 失败时，回滚哪些文件？\n归档中哪个文件描述已备份的 assets？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-backup-restore-2.json",
+    "requiredFields": [
+      "overwriteExisting",
+      "failureRollbackScope",
+      "archiveManifest"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "overwriteExisting": null,
+        "failureRollbackScope": null,
+        "archiveManifest": null
+      },
+      "untouched": {
+        "requestId": "t-backup-restore-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-backup-restore-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "incident": "A later archive entry fails after restore created two new files; rollback also deletes a pre-existing target.",
+      "hypotheses": [
+        "insufficient-project-evidence",
+        "restore-rollback-scope-regression",
+        "provider-temporary-unavailability"
+      ],
+      "actions": [
+        "change-the-frozen-product-default",
+        "rollback-only-created-files",
+        "increase-all-budgets-and-retry"
+      ],
+      "verification": [
+        {
+          "probeId": "verify-overwriteExisting",
+          "request": "Predict the correct documented behavior for overwriteExisting after the repair."
+        },
+        {
+          "probeId": "verify-failureRollbackScope",
+          "request": "Predict the correct documented behavior for failureRollbackScope after the repair."
+        },
+        {
+          "probeId": "verify-archiveManifest",
+          "request": "Predict the correct documented behavior for archiveManifest after the repair."
+        }
+      ],
+      "missingObservation": "post-repair-runtime-trace",
+      "instruction": "Diagnose the incident causally, select a hypothesis and corrective action, predict every verification result from the source contracts, and name the missing runtime observation. Return analysis with diagnosis, action, predictions (probeId/result), and evidenceGaps. Filling values alone is incomplete."
+    }
+  },
+  {
+    "id": "t-experience-adoption-1",
+    "familyId": "experience-adoption",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "cross-source",
+    "locale": "ja",
+    "kind": "cross-source-research",
+    "queryId": "q-experience-adoption-1-ja",
+    "title": "cross-source-research: experience-adoption/requiredPrincipleStatus",
+    "instruction": "adoption を記録する前に principle が必要とする状態は何ですか？\nSEKB master gate を制御する環境変数は何ですか？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-experience-adoption-1.json",
+    "requiredFields": [
+      "requiredPrincipleStatus",
+      "adoptionDispositions",
+      "masterEnableEnvironment"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "requiredPrincipleStatus": null,
+        "adoptionDispositions": null,
+        "masterEnableEnvironment": null
+      },
+      "untouched": {
+        "requestId": "t-experience-adoption-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-experience-adoption-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "objective": "Select an implementable integration plan for experience-adoption using all source contracts and the stated resource constraints.",
+      "constraints": [
+        "preserve-source-owner-contracts",
+        "keep-frozen-default",
+        "require-measurement-before-capacity-expansion"
+      ],
+      "proposals": [
+        {
+          "id": "plan-1",
+          "commitments": {
+            "requiredPrincipleStatus": "active",
+            "adoptionDispositions": [
+              "recorded",
+              "duplicate",
+              "rejected",
+              "conflict"
+            ],
+            "masterEnableEnvironment": "OPENCLAW_SEKB_ENABLED"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        },
+        {
+          "id": "plan-2",
+          "commitments": {
+            "requiredPrincipleStatus": "active-unsupported",
+            "adoptionDispositions": [
+              "recorded",
+              "duplicate",
+              "rejected",
+              "conflict"
+            ],
+            "masterEnableEnvironment": "OPENCLAW_SEKB_ENABLED"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        },
+        {
+          "id": "plan-3",
+          "commitments": {
+            "requiredPrincipleStatus": "active",
+            "adoptionDispositions": [
+              "recorded",
+              "duplicate",
+              "rejected",
+              "conflict"
+            ],
+            "masterEnableEnvironment": "OPENCLAW_SEKB_ENABLED-unsupported"
+          },
+          "changesDefault": true,
+          "requiresUnmeasuredCapacity": true
+        }
+      ],
+      "missingObservation": "measured-integration-capacity",
+      "availableResearchRounds": 3,
+      "instruction": "Compare every proposal across sources. Return analysis with selectedPlan, rejectedPlans (planId/violatedConstraints), evidenceGaps, and stopReason. Violations name the contradicted field or frozen-default/unmeasured-capacity. Stop with evidence-complete-capacity-unknown when contract comparison is complete and capacity remains unmeasured."
+    }
+  },
+  {
+    "id": "t-experience-adoption-2",
+    "familyId": "experience-adoption",
+    "split": "held-out",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "ru",
+    "kind": "diagnostic-report",
+    "queryId": "q-experience-adoption-2-ru",
+    "title": "diagnostic-report: experience-adoption/adoptionDispositions",
+    "instruction": "Какие disposition может вернуть record_adoption?\nКакая переменная окружения управляет master gate SEKB?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-experience-adoption-2.json",
+    "requiredFields": [
+      "requiredPrincipleStatus",
+      "adoptionDispositions",
+      "masterEnableEnvironment"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "requiredPrincipleStatus": null,
+        "adoptionDispositions": null,
+        "masterEnableEnvironment": null
+      },
+      "untouched": {
+        "requestId": "t-experience-adoption-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-experience-adoption-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "incident": "A candidate principle is counted as an observed adoption and retried records are all reported as new.",
+      "hypotheses": [
+        "adoption-admission-and-dedup-drift",
+        "provider-temporary-unavailability",
+        "insufficient-project-evidence"
+      ],
+      "actions": [
+        "validate-active-principle-and-disposition",
+        "increase-all-budgets-and-retry",
+        "change-the-frozen-product-default"
+      ],
+      "verification": [
+        {
+          "probeId": "verify-requiredPrincipleStatus",
+          "request": "Predict the correct documented behavior for requiredPrincipleStatus after the repair."
+        },
+        {
+          "probeId": "verify-adoptionDispositions",
+          "request": "Predict the correct documented behavior for adoptionDispositions after the repair."
+        },
+        {
+          "probeId": "verify-masterEnableEnvironment",
+          "request": "Predict the correct documented behavior for masterEnableEnvironment after the repair."
+        }
+      ],
+      "missingObservation": "post-repair-runtime-trace",
+      "instruction": "Diagnose the incident causally, select a hypothesis and corrective action, predict every verification result from the source contracts, and name the missing runtime observation. Return analysis with diagnosis, action, predictions (probeId/result), and evidenceGaps. Filling values alone is incomplete."
+    }
+  },
+  {
+    "id": "t-orchestration-capacity-1",
+    "familyId": "orchestration-capacity",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "cross-source",
+    "locale": "en",
+    "kind": "cross-source-research",
+    "queryId": "q-orchestration-capacity-1-en",
+    "title": "cross-source-research: orchestration-capacity/unmeasuredConcurrencyCap",
+    "instruction": "What concurrency cap is used when no measured worker cap is supplied?\nWhich routing mode decomposes a complex task into lead and workers?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-orchestration-capacity-1.json",
+    "requiredFields": [
+      "unmeasuredConcurrencyCap",
+      "highEffortCost",
+      "complexRoutingMode"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "unmeasuredConcurrencyCap": null,
+        "highEffortCost": null,
+        "complexRoutingMode": null
+      },
+      "untouched": {
+        "requestId": "t-orchestration-capacity-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-orchestration-capacity-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "objective": "Select an implementable integration plan for orchestration-capacity using all source contracts and the stated resource constraints.",
+      "constraints": [
+        "preserve-source-owner-contracts",
+        "keep-frozen-default",
+        "require-measurement-before-capacity-expansion"
+      ],
+      "proposals": [
+        {
+          "id": "plan-3",
+          "commitments": {
+            "unmeasuredConcurrencyCap": 2,
+            "highEffortCost": 3,
+            "complexRoutingMode": "lead-workers"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        },
+        {
+          "id": "plan-1",
+          "commitments": {
+            "unmeasuredConcurrencyCap": 1,
+            "highEffortCost": 3,
+            "complexRoutingMode": "lead-workers-unsupported"
+          },
+          "changesDefault": true,
+          "requiresUnmeasuredCapacity": true
+        },
+        {
+          "id": "plan-2",
+          "commitments": {
+            "unmeasuredConcurrencyCap": 1,
+            "highEffortCost": 3,
+            "complexRoutingMode": "lead-workers"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        }
+      ],
+      "missingObservation": "measured-integration-capacity",
+      "availableResearchRounds": 3,
+      "instruction": "Compare every proposal across sources. Return analysis with selectedPlan, rejectedPlans (planId/violatedConstraints), evidenceGaps, and stopReason. Violations name the contradicted field or frozen-default/unmeasured-capacity. Stop with evidence-complete-capacity-unknown when contract comparison is complete and capacity remains unmeasured."
+    }
+  },
+  {
+    "id": "t-orchestration-capacity-2",
+    "familyId": "orchestration-capacity",
+    "split": "held-out",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "zh",
+    "kind": "diagnostic-report",
+    "queryId": "q-orchestration-capacity-2-zh",
+    "title": "diagnostic-report: orchestration-capacity/highEffortCost",
+    "instruction": "wave scheduler 给 high effort 的规划成本是多少？\n复杂任务拆分为 lead 和 workers 使用哪种 routing mode？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-orchestration-capacity-2.json",
+    "requiredFields": [
+      "unmeasuredConcurrencyCap",
+      "highEffortCost",
+      "complexRoutingMode"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "unmeasuredConcurrencyCap": null,
+        "highEffortCost": null,
+        "complexRoutingMode": null
+      },
+      "untouched": {
+        "requestId": "t-orchestration-capacity-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-orchestration-capacity-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "incident": "Without a measured worker cap, a high-effort wave starts sixteen workers immediately.",
+      "hypotheses": [
+        "provider-temporary-unavailability",
+        "insufficient-project-evidence",
+        "unmeasured-wave-overadmission"
+      ],
+      "actions": [
+        "increase-all-budgets-and-retry",
+        "change-the-frozen-product-default",
+        "bound-wave-by-measured-cap"
+      ],
+      "verification": [
+        {
+          "probeId": "verify-unmeasuredConcurrencyCap",
+          "request": "Predict the correct documented behavior for unmeasuredConcurrencyCap after the repair."
+        },
+        {
+          "probeId": "verify-highEffortCost",
+          "request": "Predict the correct documented behavior for highEffortCost after the repair."
+        },
+        {
+          "probeId": "verify-complexRoutingMode",
+          "request": "Predict the correct documented behavior for complexRoutingMode after the repair."
+        }
+      ],
+      "missingObservation": "post-repair-runtime-trace",
+      "instruction": "Diagnose the incident causally, select a hypothesis and corrective action, predict every verification result from the source contracts, and name the missing runtime observation. Return analysis with diagnosis, action, predictions (probeId/result), and evidenceGaps. Filling values alone is incomplete."
+    }
+  },
+  {
+    "id": "t-role-contracts-1",
+    "familyId": "role-contracts",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "cross-source",
+    "locale": "ja",
+    "kind": "cross-source-research",
+    "queryId": "q-role-contracts-1-ja",
+    "title": "cross-source-research: role-contracts/reviewerRoleName",
+    "instruction": "Reviewer contract の canonical role name は何ですか？\n組み込み Security Audit Team の verifier role は何ですか？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-role-contracts-1.json",
+    "requiredFields": [
+      "reviewerRoleName",
+      "skepticRoleName",
+      "securityTeamVerifier"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "reviewerRoleName": null,
+        "skepticRoleName": null,
+        "securityTeamVerifier": null
+      },
+      "untouched": {
+        "requestId": "t-role-contracts-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-role-contracts-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "objective": "Select an implementable integration plan for role-contracts using all source contracts and the stated resource constraints.",
+      "constraints": [
+        "preserve-source-owner-contracts",
+        "keep-frozen-default",
+        "require-measurement-before-capacity-expansion"
+      ],
+      "proposals": [
+        {
+          "id": "plan-2",
+          "commitments": {
+            "reviewerRoleName": "reviewer",
+            "skepticRoleName": "skeptic",
+            "securityTeamVerifier": "skeptic-unsupported"
+          },
+          "changesDefault": true,
+          "requiresUnmeasuredCapacity": true
+        },
+        {
+          "id": "plan-3",
+          "commitments": {
+            "reviewerRoleName": "reviewer",
+            "skepticRoleName": "skeptic",
+            "securityTeamVerifier": "skeptic"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        },
+        {
+          "id": "plan-1",
+          "commitments": {
+            "reviewerRoleName": "reviewer-unsupported",
+            "skepticRoleName": "skeptic",
+            "securityTeamVerifier": "skeptic"
+          },
+          "changesDefault": false,
+          "requiresUnmeasuredCapacity": false
+        }
+      ],
+      "missingObservation": "measured-integration-capacity",
+      "availableResearchRounds": 3,
+      "instruction": "Compare every proposal across sources. Return analysis with selectedPlan, rejectedPlans (planId/violatedConstraints), evidenceGaps, and stopReason. Violations name the contradicted field or frozen-default/unmeasured-capacity. Stop with evidence-complete-capacity-unknown when contract comparison is complete and capacity remains unmeasured."
+    }
+  },
+  {
+    "id": "t-role-contracts-2",
+    "familyId": "role-contracts",
+    "split": "held-out",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "ru",
+    "kind": "diagnostic-report",
+    "queryId": "q-role-contracts-2-ru",
+    "title": "diagnostic-report: role-contracts/skepticRoleName",
+    "instruction": "Какое canonical role name у контракта Skeptic?\nКакой verifier role у встроенной Security Audit Team?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-role-contracts-2.json",
+    "requiredFields": [
+      "reviewerRoleName",
+      "skepticRoleName",
+      "securityTeamVerifier"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "reviewerRoleName": null,
+        "skepticRoleName": null,
+        "securityTeamVerifier": null
+      },
+      "untouched": {
+        "requestId": "t-role-contracts-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-role-contracts-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array",
+      "analysis": "source-grounded incident diagnosis or cross-source proposal comparison, following scenario.instruction"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    },
+    "scenario": {
+      "incident": "A Security Audit Team omits its skeptical verifier because reviewer and skeptic are treated as aliases.",
+      "hypotheses": [
+        "insufficient-project-evidence",
+        "verifier-role-conflation",
+        "provider-temporary-unavailability"
+      ],
+      "actions": [
+        "change-the-frozen-product-default",
+        "restore-distinct-security-verifier",
+        "increase-all-budgets-and-retry"
+      ],
+      "verification": [
+        {
+          "probeId": "verify-reviewerRoleName",
+          "request": "Predict the correct documented behavior for reviewerRoleName after the repair."
+        },
+        {
+          "probeId": "verify-skepticRoleName",
+          "request": "Predict the correct documented behavior for skepticRoleName after the repair."
+        },
+        {
+          "probeId": "verify-securityTeamVerifier",
+          "request": "Predict the correct documented behavior for securityTeamVerifier after the repair."
+        }
+      ],
+      "missingObservation": "post-repair-runtime-trace",
+      "instruction": "Diagnose the incident causally, select a hypothesis and corrective action, predict every verification result from the source contracts, and name the missing runtime observation. Return analysis with diagnosis, action, predictions (probeId/result), and evidenceGaps. Filling values alone is incomplete."
+    }
+  }
+]

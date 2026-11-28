@@ -381,6 +381,18 @@ describe("public remote embedding provider boundary", () => {
     expect(JSON.parse(transport.request.mock.calls[1][0].init.body).input_type).toBe("query");
     expect(transport.release).toHaveBeenCalledTimes(2);
   });
+  it("reports provider input usage even when subsequent vector validation rejects the response", async () => {
+    const provider = await create(), onUsage = vi.fn();
+    transport.request.mockResolvedValue({ response: new Response(JSON.stringify({
+      data: [{ index: 0, embedding: [1] }], usage: { prompt_tokens: 12 },
+    })), release: transport.release });
+    expect(provider.requestAccounting).toBe("single-call-input-tokens");
+    await expect(provider.embed("query", { onUsage })).rejects.toThrow("malformed JSON response");
+    expect(onUsage).toHaveBeenCalledExactlyOnceWith(12);
+    respond([{ index: 0, embedding: [1, 0, 0] }]);
+    await provider.embed("query", { onUsage });
+    expect(onUsage).toHaveBeenLastCalledWith(undefined);
+  });
 
   it.each([
     [
@@ -683,7 +695,7 @@ describe("owner-bound embedding sessions", () => {
     });
     const embedBatch = vi.fn(async (texts: unknown[]) => texts.map(() => [3, 4, 0]));
     const read = vi.fn(async () => snapshot);
-    const provider = { id: space.providerRef, model: space.model, embed: vi.fn(), embedBatch };
+    const provider = { id: space.providerRef, model: space.model, requestAccounting: "single-call-input-tokens" as const, embed: vi.fn(), embedBatch };
     const session = new KnowledgeEmbeddingSession({
       workspaceId,
       credentialEpoch,
@@ -742,6 +754,19 @@ describe("owner-bound embedding sessions", () => {
     one.setSnapshot({ ...one.snapshot, policy: { ...one.snapshot.policy, status: "revoked" } });
     await expect(one.session.embed(input)).rejects.toThrow("revoked");
     expect(one.provider.embedBatch).toHaveBeenCalledTimes(2);
+    await one.session.close();
+  });
+  it("reserves only uncached remote batches and forwards response usage to the request owner", async () => {
+    const one = setup(), reported = vi.fn();
+    const call = vi.fn(async (_request, operation) => operation(reported));
+    one.provider.embedBatch.mockImplementation(async (texts, options?: { onUsage?: (tokens: number) => void }) => {
+      options?.onUsage?.(7); return texts.map(() => [3, 4, 0]);
+    });
+    const input = { kind: "query" as const, text: "same query", context: one.context, space: one.space, remoteSpend: call };
+    await one.session.embed(input);
+    expect((await one.session.embed(input)).job.cacheHits).toBe(1);
+    expect(call).toHaveBeenCalledOnce(); expect(reported).toHaveBeenCalledExactlyOnceWith(7);
+    expect(one.provider.embedBatch).toHaveBeenCalledOnce();
     await one.session.close();
   });
 

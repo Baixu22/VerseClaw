@@ -23,7 +23,8 @@ test('Project RAG rerank settings call an admitted local endpoint and preserve R
     const chunks: Buffer[] = []; for await (const chunk of request) chunks.push(Buffer.from(chunk));
     const body = JSON.parse(Buffer.concat(chunks).toString('utf8')); requests.push(body);
     response.writeHead(200, { 'content-type': 'application/json' });
-    response.end(JSON.stringify({ model: body.model, results: body.documents.map((_: string, index: number) => ({ index, relevance_score: 1 - index / 100 })) }));
+    response.end(JSON.stringify({ model: body.model, meta: { tokens: { input_tokens: 23 } },
+      results: body.documents.map((_: string, index: number) => ({ index, relevance_score: 1 - index / 100 })) }));
   });
   await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
   const address = server.address(); if (!address || typeof address === 'string') throw new Error('No endpoint port');
@@ -54,18 +55,19 @@ test('Project RAG rerank settings call an admitted local endpoint and preserve R
     for (const method of ['wiki.index.start', 'wiki.index.reconcile', 'wiki.index.idle']) {
       await host(page, 'gateway', 'rpc', { method, params: { workspaceId: owner.id, sessionKey: owner.activeSessionKey }, timeoutMs: 60000 });
     }
-    type RetrieveResult = { success: boolean; retrieval?: { status: string; rerank?: { status: string; candidateCount: number; calibrated: boolean }; fallbackReasons: string[] } };
+    type RetrieveResult = { success: boolean; retrieval?: { status: string; rerank?: { status: string; candidateCount: number; calibrated: boolean; inputTokens?: number }; fallbackReasons: string[] } };
     const retrieve = async (profile: 'local' | 'quality' | 'research') => host<RetrieveResult>(page, 'knowledge', 'retrieve', { query: 'gateway deployment port', workspaceId: owner.id, sessionKey: owner.activeSessionKey, profile, mode: 'suggest' });
     const indexedRaw = await readFile(join(vault, 'concepts/evidence.md'), 'utf8');
     const quality: RetrieveResult = await retrieve('quality');
     receipt.quality = quality;
-    expect(quality.retrieval?.rerank).toMatchObject({ status: 'complete', candidateCount: 1, calibrated: false });
+    expect(quality.retrieval?.rerank).toMatchObject({ status: 'complete', candidateCount: 1, calibrated: false, inputTokens: 23 });
     expect(await readFile(join(vault, 'concepts/evidence.md'), 'utf8')).toBe(indexedRaw);
     receipt.retrievalPreservedOwnerBytes = true;
     expect(requests.some(request => request.model === 'Qwen/Qwen3-Reranker-0.6B' && request.documents.includes('The gateway deployment port is 18789.\n'))).toBe(true);
     const research: RetrieveResult = await retrieve('research');
     receipt.research = research;
     expect(research.retrieval?.rerank?.status).toBe('complete');
+    expect(research.retrieval?.rerank?.inputTokens).toBe(23);
     const localCalls = requests.length;
     const local: RetrieveResult = await retrieve('local');
     receipt.local = local;

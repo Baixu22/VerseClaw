@@ -1,4 +1,5 @@
 import { invokeHost } from '../../host-api-client';
+import type { KnowledgeObservabilityResult, KnowledgePolicyImportPayload, KnowledgePolicyRollbackPayload, KnowledgeRetrievalFeedbackPayload } from '@shared/knowledge/observability';
 import type { ProjectRagConfigInput, KnowledgeOperationsResult, KnowledgeOperationsConfigureResult, KnowledgeIndexResult } from '@shared/knowledge/operations';
 import type {
   KnowledgeApplyDraftPayload,
@@ -22,6 +23,10 @@ import type {
 } from '@shared/host-api/contract';
 
 export const knowledgeLibraryApi = {
+  observabilityStatus: (): Promise<KnowledgeObservabilityResult> => invokeHost('knowledge', 'observabilityStatus'),
+  retrievalFeedback: (input: KnowledgeRetrievalFeedbackPayload): Promise<KnowledgeObservabilityResult> => invokeHost('knowledge', 'retrievalFeedback', input),
+  policyPromote: (input: KnowledgePolicyImportPayload): Promise<KnowledgeObservabilityResult> => invokeHost('knowledge', 'policyPromote', input),
+  policyRollback: (input: KnowledgePolicyRollbackPayload): Promise<KnowledgeObservabilityResult> => invokeHost('knowledge', 'policyRollback', input),
   operationsStatus: (): Promise<KnowledgeOperationsResult> => invokeHost('knowledge', 'operationsStatus'),
   operationsConfigure: (input: ProjectRagConfigInput): Promise<KnowledgeOperationsConfigureResult> => invokeHost('knowledge', 'operationsConfigure', input),
   indexEnable: (): Promise<KnowledgeIndexResult> => invokeHost('knowledge', 'indexEnable'),

@@ -24,6 +24,7 @@ export function createEndpointRerankProvider(options: {
   ) => Promise<{
     results: Array<{ index: number; relevance_score: number }>;
     tokens?: { input_tokens?: number };
+    meta?: { tokens?: { input_tokens?: number } };
   }>;
 }): RerankProviderV1 {
   return {
@@ -41,7 +42,7 @@ export function createEndpointRerankProvider(options: {
       const all: RerankResultV1["results"] = [];
       let batchCount = 0,
         inputTokens = 0,
-        observedTokens = false;
+        allTokensObserved = true;
       for (let offset = 0; offset < candidates.length; ) {
         call.signal.throwIfAborted();
         const batch: RerankCandidate[] = [];
@@ -99,12 +100,16 @@ export function createEndpointRerankProvider(options: {
         all.push(...ordered.map(({ id, score }) => ({ id, score })));
         batchCount += 1;
         offset += batch.length;
+        const tokens = response.tokens?.input_tokens ?? response.meta?.tokens?.input_tokens;
         if (
-          typeof response.tokens?.input_tokens === "number" &&
-          Number.isFinite(response.tokens.input_tokens)
+          typeof tokens === "number" &&
+          Number.isSafeInteger(tokens) &&
+          tokens >= 0 &&
+          Number.isSafeInteger(inputTokens + tokens)
         ) {
-          inputTokens += response.tokens.input_tokens;
-          observedTokens = true;
+          inputTokens += tokens;
+        } else {
+          allTokensObserved = false;
         }
       }
       all.sort((a, b) => b.score - a.score || a.id.localeCompare(b.id));
@@ -118,7 +123,7 @@ export function createEndpointRerankProvider(options: {
         candidateCount: candidates.length,
         batchCount,
         elapsedMs: performance.now() - started,
-        ...(observedTokens ? { inputTokens } : {}),
+        ...(batchCount > 0 && allTokensObserved ? { inputTokens } : {}),
         results: all,
       };
     },

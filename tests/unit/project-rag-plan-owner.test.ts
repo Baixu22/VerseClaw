@@ -104,6 +104,14 @@ describe('Project RAG owner-side plan', () => {
     expect(searched).toBe(true);
     expect(JSON.stringify(search)).toContain('18789');
     expect(sync).toHaveBeenCalledOnce();
+    const [cancelled] = await invoke('wiki.retrieval.cancel', { requestId: 'research-cancel-before-admission' });
+    expect(cancelled).toBe(true);
+    const [late, , error] = await invoke('wiki.retrieve', { query: 'gateway', profile: 'research', mode: 'suggest',
+      requestId: 'research-cancel-before-admission', researchBudget: { requestId: 'research-cancel-before-admission', maxTokens: 4000, maxCostUsd: 0.0125 } });
+    expect(late).toBe(false); expect(JSON.stringify(error)).toContain('cancelled before admission');
+    const [wrongBudget] = await invoke('wiki.retrieve', { query: 'gateway', profile: 'research', requestId: 'one-request',
+      researchBudget: { requestId: 'another-request', maxTokens: 4000, maxCostUsd: 0.0125 } });
+    expect(wrongBudget).toBe(false);
     await writeFile(f.file, f.raw('Changed source', true));
     const [checked, denied] = await invoke('wiki.get', { lookup: f.sourceRef.subjectId, sourceRef: f.sourceRef });
     expect(checked).toBe(true);
@@ -125,6 +133,26 @@ describe('Project RAG owner-side plan', () => {
     expect(result.results[0].autoReadAdmission.eligible).toBe(false);
     expect(result.plan.admissionContextId).toBeTruthy();
     expect(result.plan.generations.some(generation => generation.lane === 'lexical')).toBe(true);
+  });
+
+  it('routes budgeted Research dense calls through the shared spend owner', async () => {
+    const f = await fixture();
+    const rows = (await f.projection.search(f.identity, 'gateway configuration')).candidates;
+    const result = await retrieveMemoryWiki({ ...f, query: 'gateway configuration', profile: 'research', allowRemote: true,
+      researchBudget: { requestId: 'budgeted-owner-query', maxTokens: 4000, maxCostUsd: 0.0125 },
+      appConfig: { models: { providers: { fixture: { baseUrl: 'https://example.test', models: [{
+        id: 'embed', name: 'embed', reasoning: false, input: ['text'], contextWindow: 8000, maxTokens: 1,
+        cost: { input: 1, output: 0, cacheRead: 0, cacheWrite: 0 },
+      }] } } } },
+      embedding: { status: () => ({ mode: 'remote' }) } as never,
+      vector: { search: async (_identity, text, _limit, request) => {
+        expect(request?.remoteSpend).toBeTypeOf('function');
+        await request!.remoteSpend!({ providerRef: 'fixture', model: 'embed', texts: [text], signal: request!.signal! }, async report => { report(7); });
+        return { status: 'available', candidates: rows.map(row => ({ ...row, id: row.chunkId, distance: 0.01 })) };
+      } } as Parameters<typeof retrieveMemoryWiki>[0]['vector'] });
+    expect(result.remoteSpend?.calls).toBeGreaterThan(0);
+    expect(result.remoteSpend?.actualTokens).toBe(result.remoteSpend!.calls * 7);
+    expect(result.results.length).toBeGreaterThan(0);
   });
 
   it('rejects an index generation change before returning ranked results', async () => {
@@ -249,6 +277,8 @@ describe('Project RAG owner-side plan', () => {
     const f = await fixture();
     for (const raw of [f.original.replace('2026-11-12T00:00:00Z', 'unknown'), f.original.replace('trust: confirmed', 'trust: advisory')]) {
       await writeFile(f.file, raw);
+      await f.projection.reconcile(f.identity);
+      await f.projection.idle(f.identity);
       const result = await retrieveMemoryWiki({ ...f, query: 'concepts/gateway.md', mode: 'auto-read' });
       expect(result.results[0].autoReadAdmission).toMatchObject({ eligible: false,
         reason: 'source-confirmation-or-freshness-unavailable' });
@@ -260,6 +290,8 @@ describe('Project RAG owner-side plan', () => {
     for (const raw of [f.original.replace('updatedAt:', 'verifiedAt:'),
       f.original.replace('updatedAt:', 'verifiedAt: "unknown"\nupdatedAt:')]) {
       await writeFile(f.file, raw);
+      await f.projection.reconcile(f.identity);
+      await f.projection.idle(f.identity);
       const result = await retrieveMemoryWiki({ ...f, query: 'concepts/gateway.md', mode: 'auto-read' });
       expect(result.results[0].autoReadAdmission.eligible).toBe(true);
       expect(result.results[0].freshnessLevel).toBe('fresh');

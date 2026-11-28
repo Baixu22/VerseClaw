@@ -2810,6 +2810,8 @@ openclaw_runtime/_tmp_*
 !/docs/dev/evidence/ui-hierarchy-20261112/sidebar-checks.json
 !/docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md
 !/docs/dev/project-rag/WORK-PACKAGES.md
+!/docs/dev/project-rag/OPTIMIZATION-20261126.md
+!/docs/dev/project-rag/EVIDENCE-UNIT-EXPERIMENTS.md
 !/docs/dev/project-rag/MEMORY-SOURCE-CONTRACT.md
 !/docs/dev/project-rag/RETRIEVAL-PLAN-CONTRACT.md
 !/docs/dev/project-rag/EXPERIENCE-LANE-CONTRACT.md

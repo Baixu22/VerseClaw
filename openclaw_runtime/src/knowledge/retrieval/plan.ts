@@ -1,5 +1,12 @@
 import { randomUUID } from "node:crypto";
 import { setMaxListeners } from "node:events";
+import type { RetrievalPolicyV1 } from "../../../../shared/knowledge/observability.js";
+import {
+  RETRIEVAL_PROFILES,
+  defaultRetrievalPolicy,
+  normalizeRetrievalPolicy,
+  retrievalPolicyDigest,
+} from "./policy.js";
 import type { SourceRefV2 } from "../../runtime-core/knowledge-owner-read.js";
 
 import type {
@@ -34,38 +41,7 @@ export type {
   RetrievalResultV2,
 } from "../../../../shared/knowledge/retrieval.js";
 
-export const RETRIEVAL_PROFILES = Object.freeze({
-  local: Object.freeze({
-    candidateK: 40,
-    rerankK: 0,
-    finalK: 4,
-    maxTokens: 1200,
-    maxChars: 3200,
-    deadlineMs: 900,
-    maxQueries: 1,
-    maxModelCalls: 0,
-  }),
-  quality: Object.freeze({
-    candidateK: 80,
-    rerankK: 30,
-    finalK: 6,
-    maxTokens: 2200,
-    maxChars: 6000,
-    deadlineMs: 2500,
-    maxQueries: 1,
-    maxModelCalls: 0,
-  }),
-  research: Object.freeze({
-    candidateK: 120,
-    rerankK: 60,
-    finalK: 12,
-    maxTokens: 5000,
-    maxChars: 15000,
-    deadlineMs: 30000,
-    maxQueries: 8,
-    maxModelCalls: 2,
-  }),
-} as const);
+export { RETRIEVAL_PROFILES } from "./policy.js";
 
 export function createRetrievalPlan(input: {
   query: string;
@@ -80,6 +56,7 @@ export function createRetrievalPlan(input: {
   admissionContextId?: string;
   generations?: readonly RetrievalGeneration[];
   intent?: RetrievalIntent;
+  policy?: RetrievalPolicyV1;
 }): RetrievalPlanV2 {
   const profile = input.profile ?? "local",
     mode = input.mode ?? "suggest";
@@ -98,6 +75,10 @@ export function createRetrievalPlan(input: {
     throw new Error("Invalid retrieval owner scope");
   const policy = RETRIEVAL_PROFILES[profile],
     now = input.now ?? Date.now();
+  const ranking = input.policy
+    ? normalizeRetrievalPolicy(input.policy)
+    : defaultRetrievalPolicy(profile);
+  if (ranking.profile !== profile) throw new Error("Retrieval policy profile mismatch");
   if (input.deadlineAtMs !== undefined && !Number.isFinite(input.deadlineAtMs))
     throw new Error("Invalid retrieval deadline");
   const queries = input.queries ?? [{ text: input.query.trim(), family: "root" }];
@@ -123,7 +104,9 @@ export function createRetrievalPlan(input: {
     planId: randomUUID(),
     requestId: input.requestId ?? randomUUID(),
     admissionContextId: input.admissionContextId ?? null,
-    policyVersion: "project-rag-rrf/v2",
+    policyVersion: ranking.version,
+    policyDigest: retrievalPolicyDigest(ranking),
+    rrfK: ranking.rrfK,
     mode,
     profile,
     intent:
@@ -162,10 +145,10 @@ export function createRetrievalPlan(input: {
         : [],
     ),
     budget: Object.freeze({
-      candidateK: policy.candidateK,
-      rerankK: policy.rerankK,
-      finalK: policy.finalK,
-      maxPerParent: 2,
+      candidateK: ranking.candidateK,
+      rerankK: ranking.rerankK,
+      finalK: ranking.finalK,
+      maxPerParent: ranking.maxPerParent,
       maxTokens: policy.maxTokens,
       maxChars: policy.maxChars,
       maxQueries: policy.maxQueries,
@@ -206,7 +189,10 @@ export function fuseRetrievalLanes<T>(
     hits: RetrievalHit<T>[];
   }>,
   denied: readonly RetrievalFilter[] = [],
+  rrfK = 60,
 ) {
+  if (!Number.isSafeInteger(rrfK) || rrfK < 1 || rrfK > 1000)
+    throw new Error("Invalid rank fusion constant");
   const blocked = new Set(denied.map(parentKey));
   const filters = [...denied];
   const fused = new Map<string, RetrievalHit<T> & { rankSignals: RankSignalsV2 }>();
@@ -263,7 +249,7 @@ export function fuseRetrievalLanes<T>(
           rank,
           rawScore: hit.rawScore,
           scoreKind: hit.scoreKind,
-          contribution: 1 / (60 + rank),
+          contribution: 1 / (rrfK + rank),
         });
       }
       entry.rankSignals.fusionScore = entry.rankSignals.lanes.reduce(
@@ -313,6 +299,7 @@ export async function runRetrievalPlan<T>(options: {
     filters: [],
     fallbackReasons: [],
     snapshotStatus: "current",
+    stages: [],
   };
   if (!plan.lanes.length) return result;
   const deadline = new AbortController();
@@ -414,9 +401,12 @@ export async function runRetrievalPlan<T>(options: {
         a.queryFamily.localeCompare(b.queryFamily) ||
         plan.lanes.indexOf(a.lane) - plan.lanes.indexOf(b.lane),
     );
-    const fused = fuseRetrievalLanes(batches, result.filters);
+    const fusionStart = performance.now();
+    const fused = fuseRetrievalLanes(batches, result.filters, plan.rrfK ?? 60);
     result.filters = fused.filters;
     const pool = fused.hits.slice(0, plan.budget.candidateK);
+    result.stages!.push({ stage: "fusion", elapsedMs: performance.now() - fusionStart, status: "complete", candidateCount: pool.length });
+    const ownerStart = performance.now();
     let ranked: typeof pool | undefined;
     const verified: typeof pool = [];
     for (const hit of pool) {
@@ -438,7 +428,11 @@ export async function runRetrievalPlan<T>(options: {
         });
       }
     }
-    if (plan.budget.rerankK && !plan.explicitRefs.length && verified.length) {
+    result.stages!.push({ stage: "owner-verification", elapsedMs: performance.now() - ownerStart,
+      status: verified.length === pool.length ? "complete" : "partial", candidateCount: verified.length });
+    const rerankStart = performance.now();
+    const needsRerank = Boolean(plan.budget.rerankK && !plan.explicitRefs.length && verified.length);
+    if (needsRerank) {
       if (!options.rerank) result.fallbackReasons.push("rerank-unavailable");
       else {
         const candidates = verified.slice(0, plan.budget.rerankK);
@@ -467,13 +461,7 @@ export async function runRetrievalPlan<T>(options: {
             throw new Error("Rerank result does not match the admitted candidate set");
           }
           const ordered = receipt.results.map((row) => byId.get(row.id)!);
-          const checked: typeof pool = [];
-          for (const hit of ordered) {
-            const reason = await bounded(() => options.verify(hit, signal));
-            if (reason) throw new Error(`Rerank owner verification failed: ${reason}`);
-            checked.push(hit);
-          }
-          ranked = [...checked, ...verified.slice(candidates.length)];
+          ranked = [...ordered, ...verified.slice(candidates.length)];
         } catch (error) {
           result.fallbackReasons.push(
             `rerank-failed:${error instanceof Error ? error.message : String(error)}`.slice(0, 240),
@@ -481,6 +469,26 @@ export async function runRetrievalPlan<T>(options: {
         }
       }
     }
+    if (needsRerank && options.rerank) {
+      let changed = false;
+      // Successful and failed provider waits both invalidate the earlier owner reads.
+      for (const hit of ranked ?? verified) {
+        let reason: string | undefined;
+        try { reason = await bounded(() => options.verify(hit, signal)); }
+        catch (error) { reason = error instanceof Error ? error.message : String(error); }
+        if (reason) {
+          changed = true;
+          result.filters.push({ namespaceId: hit.sourceRef.namespaceId, subjectId: hit.sourceRef.subjectId, reason });
+        }
+      }
+      if (changed) {
+        ranked = undefined;
+        result.fallbackReasons.push("rerank-failed:owner-evidence-changed");
+      }
+    }
+    result.stages!.push({ stage: "rerank", elapsedMs: performance.now() - rerankStart,
+      status: !needsRerank ? "skipped" : ranked ? "complete" : "unavailable", candidateCount: ranked?.length ?? verified.length });
+    const selectionStart = performance.now();
     const denied = new Set(result.filters.map(parentKey)),
       counts = new Map<string, number>();
     for (const hit of ranked ?? verified) {
@@ -505,6 +513,8 @@ export async function runRetrievalPlan<T>(options: {
         a.subjectId.localeCompare(b.subjectId) ||
         a.reason.localeCompare(b.reason),
     );
+    result.stages!.push({ stage: "selection", elapsedMs: performance.now() - selectionStart,
+      status: "complete", candidateCount: result.results.length });
     result.fallbackReasons = [
       ...result.fallbackReasons,
       ...result.lanes

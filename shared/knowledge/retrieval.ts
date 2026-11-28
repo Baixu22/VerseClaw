@@ -30,7 +30,9 @@ export type RetrievalPlanV2 = {
   planId: string;
   requestId: string;
   admissionContextId: string | null;
-  policyVersion: 'project-rag-rrf/v2';
+  policyVersion: string;
+  policyDigest?: string;
+  rrfK?: number;
   mode: RetrievalMode;
   profile: RetrievalProfile;
   intent: RetrievalIntent;
@@ -62,6 +64,10 @@ export type RetrievalHit<T> = {
   data: T;
 };
 export type RetrievalFilter = { namespaceId: string; subjectId: string; reason: string };
+export type RetrievalSpendUsage = { calls: number; reservedTokens: number; reservedCostUsd: number | null;
+  actualTokens: number | null; actualCostUsd: number | null; inFlight?: boolean };
+export type RetrievalStage = { stage: 'fusion' | 'owner-verification' | 'rerank' | 'selection';
+  elapsedMs: number; status: 'complete' | 'partial' | 'unavailable' | 'skipped'; candidateCount: number };
 export type RetrievalLaneResult<T> = {
   status: 'available' | 'unavailable';
   reason?: string;
@@ -88,4 +94,8 @@ export type RetrievalResultV2<T> = {
   fallbackReasons: string[];
   rerank?: RerankResultV1;
   snapshotStatus: 'current' | 'changed';
+  receiptId?: string;
+  receiptStatus?: 'recorded' | 'unavailable';
+  remoteSpend?: RetrievalSpendUsage;
+  stages?: RetrievalStage[];
 };

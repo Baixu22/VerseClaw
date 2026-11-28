@@ -31,6 +31,7 @@ export type OpenAICompatibleEmbeddingClient = {
 type OpenAICompatibleEmbeddingResponse = {
   data?: unknown;
   model?: unknown;
+  usage?: { prompt_tokens?: unknown };
 };
 
 type ConfiguredEmbeddingProvider = {
@@ -320,6 +321,7 @@ async function postEmbeddingRequest(params: {
   input: string[];
   signal?: AbortSignal;
   inputType?: EmbeddingProviderCallOptions["inputType"];
+  onUsage?: EmbeddingProviderCallOptions["onUsage"];
 }): Promise<number[][]> {
   const { client, input } = params;
   const inputType = resolveRequestInputType(client, params.inputType);
@@ -345,6 +347,7 @@ async function postEmbeddingRequest(params: {
       throw new Error(`openai-compatible embeddings failed: HTTP ${response.status}`);
     }
     const payload = (await readJsonResponse(response)) as OpenAICompatibleEmbeddingResponse;
+    params.onUsage?.(payload.usage?.prompt_tokens);
     if (payload.model !== undefined && payload.model !== client.model) {
       throw new Error("openai-compatible embeddings failed: response model mismatch");
     }
@@ -408,11 +411,13 @@ export async function createOpenAICompatibleEmbeddingProvider(
       input: inputs.map(embeddingInputToText),
       signal: callOptions?.signal,
       inputType: callOptions?.inputType,
+      onUsage: callOptions?.onUsage,
     });
   };
   return {
     provider: {
       id: OPENAI_COMPATIBLE_EMBEDDING_PROVIDER_ID,
+      requestAccounting: "single-call-input-tokens",
       model: client.model,
       ...(typeof client.dimensions === "number" ? { dimensions: client.dimensions } : {}),
       embed: async (input, callOptions) => {

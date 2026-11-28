@@ -1,0 +1,272 @@
+{
+  "schema": "ProjectRagCorpusFreeze/v1",
+  "corpusId": "project-rag-v1",
+  "actor": "codex/project-rag-corpus-author",
+  "driven_by": "agent",
+  "frozenAt": "2026-11-09T22:32:47.090Z",
+  "sourceRevision": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "digest": "sha256:705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+      "bytes": 8
+    },
+    {
+      "path": "owner/vault/concepts/owner-version-1.md",
+      "digest": "sha256:2a8e8862421572501d0540b97228d6318bda7579280ef5e45d458a5669a467b1",
+      "bytes": 14768
+    },
+    {
+      "path": "owner/vault/concepts/wiki-read-policy-1.md",
+      "digest": "sha256:88b63c15470bc2ea20e5574dca110a3e1509a1cabe21c0d0258b273acbcc2e87",
+      "bytes": 10217
+    },
+    {
+      "path": "owner/vault/concepts/host-knowledge-scope-1.md",
+      "digest": "sha256:26e7d5fbca85701c60aa40d85a4d64e4f56beb99d78483a34e37bf057ee3cd9a",
+      "bytes": 4870
+    },
+    {
+      "path": "owner/vault/concepts/bounded-page-read-1.md",
+      "digest": "sha256:5a5b42589ea2feaa203c2706184ae3f5d9900acc7188deaa15a6efc8b511de64",
+      "bytes": 18911
+    },
+    {
+      "path": "owner/vault/concepts/source-set-limit-1.md",
+      "digest": "sha256:dce95c7a51bcbeb8eb35d73d75253d97151022c0f1485e690c124f404bd1a32e",
+      "bytes": 37468
+    },
+    {
+      "path": "owner/vault/concepts/cjk-tokenizer-1.md",
+      "digest": "sha256:5dbaae946856d3490012abd619dc1dc65a1e32d76eded7235992faaa600fefbd",
+      "bytes": 883
+    },
+    {
+      "path": "owner/vault/concepts/memory-temporal-1.md",
+      "digest": "sha256:ea94e6ab039edceaf684c02f691f6f81f25fee9adffecbda49cc038784364707",
+      "bytes": 12286
+    },
+    {
+      "path": "owner/vault/concepts/host-deadline-1.md",
+      "digest": "sha256:a98d6be863318299db6809217fa1374324ab96baf54c0b1a7eb397006fdfbe1c",
+      "bytes": 5264
+    },
+    {
+      "path": "owner/vault/concepts/host-action-timeouts-1.md",
+      "digest": "sha256:759502d5d99c9d91f65d1118fa7f44f830ee61c245f53f0105cbfb5cafaacc35",
+      "bytes": 2328
+    },
+    {
+      "path": "owner/vault/concepts/development-commands-1.md",
+      "digest": "sha256:75eea0c929ce9cb4ddaed8993d4237b802da6c34cc01726d4f91276fa04e1dcc",
+      "bytes": 13941
+    },
+    {
+      "path": "owner/vault/concepts/session-continuity-1.md",
+      "digest": "sha256:ade5eecc0f48beb6473af3834e59ba869bad79bf363ff428ceb5aab3da568f02",
+      "bytes": 18469
+    },
+    {
+      "path": "owner/vault/concepts/workspace-preflight-1.md",
+      "digest": "sha256:f1494e578c48e341192e5bbc67198c259b83c9bb92a3267234fe81133eaf75a0",
+      "bytes": 14973
+    },
+    {
+      "path": "owner/vault/concepts/provider-accounts-1.md",
+      "digest": "sha256:47e40bc6d4e6f5489740638590d0d21a0c102b9b746e9f83e2876480715f5950",
+      "bytes": 13991
+    },
+    {
+      "path": "owner/vault/concepts/usage-aggregation-1.md",
+      "digest": "sha256:17ae975f9afbf045dc42b3dee040b4d84e6ab0d1dfbd768616f4884b4dc3fe3f",
+      "bytes": 13547
+    },
+    {
+      "path": "owner/vault/concepts/knowledge-governance-1.md",
+      "digest": "sha256:deecff903a2502265b4d6e76bdfe38bef47765597061eb5ebe46cade9333914b",
+      "bytes": 18429
+    },
+    {
+      "path": "owner/vault/concepts/local-embedding-model-1.md",
+      "digest": "sha256:946f9254a9a63109576f99d854a981ae27e6e0178a860143d366913f24f89db8",
+      "bytes": 734
+    },
+    {
+      "path": "owner/vault/concepts/existing-semantic-provider-1.md",
+      "digest": "sha256:6be805e45d8430a847a7f2804a8072d990232ea4d358827f8fad254f98ba11be",
+      "bytes": 8657
+    },
+    {
+      "path": "owner/vault/concepts/role-memory-store-1.md",
+      "digest": "sha256:2c6880cec1667010782b2c7f8633a1152f16f14ab646621f668c2223b2895a84",
+      "bytes": 95372
+    },
+    {
+      "path": "owner/vault/concepts/file-path-boundary-1.md",
+      "digest": "sha256:8bff37fc96935ba3cf97a8919de7736eb00ad4fe1bbb856ad86dd67e08b81349",
+      "bytes": 5179
+    },
+    {
+      "path": "owner/vault/concepts/task-working-context-1.md",
+      "digest": "sha256:323202aa4f334b64aef6563bf8230d7d4ef7ce90b5012528ee32bf3192a7aa73",
+      "bytes": 8515
+    },
+    {
+      "path": "owner/vault/concepts/dcs-turn-budget-1.md",
+      "digest": "sha256:d89deeacd86db4b01d6bc536bcf60a67874fb63516df52a0818a157618473589",
+      "bytes": 28538
+    },
+    {
+      "path": "owner/vault/concepts/dcs-turn-budget-2.md",
+      "digest": "sha256:cd28cfc1e84456a59d3cf76df2d5d188fefdf48e39fd49bf227239bb7c9a0dd3",
+      "bytes": 5226
+    },
+    {
+      "path": "owner/vault/concepts/context-candidates-1.md",
+      "digest": "sha256:2f4764db9e8884b77c9ddb4027802926f6c2f127f19e132d5515d9e3e509f2f2",
+      "bytes": 18131
+    },
+    {
+      "path": "owner/vault/concepts/context-candidates-2.md",
+      "digest": "sha256:b06188f2ef26e2871703650fabc3c20f2e1ba3c0dc1dfbf360763e74e266b130",
+      "bytes": 41577
+    },
+    {
+      "path": "owner/vault/concepts/context-resource-contract-1.md",
+      "digest": "sha256:f335f5307c9c1cba002806ce3f49bb8ee357ecbaa27a4544f295185c45fc557c",
+      "bytes": 18235
+    },
+    {
+      "path": "owner/vault/concepts/context-resource-contract-2.md",
+      "digest": "sha256:bf84365f6276fd9e4f7b82c419d6e5038955e7929b45d824fc1588e2c43f92a1",
+      "bytes": 3515
+    },
+    {
+      "path": "owner/vault/concepts/background-admission-1.md",
+      "digest": "sha256:d5148ac3cd3000391fdf4520e926510a9aea97467a521739deb4eebab5a0fa06",
+      "bytes": 7601
+    },
+    {
+      "path": "owner/vault/concepts/background-admission-2.md",
+      "digest": "sha256:d5552b7c5010f2dcf661cf8793a10e62404d40b985794bd58438c1cfc63f92f4",
+      "bytes": 5053
+    },
+    {
+      "path": "owner/vault/concepts/bounded-cache-1.md",
+      "digest": "sha256:32986b885f2f62b5bccddff04aec9a8a36709eaa5d6c15cc584943fa5b571b87",
+      "bytes": 4756
+    },
+    {
+      "path": "owner/vault/concepts/bounded-cache-2.md",
+      "digest": "sha256:496316e5711d92cb51f2bc4b98ad0740bf2ca269b8f13d10c8ac19033c693a33",
+      "bytes": 3308
+    },
+    {
+      "path": "owner/vault/concepts/provider-outbound-quota-1.md",
+      "digest": "sha256:cf9ae2446d8417a556af7363c7841b89687b68339c0fab3fdd7cc61e885e0616",
+      "bytes": 23301
+    },
+    {
+      "path": "owner/vault/concepts/provider-outbound-quota-2.md",
+      "digest": "sha256:e8e75d6a9efb43611fa4cb91b3b3534d22a45ffdff378f8955370503ee77ff4f",
+      "bytes": 27641
+    },
+    {
+      "path": "owner/vault/concepts/backup-restore-1.md",
+      "digest": "sha256:8055916f281cf91cb6925b39c88f0b5ae4809007a427ceb75a4203bfcebfa71f",
+      "bytes": 14504
+    },
+    {
+      "path": "owner/vault/concepts/backup-restore-2.md",
+      "digest": "sha256:b5dd813f77b0eb452eb215eb06e99a68eef45b471538d92a5a90423c861c9feb",
+      "bytes": 13213
+    },
+    {
+      "path": "owner/vault/concepts/experience-adoption-1.md",
+      "digest": "sha256:bcc41128e9746821f70490768792d25e731b7fd726479c4bb21ad00849a47d36",
+      "bytes": 43960
+    },
+    {
+      "path": "owner/vault/concepts/experience-adoption-2.md",
+      "digest": "sha256:8cab8dfcca502c4ef1a31533cf741fa5b3eb15251dc738e46913732b1d622d1b",
+      "bytes": 4018
+    },
+    {
+      "path": "owner/vault/concepts/orchestration-capacity-1.md",
+      "digest": "sha256:6a2fe899a20b4c1f15b04d4b024744f63f68c9fdaea2ef37d8825612713a3c4b",
+      "bytes": 11173
+    },
+    {
+      "path": "owner/vault/concepts/orchestration-capacity-2.md",
+      "digest": "sha256:063021ce1b094cfebc038a3869a9d473396db6c0b21654bb8fa634c3890bf08e",
+      "bytes": 6465
+    },
+    {
+      "path": "owner/vault/concepts/role-contracts-1.md",
+      "digest": "sha256:979076dd69ff47dce67e5d03e91cadb309780eba41b13ca6dcda6ea898e21478",
+      "bytes": 19477
+    },
+    {
+      "path": "owner/vault/concepts/role-contracts-2.md",
+      "digest": "sha256:71aa836ea95075c9d7342e1d562f50acee15f08e35b2669f021f61fe96427a73",
+      "bytes": 3568
+    },
+    {
+      "path": "corpus.json",
+      "digest": "sha256:b74c8918e61f7d38086823e826941bc54f4688fa7893acfc1177efab5665939b",
+      "bytes": 62656
+    },
+    {
+      "path": "queries.json",
+      "digest": "sha256:7173ef37c92bceffad105a0c8fb44089b3d9047d2ce5e0b4811d29f403ab2e1d",
+      "bytes": 174359
+    },
+    {
+      "path": "tasks.json",
+      "digest": "sha256:b8a3c23b5c20502cac0a6ccd4ec742a28d3cdfaa86ef94fef902d3f566a50c6f",
+      "bytes": 112476
+    },
+    {
+      "path": "trial-plan.json",
+      "digest": "sha256:da6d38846f0d4439647d10c88b55c6ccc579c995cc87de56bc23fceb066cad14",
+      "bytes": 254459
+    },
+    {
+      "path": "promotion-policy.json",
+      "digest": "sha256:5f51a53b8315065fd6b750cc46c66fa6e16e17490402ef68cd88f6b0311bb76f",
+      "bytes": 5944
+    },
+    {
+      "path": "baseline.json",
+      "digest": "sha256:044a88c8249a6e1c7d2c7588b65813bd06935194a0c2280e71c02f4c0f329211",
+      "bytes": 2362
+    },
+    {
+      "path": "oracle/query-gold.json",
+      "digest": "sha256:6031c2153ac874703032e61dd67dabfdc09d6b2d76891391d9161b8b56e87c48",
+      "bytes": 491775
+    },
+    {
+      "path": "oracle/task-gold.json",
+      "digest": "sha256:72a55da9d9624201153592dbef3338a84114c24cac79e3d83a91aebe8fa6dd16",
+      "bytes": 147960
+    },
+    {
+      "path": "oracle/negative-cases.json",
+      "digest": "sha256:e8805812a8515aa507c0f102590f724eca32fb430c1edaf3fcdce44c59c5ffce",
+      "bytes": 48263
+    },
+    {
+      "path": "oracle/authoring-catalog.mjs",
+      "digest": "sha256:b3ab0527d9f6d4bd616436a174a80695759371e6c82cc935ed571799d53ccf98",
+      "bytes": 33201
+    }
+  ],
+  "overwritePolicy": "new-version-only",
+  "oracleFilePaths": [
+    "oracle/query-gold.json",
+    "oracle/task-gold.json",
+    "oracle/negative-cases.json",
+    "oracle/authoring-catalog.mjs"
+  ]
+}

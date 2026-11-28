@@ -2,10 +2,15 @@ import { createHash } from "node:crypto";
 import {
   createRetrievalPlan,
   runRetrievalPlan,
+  RETRIEVAL_PROFILES,
+  waitForRetrievalOperation,
   type RetrievalHit,
   type RetrievalMode,
   type RetrievalProfile,
   type RetrievalGeneration,
+  type RetrievalPolicyV1,
+  createRetrievalSpend,
+  type RetrievalSpendBudget,
 } from "openclaw/plugin-sdk/knowledge-retrieval";
 import {
   evaluateOwnerReadSnapshot,
@@ -24,6 +29,7 @@ import type { MemoryWikiProjectionService } from "../retrieval-index.js";
 import type { MemoryWikiEmbeddingService } from "../retrieval-embeddings.js";
 import type { MemoryWikiVectorService } from "./vector-service.js";
 import type { MemoryWikiRerankService } from "../retrieval-rerank.js";
+import type { MemoryWikiObservabilityService } from "./observability-service.js";
 
 type WikiCandidate = {
   lookup: string;
@@ -47,13 +53,18 @@ export async function retrieveMemoryWiki(input: {
   deadlineAtMs?: number;
   /** A caller may tighten the owner policy when no remote retrieval tariff is available. */
   allowRemote?: boolean;
+  researchBudget?: RetrievalSpendBudget;
   signal?: AbortSignal;
   projection?: MemoryWikiProjectionService;
   embedding?: MemoryWikiEmbeddingService;
   vector?: MemoryWikiVectorService;
   rerank?: MemoryWikiRerankService;
   requestId?: string;
+  observability?: MemoryWikiObservabilityService;
+  /** A backend evaluation uses bounded candidate parameters without publishing them. */
+  evaluationPolicy?: RetrievalPolicyV1;
 }) {
+  const startedAt = Date.now();
   const context = () =>
     createMemoryWikiReadContext({
       config: input.config,
@@ -95,6 +106,23 @@ export async function retrieveMemoryWiki(input: {
     );
   };
   const initialGenerations = generations();
+  const profile = input.profile ?? input.config.retrieval.profile;
+  const policyDeadline = Math.min(
+    input.deadlineAtMs ?? Infinity,
+    startedAt + RETRIEVAL_PROFILES[profile].deadlineMs,
+  );
+  const policySignal = AbortSignal.any([
+    ...(input.signal ? [input.signal] : []),
+    AbortSignal.timeout(Math.max(1, policyDeadline - Date.now())),
+  ]);
+  const selectedPolicy =
+    input.evaluationPolicy ??
+    (input.observability
+      ? await waitForRetrievalOperation(
+          input.observability.policy(input.identity, profile),
+          policySignal,
+        )
+      : undefined);
   const scopeKey = (value: typeof initialContext) =>
     JSON.stringify([
       value.principalId,
@@ -104,17 +132,33 @@ export async function retrieveMemoryWiki(input: {
       value.workspaceRootDigest,
       value.policyDigest,
     ]);
+  const spend = input.researchBudget
+    ? createRetrievalSpend({
+        budget: input.researchBudget,
+        config: input.appConfig ?? {},
+        workspaceId: input.identity.workspaceId ?? "",
+        sessionKey: input.identity.agentSessionKey ?? "",
+        sessionGeneration: input.identity.sessionId ?? "",
+        assertScope: () => {
+          if (scopeKey(context()) !== scopeKey(initialContext))
+            throw new Error("Research retrieval owner changed");
+        },
+      })
+    : undefined;
   const plan = createRetrievalPlan({
     query: input.query,
-    profile: input.profile ?? input.config.retrieval.profile,
+    profile,
     mode: input.mode,
     explicitRefs: input.explicitRefs,
     namespaceIds: [memoryWikiNamespaceId(input.config)],
-    deadlineAtMs: input.deadlineAtMs,
+    deadlineAtMs: policyDeadline,
+    now: startedAt,
     requestId: input.requestId,
     admissionContextId: initialContext.contextId,
     generations: initialGenerations,
+    policy: selectedPolicy,
   });
+  const spendBefore = await spend?.snapshot();
   const rerankProviderRef =
     !remoteRerankDenied && initialRerankStatus?.mode === "remote"
       ? initialRerankStatus.providerRef
@@ -142,7 +186,7 @@ export async function retrieveMemoryWiki(input: {
   if (input.rerank && !remoteRerankDenied && !plan.explicitRefs.length && plan.budget.rerankK) {
     try {
       rerank = {
-        provider: await input.rerank.provider(input.identity),
+        provider: await input.rerank.provider(input.identity, spend?.call),
         candidates: (hit) => ({ id: hit.id, text: hit.data.snippet }),
       };
     } catch (error) {
@@ -255,6 +299,7 @@ export async function retrieveMemoryWiki(input: {
       const found = await input.vector.search(input.identity, query.text, plan.budget.candidateK, {
         signal,
         deadlineAt: plan.budget.deadlineAtMs,
+        remoteSpend: spend?.call,
       });
       return {
         status: found.status === "available" ? "available" : "unavailable",
@@ -327,8 +372,33 @@ export async function retrieveMemoryWiki(input: {
       .filter((hit) => hit.rankSignals.lanes.some((lane) => lane.lane === "exact"))
       .map((hit) => hit.sourceRef.subjectId),
   );
+  const cumulativeSpend = await spend?.snapshot();
+  if (cumulativeSpend && spendBefore) result.remoteSpend = {
+    calls: cumulativeSpend.calls - spendBefore.calls,
+    reservedTokens: cumulativeSpend.reservedTokens - spendBefore.reservedTokens,
+    reservedCostUsd: cumulativeSpend.reservedCostUsd === null || spendBefore.reservedCostUsd === null ? null : cumulativeSpend.reservedCostUsd - spendBefore.reservedCostUsd,
+    actualTokens: cumulativeSpend.actualTokens === null || spendBefore.actualTokens === null ? null : cumulativeSpend.actualTokens - spendBefore.actualTokens,
+    actualCostUsd: cumulativeSpend.actualCostUsd === null || spendBefore.actualCostUsd === null ? null : cumulativeSpend.actualCostUsd - spendBefore.actualCostUsd,
+  };
+  if (input.observability) {
+    try {
+      const remaining = plan.budget.deadlineAtMs - Date.now();
+      if (remaining <= 0) throw new Error("Retrieval receipt deadline exhausted");
+      result.receiptId = await waitForRetrievalOperation(
+        input.observability.record(input.identity, result, startedAt),
+        AbortSignal.any([
+          ...(input.signal ? [input.signal] : []),
+          AbortSignal.timeout(Math.min(100, remaining)),
+        ]),
+      );
+      result.receiptStatus = "recorded";
+    } catch {
+      result.receiptStatus = "unavailable";
+    }
+  }
   return {
     ...result,
+    ...(cumulativeSpend ? { remoteSpend: cumulativeSpend } : {}),
     results: result.results.map((hit) => {
       const { ownerConfirmed, ...data } = hit.data;
       const eligible =

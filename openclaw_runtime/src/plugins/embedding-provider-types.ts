@@ -16,6 +16,8 @@ export type EmbeddingInput =
 export type EmbeddingProviderCallOptions = {
   signal?: AbortSignal;
   inputType?: "query" | "document" | "semantic" | "classification" | "clustering";
+  /** Response usage, before vector validation; missing usage must stay unknown. */
+  onUsage?: (inputTokens: unknown) => void;
 };
 
 /** Runtime metadata returned with a created embedding provider. */
@@ -32,6 +34,7 @@ export type EmbeddingProvider = {
   model: string;
   dimensions?: number;
   maxInputTokens?: number;
+  requestAccounting?: "single-call-input-tokens";
   embed: (input: EmbeddingInput, options?: EmbeddingProviderCallOptions) => Promise<number[]>;
   embedBatch: (
     inputs: EmbeddingInput[],

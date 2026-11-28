@@ -3,6 +3,7 @@ import { execFileSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import ts from 'typescript';
 
 const PROBE_TIMEOUT_MS = 15000;
@@ -71,17 +72,18 @@ function projection(source, spec, supportingSources) {
   assert(!transpiled.diagnostics?.some(d => d.category === ts.DiagnosticCategory.Error), 'task declaration cannot be transpiled');
   let yamlPath;
   if (spec.builtins?.includes('yaml')) {
-    const require = createRequire(new URL('../../openclaw_runtime/package.json', import.meta.url));
+    const require = createRequire(import.meta.url);
     yamlPath = require.resolve('yaml');
   }
   return { code: transpiled.outputText, builtins: new Set(spec.builtins ?? []), yamlPath };
 }
 
-function probeDriver(selected, spec, cases) {
+function probeDriver(selected, spec, cases, platform) {
   const needsPath = selected.builtins.has('path'), needsCrypto = selected.builtins.has('crypto'), yamlUrl = selected.yamlPath
-    ? new URL(`file:///${selected.yamlPath.replaceAll('\\', '/')}`).href : null;
+    ? pathToFileURL(selected.yamlPath).href : null;
   return `const vm=await import('node:vm');
-const pathModule=(await import('node:path')).default;
+const nativePath=(await import('node:path')).default;
+const pathModule=Object.assign({},${platform === 'win32' ? 'nativePath.win32' : 'nativePath.posix'}, {win32:nativePath.win32,posix:nativePath.posix});
 const {createHash}=await import('node:crypto');
 const permissionFs=process.getBuiltinModule('node:fs');
 const denied=operation=>{try{operation();return false}catch(error){return error?.code==='ERR_ACCESS_DENIED'}};
@@ -154,9 +156,10 @@ console.log(JSON.stringify(outputs));`;
 }
 /** Execute one independent probe process. The fixed case inputs and reference
  * outputs live only in the evaluator directory. */
-export function executeCodeProbe(source, spec, supportingSources, cases) {
+export function executeCodeProbe(source, spec, supportingSources, cases, platform = process.platform) {
+  assert(['win32', 'darwin', 'linux'].includes(platform), 'Unknown pinned code-oracle platform');
   const selected = projection(source, spec, supportingSources);
-  const driver = probeDriver(selected, spec, cases);
+  const driver = probeDriver(selected, spec, cases, platform);
   const permissions = ['--permission', '--disallow-code-generation-from-strings', '--disable-proto=throw'];
   if (selected.yamlPath) permissions.push(`--allow-fs-read=${dirname(selected.yamlPath)}`);
   const out = execFileSync(process.execPath, [...permissions, '--input-type=module', '-e', driver], {
@@ -178,7 +181,7 @@ export function gradeCodeProbe(candidateSource, oracle) {
   const expected = codeDeclaration(original, oracle.spec.symbol), actual = codeDeclaration(candidateSource, oracle.spec.symbol);
   assert.equal(candidateSource.slice(0, actual.start), original.slice(0, expected.start), 'out-of-scope code changed before declaration');
   assert.equal(candidateSource.slice(actual.end), original.slice(expected.end), 'out-of-scope code changed after declaration');
-  const results = executeCodeProbe(candidateSource, oracle.spec, oracle.supportingSources, oracle.cases);
+  const results = executeCodeProbe(candidateSource, oracle.spec, oracle.supportingSources, oracle.cases, oracle.platform);
   return { passed: JSON.stringify(results) === JSON.stringify(oracle.expected), caseCount: results.length, results,
     probeMode: oracle.spec.mode === 'scope' || oracle.spec.mode === 'bounded' ? 'pinned-function-with-controlled-owner-io' : 'pinned-runtime-declaration' };
 }

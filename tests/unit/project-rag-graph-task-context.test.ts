@@ -1,5 +1,6 @@
 // @vitest-environment node
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync, existsSync, linkSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -11,7 +12,7 @@ import { buildQueryContext } from '../../openclaw_runtime/src/context-engine/vie
 import { createContextUnderstandTool, createContextImpactTool } from '../../openclaw_runtime/src/agents/tools/context-agent-tools';
 import { readTaskContextHint } from '../../openclaw_runtime/src/knowledge/retrieval/task-context-hint';
 import { TaskSystemStore } from '../../shared/task-system/store';
-import { resolveTaskDomain } from '../../shared/task-system/identity';
+import { canonicalPath, resolveTaskDomain } from '../../shared/task-system/identity';
 import type { TaskContractInput } from '../../shared/task-system/types';
 import { upsertSessionEntry, updateSessionStore } from '../../openclaw_runtime/src/config/sessions/store';
 import { closeSqliteSessionStoreDatabase } from '../../openclaw_runtime/src/config/sessions/store-sqlite';
@@ -298,13 +299,21 @@ describe('Project RAG exact owner-admitted relationships', () => {
 });
 
 describe('Project RAG current task hint', () => {
+  function checkpointFile(name: string) {
+    const file = join(root, name);
+    const bytes = Buffer.from(`checkpoint evidence: ${name}\n`);
+    writeFileSync(file, bytes);
+    return { path: canonicalPath(file), sha256: createHash('sha256').update(bytes).digest('hex') };
+  }
+
   it('reads the current contract and checkpoint refs without rewriting any task table', async () => {
     const owner = bindTask();
-    tasks!.checkpoint(owner, { nextAction: 'Inspect evidence', completed: [], unresolved: [], artifacts: [{ path: 'artifact.txt', sha256: 'b'.repeat(64) }] });
+    const evidence = checkpointFile('artifact.txt');
+    tasks!.checkpoint(owner, { nextAction: 'Inspect evidence', completed: [], unresolved: [], artifacts: [evidence] });
     const before = taskRows(); const result = await hint();
     expect(result).toMatchObject({ schema: 'TaskContextHint/v1', status: 'available', taskNodeId: owner.taskNodeId,
       revision: 1, objective: 'Find related implementation', constraints: contract().constraints,
-      evidenceRefs: [{ path: 'artifact.txt', sha256: 'b'.repeat(64) }] });
+      evidenceRefs: [evidence] });
     expect(result.sourceRef).toMatchObject({ domain: 'task', subjectId: owner.taskNodeId, revision: '1' });
     expect(taskRows()).toEqual(before);
   });
@@ -327,14 +336,15 @@ describe('Project RAG current task hint', () => {
   });
   it('excludes checkpoint refs from a preceding contract revision without rewriting the checkpoint', async () => {
     const owner = bindTask();
-    tasks!.checkpoint(owner, { nextAction: 'Old revision', completed: [], unresolved: [], artifacts: [{ path: 'old.txt', sha256: 'b'.repeat(64) }] });
+    tasks!.checkpoint(owner, { nextAction: 'Old revision', completed: [], unresolved: [], artifacts: [checkpointFile('old.txt')] });
     const checkpoint = tasks!.get(owner.taskNodeId).checkpoint;
     tasks!.revise(owner.taskNodeId, 1, contract('New revision'));
     const next = tasks!.claim(owner.taskNodeId, 'session-a', 'generation-a', 'claim-v2').claim!;
     expect(await hint()).toMatchObject({ status: 'available', revision: 2, reason: 'checkpoint_revision_mismatch', evidenceRefs: [] });
     expect(tasks!.get(owner.taskNodeId).checkpoint).toEqual(checkpoint);
-    tasks!.checkpoint(next, { nextAction: 'Current revision', completed: [], unresolved: [], artifacts: [{ path: 'new.txt', sha256: 'c'.repeat(64) }] });
-    expect((await hint()).evidenceRefs).toEqual([{ path: 'new.txt', sha256: 'c'.repeat(64) }]);
+    const current = checkpointFile('new.txt');
+    tasks!.checkpoint(next, { nextAction: 'Current revision', completed: [], unresolved: [], artifacts: [current] });
+    expect((await hint()).evidenceRefs).toEqual([current]);
   });
   it('checks external identity after the second snapshot and fences a last-moment revision', async () => {
     const owner = bindTask(); let checks = 0;

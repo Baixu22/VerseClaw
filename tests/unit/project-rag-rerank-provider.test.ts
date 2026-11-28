@@ -15,6 +15,47 @@ const hit = (id: string): RetrievalHit<string> => ({ id, sourceRef: ref(id), raw
 const providerStub = () => ({ schema: 'RerankProvider/v1' as const, providerRef: 'fixture', model: 'Qwen/Qwen3-Reranker-0.6B' });
 
 describe('Project RAG RerankProvider/v1', () => {
+  it('reads SiliconFlow nested token usage for every completed batch', async () => {
+    const stored = JSON.parse(await readFile(resolve('harness/specs/fixtures/project-rag/rag-a1-adaptation-20261125/siliconflow-rerank-response.json'), 'utf8'));
+    const size = stored.results.length;
+    const provider = createEndpointRerankProvider({ providerRef: 'siliconflow', model: 'Qwen/Qwen3-Reranker-0.6B', endpoint: 'https://api.siliconflow.cn/v1/rerank',
+      request: async body => { expect(body.documents).toHaveLength(size); return stored; },
+    });
+    const result = await provider.rerank('query', Array.from({ length: size * 2 }, (_, index) => ({ id: String(index), text: 'stored candidate' })), {
+      signal: new AbortController().signal, deadlineAtMs: Date.now() + 1000, batchSize: size, batchChars: 1000,
+    });
+    expect(result).toMatchObject({ status: 'complete', batchCount: 2, inputTokens: 5436 });
+  });
+
+  it.each([undefined, -1, 1.5, Number.MAX_SAFE_INTEGER + 1])('keeps the batch total unknown when one batch reports %s tokens', async tokens => {
+    let calls = 0;
+    const provider = createEndpointRerankProvider({ providerRef: 'fixture', model: 'rerank', endpoint: 'http://localhost/rerank',
+      request: async () => ({ results: [{ index: 0, relevance_score: 1 }], tokens: { input_tokens: ++calls === 1 ? 12 : tokens } }),
+    });
+    const result = await provider.rerank('query', [{ id: 'a', text: 'alpha' }, { id: 'b', text: 'beta' }], {
+      signal: new AbortController().signal, deadlineAtMs: Date.now() + 1000, batchSize: 1, batchChars: 100,
+    });
+    expect(result.status).toBe('complete'); expect(result.inputTokens).toBeUndefined();
+  });
+
+  it('retains the legacy token shape including a measured zero', async () => {
+    const provider = createEndpointRerankProvider({ providerRef: 'fixture', model: 'rerank', endpoint: 'http://localhost/rerank',
+      request: async () => ({ results: [{ index: 0, relevance_score: 1 }], tokens: { input_tokens: 0 } }),
+    });
+    expect((await provider.rerank('query', [{ id: 'a', text: 'alpha' }], {
+      signal: new AbortController().signal, deadlineAtMs: Date.now() + 1000, batchSize: 1, batchChars: 100,
+    })).inputTokens).toBe(0);
+  });
+
+  it('keeps an unsafe batch sum unknown', async () => {
+    const provider = createEndpointRerankProvider({ providerRef: 'fixture', model: 'rerank', endpoint: 'http://localhost/rerank',
+      request: async () => ({ results: [{ index: 0, relevance_score: 1 }], tokens: { input_tokens: Number.MAX_SAFE_INTEGER } }),
+    });
+    expect((await provider.rerank('query', [{ id: 'a', text: 'alpha' }, { id: 'b', text: 'beta' }], {
+      signal: new AbortController().signal, deadlineAtMs: Date.now() + 1000, batchSize: 1, batchChars: 100,
+    })).inputTokens).toBeUndefined();
+  });
+
   it('persists and restores a local endpoint within the same owner scope', async () => {
     const values = new Map<string, unknown>();
     const openKeyedStore = () => ({ lookup: async (key: string) => values.get(key), register: async (key: string, value: unknown) => { values.set(key, value); }, delete: async (key: string) => { values.delete(key); } });
@@ -33,6 +74,30 @@ describe('Project RAG RerankProvider/v1', () => {
     await service.retry(identity);
     expect(service.status(identity).status).toBe('ready');
     expect((await service.provider(identity)).schema).toBe('RerankProvider/v1');
+  });
+  it.each(['cancel', 'disable', 'replace'] as const)('stops an already acquired provider after %s', async change => {
+    const values = new Map<string, unknown>(), requests: string[] = [];
+    const server = createServer((request, response) => {
+      requests.push(request.url ?? ''); response.setHeader('Content-Type', 'application/json');
+      response.end(JSON.stringify({ results: [{ index: 0, relevance_score: 1 }] }));
+    });
+    await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
+    const address = server.address() as { port: number };
+    const service = createMemoryWikiRerankService({ config: resolveMemoryWikiConfig({ vault: { path: 'D:/tmp/rag-review-owner' } }),
+      openKeyedStore: (() => ({ lookup: async (key: string) => values.get(key), register: async (key: string, value: unknown) => values.set(key, value),
+        delete: async (key: string) => values.delete(key) })) as never });
+    const identity = { workspaceId: 'w', workspaceDir: 'D:/tmp', agentSessionKey: 's', sessionId: 'i', egressProviderRefs: [] };
+    try {
+      const selection = { mode: 'local' as const, endpoint: `http://127.0.0.1:${address.port}` };
+      await service.configure(selection, identity);
+      const old = await service.provider(identity);
+      if (change === 'replace') await service.configure(selection, identity);
+      else await service[change](identity);
+      await expect(old.rerank('query', [{ id: 'one', text: 'secret owner text' }], {
+        signal: new AbortController().signal, deadlineAtMs: Date.now() + 1000, batchSize: 1, batchChars: 100,
+      })).rejects.toThrow(/Rerank/);
+      expect(requests).toEqual([]);
+    } finally { await service.close(); await new Promise<void>(resolve => server.close(() => resolve())); }
   });
   it('validates complete finite-score permutations and batches with a shared deadline', async () => {
     const requests: string[][] = [];
@@ -90,8 +155,19 @@ describe('Project RAG RerankProvider/v1', () => {
       const result = await runRetrievalPlan({ plan: createRetrievalPlan({ query: 'gateway', namespaceIds: ['fixture'], profile: 'quality' }),
         retrieve: async () => ({ status: 'available', hits: [hit('a'), hit('b')] }), verify: async () => { verifies += 1; return failure === 'owner-revoked' && verifies === 3 ? 'revoked' : undefined; },
         rerank: { provider: { ...providerStub(), rerank: async () => { if (failure === 'provider-error') throw new Error('unavailable'); return { schema: 'RerankResult/v1', status: 'complete', providerRef: 'fixture', model: 'Qwen/Qwen3-Reranker-0.6B', scoreKind: 'raw-relevance', calibrated: false, candidateCount: 2, batchCount: 1, elapsedMs: 1, results: failure === 'bad-result' ? [{ id: 'b', score: 2 }] : [{ id: 'b', score: 2 }, { id: 'a', score: 1 }] }; } }, candidates: row => ({ id: row.id, text: row.data }) } });
-      expect(result.results.map(row => row.id)).toEqual(['a', 'b']); expect(result.status).toBe('partial'); expect(result.fallbackReasons.some(reason => reason.startsWith('rerank-failed:'))).toBe(true);
+      expect(result.results.map(row => row.id)).toEqual(failure === 'owner-revoked' ? ['a'] : ['a', 'b']);
+      expect(result.status).toBe('partial'); expect(result.fallbackReasons.some(reason => reason.startsWith('rerank-failed:'))).toBe(true);
     }
+  });
+  it('removes sources revoked during a failed provider call before lexical fallback', async () => {
+    let revoked = false;
+    const result = await runRetrievalPlan({ plan: createRetrievalPlan({ query: 'gateway', namespaceIds: ['fixture'], profile: 'quality' }),
+      retrieve: async () => ({ status: 'available', hits: [hit('a'), hit('b')] }),
+      verify: async row => revoked && row.id === 'a' ? 'revoked' : undefined,
+      rerank: { provider: { ...providerStub(), rerank: async () => { revoked = true; throw new Error('provider disconnected'); } },
+        candidates: row => ({ id: row.id, text: row.data }) } });
+    expect(result.results.map(row => row.id)).toEqual(['b']);
+    expect(result.filters).toContainEqual({ namespaceId: 'fixture', subjectId: 'a', reason: 'revoked' });
   });
 
   it('runs the multilingual fixed-pool ablation with explicit fixture or live provenance', { timeout: 120000 }, async () => {
