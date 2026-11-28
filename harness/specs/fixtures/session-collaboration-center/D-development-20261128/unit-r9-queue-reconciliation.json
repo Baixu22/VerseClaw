@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "jobId": "session-collaboration-d-closeout-20261128-unit-r9",
+  "actor": "codex/session-collaboration-d-mainline",
+  "driven_by": "agent",
+  "leaseToken": "d6d4105000fa4d109f1b66fd5af27302",
+  "commandDigest": "26d5e094acfa326999863b26cdfff4b467301dd2046f471a5f5d0b695b7bbf27",
+  "commandStarted": true,
+  "status": "failed",
+  "exitCode": null,
+  "treeExited": true,
+  "root": {
+    "pid": 34372,
+    "createdAt": 1795860089.1193604
+  },
+  "startedAt": 1795860089.1229715,
+  "endedAt": null,
+  "reconciledAt": 1795860639.729681,
+  "sourceUnchanged": true,
+  "bindingErrors": [],
+  "peaks": {
+    "rssMiB": 795.258,
+    "commitMiB": 860.023,
+    "processCount": 9,
+    "cpuPercent": 478.45,
+    "cpuSecondsObserved": 58.797,
+    "readBytesObserved": 556621653,
+    "writeBytesObserved": 539248629
+  },
+  "error": "Supervisor and root exited without final receipt; partial report retained, exit unknown.",
+  "reconciliation": {
+    "basis": "agent-resource-queue-authority actual-artifact reconciliation",
+    "observer": "codex/session-collaboration-d-mainline",
+    "liveProcesses": [],
+    "supervisorAlive": false,
+    "testReportSha256": "6cebd7f981e5401e436a5b9a4941d07328988cdc67a801c84a424e63a2b4bc6d",
+    "completedSteps": 11,
+    "rootExitCode": null
+  },
+  "logs": {
+    "stdout.log": {
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\session-collaboration-d-closeout-20261128-unit-r9\\stdout.log",
+      "sha256": "e302c4eb4126bdbd4a7405f4657233e702c6804ed5c905916b97c8a6a93bb90f"
+    },
+    "stderr.log": {
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\session-collaboration-d-closeout-20261128-unit-r9\\stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

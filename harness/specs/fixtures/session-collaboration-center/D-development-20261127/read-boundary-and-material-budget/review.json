@@ -1,0 +1,6 @@
+{
+  "findings": [],
+  "overall_confidence": 0.94,
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "未发现可行动缺陷。冲突查询以 SQL LIMIT 读取最多 61 条，只处理前 60 条；预算内有效冲突经过可见性、有效期、任务修订和撤销/替代过滤后最多返回 8 条。扫描超过 60 条且未确认有效冲突时返回 unknown。资源读取在收集后重新核对 requester 与 target 的可见性和身份，并再次检查目标工作区。材料读取仍按 workspace/project 校验；restricted 材料还要求 session key 和 generation 匹配。三语文档及两个 Harness task spec 与这些行为一致。"
+}

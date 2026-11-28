@@ -227,6 +227,7 @@ export async function createPtyAdapter(params: {
 
   return {
     pid: pty.pid || undefined,
+    isRootActive: () => waitResult === null,
     stdin,
     onStdout,
     onStderr,

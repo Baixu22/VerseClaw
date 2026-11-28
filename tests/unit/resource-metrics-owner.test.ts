@@ -4,26 +4,27 @@ import { getResourceEnvelopeLedger, resetResourceEnvelopeLedgerForTest } from '.
 import { createGatewayEventLoopHealthMonitor } from '../../openclaw_runtime/src/gateway/server/event-loop-health';
 import { getBackgroundWorkGate } from '../../openclaw_runtime/src/resources/background-work-gate';
 
-const mocks = vi.hoisted(() => ({ snapshot: vi.fn(), publish: vi.fn(), refresh: null as null | (() => Promise<void>) }));
+const mocks = vi.hoisted(() => ({ snapshot: vi.fn(), publish: vi.fn(), warn: vi.fn(), refresh: null as null | (() => Promise<void>) }));
 vi.mock('electron', async () => {
   const { EventEmitter } = await import('node:events');
   const win = Object.assign(new EventEmitter(), { isDestroyed: () => false, isVisible: () => true, isMinimized: () => false });
   return { app: new EventEmitter(), powerMonitor: Object.assign(new EventEmitter(), { isOnBatteryPower: () => false }), BrowserWindow: { getAllWindows: () => [win] } };
 });
-vi.mock('../../electron/utils/logger', () => ({ logger: { info() {}, warn() {} } }));
+vi.mock('../../electron/utils/logger', () => ({ logger: { info() {}, warn: mocks.warn } }));
 vi.mock('../../electron/services/resource-envelope', () => ({ getAggregatedResourceEnvelopeSnapshot: mocks.snapshot }));
 vi.mock('../../openclaw_runtime/src/resources/resource-envelope-snapshot-store', () => ({ writeResourceEnvelopeSnapshot: mocks.publish }));
 vi.mock('../../electron/services/efficiency-sampler', () => ({ EfficiencySampler: class {
   start() {} stop() {} getSummary() { return { latest: { cpuPercent: 0 } }; }
 } }));
-vi.mock('../../shared/resources', async importOriginal => ({ ...await importOriginal<typeof import('../../shared/resources')>(), getTimerAligner: () => ({ setShedding() {}, register: (task: { run: () => Promise<void> }) => {
+vi.mock('../../shared/resources', async importOriginal => ({ ...await importOriginal<typeof import('../../shared/resources')>(), getTimerAligner: () => ({ setShedding() {}, register: (task: { id: string; run: () => Promise<void> }) => {
+  if (task.id !== 'efficiency-background-gate') return () => {};
   mocks.refresh = task.run; return () => { mocks.refresh = null; };
 } }) }));
 
 import { resetRuntimeEfficiencyForTests, startRuntimeEfficiency } from '../../electron/services/efficiency-orchestrator';
 
 const flush = async () => { for (let i = 0; i < 12; i++) await Promise.resolve(); };
-beforeEach(() => { vi.useFakeTimers(); vi.setSystemTime(1000); vi.stubEnv('OPENCLAW_RESOURCE_ENVELOPE_WRITE', '0'); mocks.publish.mockClear(); resetResourceEnvelopeLedgerForTest(); });
+beforeEach(() => { vi.useFakeTimers(); vi.setSystemTime(1000); vi.stubEnv('OPENCLAW_RESOURCE_ENVELOPE_WRITE', '0'); mocks.snapshot.mockClear(); mocks.publish.mockClear(); mocks.warn.mockClear(); resetResourceEnvelopeLedgerForTest(); });
 afterEach(() => { resetRuntimeEfficiencyForTests(); resetResourceEnvelopeLedgerForTest(); vi.unstubAllEnvs(); vi.useRealTimers(); });
 
 describe('resource measurement owners', () => {
@@ -37,7 +38,9 @@ describe('resource measurement owners', () => {
     expect(getBackgroundWorkGate().getState().deferring).toBe(true);
     mocks.snapshot.mockResolvedValue({ totals: { queuedCount: 0 }, processTotals: { rssBytes: 100, cpuPercent: 10 } });
     await mocks.refresh!();
-    expect(getBackgroundWorkGate().getState().deferring).toBe(false);
+    expect(mocks.snapshot).toHaveBeenCalledTimes(3);
+    expect(mocks.warn).not.toHaveBeenCalled();
+    expect(getBackgroundWorkGate().getState()).toMatchObject({ deferring: false, activeReasons: [] });
   });
 
   it('projects the existing Gateway event-loop classification with an epoch and clears it on stop', () => {

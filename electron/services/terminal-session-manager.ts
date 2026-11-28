@@ -458,7 +458,8 @@ export class TerminalSessionManager {
     return count;
   }
   /** Read-model inventory for live terminals, derived from this owner only. */
-  listAll(): Array<{ sessionId: string; workspaceId: string; sessionKey: string; expectedSessionId: string | null; pid: number | null; keepOnLeave: boolean }> {
+  listAll(): Array<{ sessionId: string; workspaceId: string; sessionKey: string; expectedSessionId: string | null;
+    pid: number | null; keepOnLeave: boolean; reservedPorts?: number[] }> {
     return Array.from(this.sessions.values())
       .filter((session) => session.status !== 'exited')
       .map((session) => ({
@@ -468,6 +469,7 @@ export class TerminalSessionManager {
         expectedSessionId: session.expectedSessionId,
         pid: this.readProcessId(session),
         keepOnLeave: session.keepOnLeave !== false,
+        reservedPorts: [...session.reservedPorts],
       }));
   }
 

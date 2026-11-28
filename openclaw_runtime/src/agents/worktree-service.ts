@@ -152,7 +152,7 @@ export type WorktreeService = {
     options?: { conflictPolicy?: MergeConflictPolicy; worktreeIds?: readonly string[]; assertParentCurrent?: () => void },
   ): Promise<MergeQueueItem[]>;
   cleanup(id: string, options?: { authorization?: VerseGitCleanupDeletionAuthorization; expectedGeneration?: string }): void;
-  listOwned(owner: Pick<WorktreeLifecycleOwner, "sessionKey" | "agentId" | "expectedSessionId">): WorktreeRecord[];
+  listOwned(owner: Pick<WorktreeLifecycleOwner, "sessionKey" | "agentId" | "expectedSessionId">, readOnly?: boolean): WorktreeRecord[];
   cleanupOwned(owner: Pick<WorktreeLifecycleOwner, "sessionKey" | "agentId" | "expectedSessionId">): WorktreeLifecycleResult;
   getMergeQueue(): MergeQueueItem[];
 };
@@ -1056,8 +1056,8 @@ export function createWorktreeService(
         });
       });
     },
-    listOwned(owner) {
-      const uniqueRecords = new Set(scope(resolved).records.values());
+    listOwned(owner, readOnly) {
+      const uniqueRecords = new Set(scope(resolved, readOnly).records.values());
       return [...uniqueRecords].filter((record) => (
         record.status !== "cleaned"
         && record.owner?.agentId === owner.agentId

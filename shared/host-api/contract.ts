@@ -82,6 +82,8 @@ import type { AutonomySessionScope } from '../types/identity-scope';
 import type { SessionCollaborationTaskContext } from '../types/session-collaboration-context';
 import type { SessionCollaborationHints } from '../types/session-collaboration-hints';
 import type { SessionCollaborationMaterialPage, SessionCollaborationMaterialPresentation, SessionCollaborationMaterialQuery } from '../types/session-collaboration-material';
+import type { SessionCollaborationUsage, SessionCollaborationUsageQuery } from '../types/session-collaboration-usage';
+import type { SessionCollaborationResourceQuery, SessionCollaborationResources } from '../types/session-collaboration-resources';
 import type {
   SessionDelegationPayload,
   SessionDelegationResult,
@@ -5993,6 +5995,8 @@ export type HostApiContract = {
     snapshot: (payload: SessionActivitySnapshotPayload) => SessionActivitySnapshotResult;
     read: (payload: SessionActivityReadQuery) => SessionActivitySnapshotResult;
     query: (payload: SessionCollaborationQuery) => SessionCollaborationQueryResult;
+    modelUsage: (payload: SessionCollaborationUsageQuery) => HostSuccess & { usage: SessionCollaborationUsage };
+    resources: (payload: SessionCollaborationResourceQuery) => HostSuccess & { resources: SessionCollaborationResources };
     watch: (payload: SessionCollaborationWatch) => HostSuccess & { watch: SessionCollaborationWatchResult };
     cancelWatch: (payload: { id: string; query: SessionCollaborationQuery }) => HostSuccess & { cancelled: boolean };
   };

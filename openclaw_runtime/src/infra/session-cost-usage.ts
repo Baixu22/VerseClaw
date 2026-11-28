@@ -2,8 +2,15 @@
 import fs from "node:fs";
 import path from "node:path";
 import readline from "node:readline";
+import { isHiddenUsageSource, readObservedModelTokens } from "../../../shared/types/usage.js";
+import { summarizeCollaborationUsage, type CollaborationUsageObservation } from "../../../shared/types/session-collaboration-usage.js";
 import { asFiniteNumber } from "@openclaw/normalization-core/number-coercion";
 import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
+import {
+  MODEL_CALL_CORRELATION_ENTRY_TYPE,
+  modelCallObservationKey,
+  type ModelCallObservation,
+} from "../agents/model-call-observations.js";
 import type { NormalizedUsage, UsageLike } from "../agents/usage.js";
 import { normalizeUsage } from "../agents/usage.js";
 import { stripInboundMetadata } from "../auto-reply/reply/strip-inbound-meta.js";
@@ -1090,6 +1097,7 @@ async function* readJsonlRecords(
   filePath: string,
   startOffset = 0,
   endOffset?: number,
+  onMalformed?: () => void,
 ): AsyncGenerator<Record<string, unknown>> {
   if (endOffset !== undefined && endOffset <= startOffset) {
     return;
@@ -1111,18 +1119,98 @@ async function* readJsonlRecords(
       }
       try {
         const parsed = JSON.parse(trimmed) as unknown;
-        if (!parsed || typeof parsed !== "object") {
+        if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+          onMalformed?.();
           continue;
         }
         yield parsed as Record<string, unknown>;
       } catch {
-        // Ignore malformed lines
+        onMalformed?.();
       }
     }
   } finally {
     rl.close();
     fileStream.destroy();
   }
+}
+
+/** Accounts for native assistant usage owned by one physical transcript generation. */
+export async function readCollaborationTranscriptUsage(input: {
+  filePath: string; sessionGeneration: string; forkedFromLeafId?: string;
+}) {
+  const before = await fs.promises.stat(input.filePath);
+  if (!before.isFile()) throw new Error('COLLABORATION_TRANSCRIPT_UNAVAILABLE');
+  const records = new Map<string, CollaborationUsageObservation>();
+  const unmappedCalls = new Set<string>();
+  let headerRead = false, inheritedHistory = false, atForkBoundary = false, unresolved = 0;
+  for await (const row of readJsonlRecords(input.filePath, 0, before.size, () => { unresolved++; })) {
+    if (!headerRead) {
+      if (row.type !== 'session' || row.id !== input.sessionGeneration || unresolved)
+        throw new Error('COLLABORATION_TRANSCRIPT_STALE');
+      headerRead = true;
+      inheritedHistory = typeof row.parentSession === 'string' && Boolean(row.parentSession);
+      continue;
+    }
+    if (inheritedHistory && input.forkedFromLeafId && !atForkBoundary) {
+      atForkBoundary = row.id === input.forkedFromLeafId;
+      // Fork labels can receive new IDs. Explicit current-generation call provenance still identifies child work.
+      const ownCall = row.modelCall as ModelCallObservation | undefined;
+      const ownCorrelation = row.type === 'custom' && row.customType === MODEL_CALL_CORRELATION_ENTRY_TYPE
+        ? row.data as ModelCallObservation | undefined : undefined;
+      if (atForkBoundary || (ownCall?.sessionKey !== input.sessionGeneration && ownCorrelation?.sessionKey !== input.sessionGeneration)) continue;
+    }
+    const message = row.type === 'message' ? row.message as Record<string, unknown> | undefined : undefined;
+    const assistant = message?.role === 'assistant' ? message : undefined;
+    const correlationData = row.type === 'custom' && row.customType === MODEL_CALL_CORRELATION_ENTRY_TYPE
+      ? row.data as (ModelCallObservation & { producedEntryId?: unknown }) | undefined : undefined;
+    const correlation = correlationData?.producedEntryId === null ? correlationData : undefined;
+    if (!assistant && !correlation) continue;
+    const provider = assistant ? assistant.provider : correlation?.providerId;
+    const model = assistant ? assistant.model : correlation?.modelId;
+    if ((typeof provider === 'string' && isHiddenUsageSource(provider)) ||
+        (typeof model === 'string' && isHiddenUsageSource(model))) continue;
+    const call = correlation ?? (row.modelCall as ModelCallObservation | undefined);
+    // The stream writes the physical session ID in this field. Gateway checks the logical key before selecting the transcript.
+    const generation = call?.sessionKey;
+    if (typeof generation === 'string' && generation !== input.sessionGeneration) continue;
+    if (generation !== input.sessionGeneration && (correlation || (inheritedHistory && !input.forkedFromLeafId))) {
+      unresolved++;
+      continue;
+    }
+    const callId = call && typeof call.runId === 'string' && call.runId &&
+      [call.attemptIndex, call.modelCallIndex, call.wireAttemptIndex ?? 0]
+        .every(index => typeof index === 'number' && Number.isSafeInteger(index) && index >= 0)
+      ? `call:${modelCallObservationKey(call)}` : null;
+    const key = callId ?? (typeof row.id === 'string' && row.id ? `entry:${row.id}` : null);
+    if (!key) { unresolved++; continue; }
+    if (!assistant) {
+      unmappedCalls.add(key);
+      continue;
+    }
+    const usage = assistant.usage as Record<string, unknown> | undefined;
+    const stopReason = String(assistant.stopReason);
+    const reported = typeof provider === 'string' && provider && typeof model === 'string' && model &&
+      ['stop', 'toolUse', 'length', 'error', 'aborted'].includes(stopReason) && usage && typeof usage === 'object'
+      ? readObservedModelTokens({ ...usage, total: usage.totalTokens ?? usage.total }) : null;
+    // Adapters initialize missing usage frames with zeros, including successful responses.
+    const tokens = reported && reported.total > 0 ? reported : null;
+    const price = (usage?.cost as Record<string, unknown> | undefined)?.total;
+    const costUsd = tokens && typeof price === 'number' && Number.isFinite(price) && price > 0 ? price : null;
+    const observation = { state: tokens ? 'known' as const : 'unknown' as const, tokens, costUsd, priceVersion: null };
+    const prior = records.get(key);
+    if (!prior) records.set(key, observation);
+    else if (JSON.stringify(prior) !== JSON.stringify(observation))
+      records.set(key, { state: 'conflict', tokens: null, costUsd: null, priceVersion: null });
+  }
+  if (!headerRead) throw new Error('COLLABORATION_TRANSCRIPT_UNAVAILABLE');
+  const after = await fs.promises.stat(input.filePath);
+  if (after.dev !== before.dev || after.ino !== before.ino || after.size < before.size ||
+      (after.size === before.size && after.mtimeMs !== before.mtimeMs)) throw new Error('COLLABORATION_TRANSCRIPT_STALE');
+  // A persisted assistant entry is the usage source when both forms carry the same call identity.
+  for (const key of unmappedCalls) {
+    if (!records.has(key)) records.set(key, { state: 'unknown', tokens: null, costUsd: null, priceVersion: null });
+  }
+  return summarizeCollaborationUsage([...records.values()], 0, unresolved + Number(inheritedHistory && Boolean(input.forkedFromLeafId) && !atForkBoundary));
 }
 
 async function scanTranscriptFile(params: {

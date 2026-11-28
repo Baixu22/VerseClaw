@@ -19,6 +19,7 @@ import { readRuntimeSessionResourceInventory } from '../../openclaw_runtime/src/
 import * as runtimeConfig from '../../openclaw_runtime/src/config/config';
 import { resetResourceEnvelopeLedgerForTest } from '../../openclaw_runtime/src/resources/resource-envelope';
 import { loadSessionStore, updateSessionStore } from '../../openclaw_runtime/src/config/sessions/store';
+import * as sessionStoreOwner from '../../openclaw_runtime/src/config/sessions/store';
 import { normalizeSessionEntrySlotKey } from '../../openclaw_runtime/src/plugins/session-entry-slot-keys';
 
 const scope = (project = 'project-a', session = 'session-a'): ProviderSpendScope => {
@@ -98,6 +99,16 @@ describe('provider owner layered spend reservation', () => {
     expect(() => reserve('project-two', { config, scope: scope('project-b', 'session-a') })).toThrow(/tokens \(session\)/);
   });
 
+  it('keeps foreign workspace allocations out of the scoped collaboration session budget', () => {
+    const config = { host: { maxTokens: 1000 } };
+    reserve('local-scope', { config });
+    reserve('foreign-scope', { config, scope: scope('project-b', 'session-a') });
+    const options = { readOnly: true };
+    const result = providerSpendSnapshot(scope(), options);
+    expect(result.map(row => [row.scope, row.heldTokens])).toEqual([['host', 120], ['project', 60]]);
+    expect(providerSpendSnapshot(scope()).find(row => row.scope === 'session')?.heldTokens).toBe(120);
+  });
+
   it('rebuilds the runtime provider projection after caches and DB handles are cleared', async () => {
     const sessionStorePath = path.join(root, 'sessions.json');
     await updateSessionStore(sessionStorePath, store => { store['session-a'] = { sessionId: 'generation-one', updatedAt: Date.now(), workspaceId: 'project-a' }; }, { skipMaintenance: true });
@@ -115,6 +126,21 @@ describe('provider owner layered spend reservation', () => {
     const mismatch = await readRuntimeSessionResourceInventory({ agentId: 'main', sessionKey: 'session-a', expectedSessionId: 'generation-one', workspaceId: 'project-b', rootPath: root });
     expect(provider(mismatch)).toMatchObject({ state: 'unknown', count: null });
     expect(() => reserve('still-held')).toThrow(/tokens/);
+  });
+
+  it('reads scoped provider metadata without entering the writable session store', async () => {
+    const storePath = path.join(root, 'sessions.json');
+    await updateSessionStore(storePath, store => { store['session-a'] = {
+      sessionId: 'generation-one', updatedAt: Date.now(), workspaceId: 'project-a',
+    }; }, { skipMaintenance: true });
+    vi.spyOn(runtimeConfig, 'getRuntimeConfig').mockReturnValue({ session: { store: storePath }, runtime: { providerBudget: { host: { maxTokens: 100 } } } });
+    reserve('readonly-projection');
+    const writer = vi.spyOn(sessionStoreOwner, 'getSessionEntry').mockImplementation(() => { throw new Error('Writable metadata entry'); });
+    const inventory = await readRuntimeSessionResourceInventory({ agentId: 'main', sessionKey: 'session-a',
+      expectedSessionId: 'generation-one', workspaceId: 'project-a', rootPath: root, scopedRead: true });
+    expect(writer).not.toHaveBeenCalled();
+    expect(inventory.owners.find(owner => owner.kind === 'provider')).toMatchObject({ state: 'known',
+      spend: expect.arrayContaining([expect.objectContaining({ scope: 'host', heldTokens: 60 })]) });
   });
 
   it('unknown usage survives SQLite reopen and cannot be freed by TTL or forged owner', () => {

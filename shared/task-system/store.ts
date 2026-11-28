@@ -154,7 +154,7 @@ export class TaskSystemStore {
     readonly domain: TaskDomain,
     readonly now: () => number = Date.now,
     private readonly access?: TaskAuthorityAccess,
-    readOnly = false,
+    private readonly readOnly = false,
   ) {
     if (
       access &&
@@ -247,7 +247,7 @@ export class TaskSystemStore {
     this.db.close();
   }
   private transaction<T>(fn: () => T): T {
-    return this.transactionDepth === 0 && this.access?.withWriteBarrier
+    return !this.readOnly && this.transactionDepth === 0 && this.access?.withWriteBarrier
       ? this.access.withWriteBarrier(() => this.transactionBody(fn))
       : this.transactionBody(fn);
   }
@@ -256,7 +256,7 @@ export class TaskSystemStore {
     const depth = this.transactionDepth++;
     const name = `task_nested_${depth}`;
     try {
-      this.db.exec(depth === 0 ? "BEGIN IMMEDIATE" : `SAVEPOINT ${name}`);
+      this.db.exec(depth === 0 ? (this.readOnly ? "BEGIN" : "BEGIN IMMEDIATE") : `SAVEPOINT ${name}`);
       this.assertAuthorityCurrent();
       const result = fn();
       this.db.exec(depth === 0 ? "COMMIT" : `RELEASE SAVEPOINT ${name}`);
@@ -2179,12 +2179,15 @@ export class TaskSystemStore {
         d.parent.generation === generation && d.contractRevision === view.contract.revision);
     return delegation ? { credential: credentialIdentity(delegation.parent), role: 'coordinator' } : null;
   }
-  beginModelCall(credential: TaskCredential, identity: Pick<TaskModelCall, 'callId' | 'runId' | 'provider' | 'model' | 'category'>): TaskModelCall {
+  beginModelCall(credential: TaskCredential, identity: Pick<TaskModelCall, 'callId' | 'runId' | 'provider' | 'model' | 'category' | 'attemptIndex'>): TaskModelCall {
     return this.transaction(() => {
       for (const key of ['callId', 'runId', 'provider', 'model'] as const) text(identity[key], `MODEL_${key}`, 512);
+      if (identity.attemptIndex !== undefined && (!Number.isSafeInteger(identity.attemptIndex) || identity.attemptIndex < 0))
+        throw new Error('TASK_MODEL_ATTEMPT_INVALID');
       const existing = this.read<TaskModelCall>('SELECT result AS json FROM task_requests WHERE id=?', `model-call:${identity.callId}`);
       if (existing) {
-        if (!sameModelIdentity(existing, credential, identity) || (existing.category ?? 'task') !== (identity.category ?? 'task')) throw new Error('TASK_MODEL_CALL_IDENTITY_CONFLICT');
+        if (!sameModelIdentity(existing, credential, identity) || (existing.category ?? 'task') !== (identity.category ?? 'task') ||
+            existing.attemptIndex !== identity.attemptIndex) throw new Error('TASK_MODEL_CALL_IDENTITY_CONFLICT');
         return existing;
       }
       const scope = this.modelCallScope(credential.sessionKey, credential.generation, identity.runId);

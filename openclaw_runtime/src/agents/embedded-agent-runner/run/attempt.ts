@@ -3473,7 +3473,8 @@ export async function runEmbeddedAttempt(
             }, taskUsageCallKey(callId), toolSearchTargetTranscriptProjections),
           } : {}),
           onUsageStarted: ({ callId }) => {
-            try { taskModelUsage.start(taskUsageCallKey(callId), params.provider, params.modelId, params.inputProvenance?.collaboration ? 'coordination' : undefined); }
+            try { taskModelUsage.start(taskUsageCallKey(callId), params.provider, params.modelId,
+              params.inputProvenance?.collaboration ? 'coordination' : undefined, params.attemptIndex ?? 0); }
             catch (error) { log.warn(`task model usage start unavailable: ${String(error)}`); }
           },
           onUsage: ({ callId, endedAt, snapshot }) => {

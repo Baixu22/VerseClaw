@@ -3,6 +3,7 @@ import { closeSync, existsSync, fstatSync, openSync, readSync, statSync } from "
 import { isAbsolute, relative, resolve, sep } from "node:path";
 import type { AutonomySessionScope, ScopedRunId } from "../types/identity-scope.js";
 import type { SessionCollaborationMaterialRef } from "../types/session-collaboration-material.js";
+import { readObservedModelTokens, type ObservedModelTokens } from "../types/usage.js";
 import type { CheckoutWriterBasis } from "../checkout-ownership.js";
 import { canonicalPath, type TaskAuthorityBasis } from "./identity.js";
 import type { TaskSystemStore } from "./store.js";
@@ -51,6 +52,7 @@ export type TaskTraceQuery = {
 };
 export type TaskModelCall = {
   category?: 'task' | 'coordination';
+  attemptIndex?: number;
   callId: string;
   runId: string;
   provider: string;
@@ -64,17 +66,17 @@ export type TaskModelCall = {
 };
 export type TaskModelUsage = {
   terminal: "done" | "error" | "aborted" | "incomplete" | "conflicting";
-  usage: {
-    input: number;
-    output: number;
-    cacheRead: number;
-    cacheWrite: number;
-    total: number;
-  } | null;
+  usage: ObservedModelTokens | null;
   costUsd: number | null;
   priceVersion: string | null;
   toolCallIdHashes: string[];
   endedAt: number;
+};
+export type TaskTraceCostRecord = {
+  call: TaskModelCall;
+  usage: TaskModelUsage | null;
+  run: ScopedRunId | null;
+  state: 'known' | 'unknown' | 'conflict';
 };
 export type TaskTraceSnapshot = {
   task: TaskView;
@@ -160,7 +162,8 @@ export type TaskTraceReport = {
     calls: number;
     unknownCalls: number;
     duplicateObservations: number;
-    records: Array<{ call: TaskModelCall; usage: TaskModelUsage | null; run: ScopedRunId | null }>;
+    orphanObservations?: number;
+    records: TaskTraceCostRecord[];
   };
   phases: Record<
     "queue" | "execution" | "verification" | "recovery",
@@ -264,6 +267,108 @@ function readRuns(events: TaskTraceEvent[]): TaskTraceRun[] {
     });
 }
 
+/** The Task Ledger and scoped collaboration view use the same original receipts. */
+export function projectTaskTraceCosts(
+  snapshot: Pick<TaskTraceSnapshot, 'runEvents' | 'usageEvents'>,
+  diagnose: (code: TaskTraceDiagnostic['code'], ref: string) => void = () => {},
+): TaskTraceReport['costs'] & { orphanObservations: number } {
+  const familyRuns = readRuns(snapshot.runEvents);
+  const calls = new Map<string, TaskModelCall>();
+  const usage = new Map<string, TaskModelUsage>();
+  const conflicts = new Set<string>();
+  let duplicates = 0;
+  for (const event of snapshot.usageEvents) {
+    if (event.kind === 'model_call_started') {
+      const call = event.payload as TaskModelCall;
+      if (!call?.callId || !call.credential || !call.runId) continue;
+      const old = calls.get(call.callId);
+      if (old && !same(old, call)) conflicts.add(call.callId);
+      else if (old) duplicates++;
+      else calls.set(call.callId, call);
+    } else if (event.kind === 'model_usage') {
+      const record = event.payload as { callId?: string; usage?: TaskModelUsage; source?: string };
+      if (!record?.callId || !record.usage || record.source !== 'runtime-model-call-observer') continue;
+      const old = usage.get(record.callId);
+      if (record.usage.terminal === 'conflicting' || (old && !same(old, record.usage))) conflicts.add(record.callId);
+      else if (old) duplicates++;
+      else usage.set(record.callId, record.usage);
+    } else if (event.kind === 'model_usage_conflict') {
+      const id = object(event.payload).callId;
+      if (typeof id === 'string') conflicts.add(id);
+    }
+  }
+  const orphan = [...new Set([...usage.keys(), ...conflicts])].filter(callId => !calls.has(callId));
+  orphan.forEach(callId => diagnose('cost_conflict', callId));
+  let knownSubtotalUsd = 0, knownTokens = 0, unknownCalls = 0, unknownTokens = false;
+  const records = [...calls.values()].map((call): TaskTraceCostRecord => {
+    // Calls started before checkout admission can resolve against the original run receipt.
+    const originalRun = familyRuns.find(run =>
+      run.runId === call.runId && run.taskRevision === call.taskRevision && same(run.credential, call.credential));
+    const resolvedRun = call.provenance?.run ?? originalRun?.provenance?.run;
+    const run = resolvedRun?.runId === call.runId && resolvedRun.scope.sessionKey === call.credential.sessionKey ? resolvedRun : null;
+    if (!run) diagnose('source_identity_unknown', call.callId);
+    const conflict = conflicts.has(call.callId);
+    if (conflict) diagnose('cost_conflict', call.callId);
+    const settlement = conflict ? undefined : usage.get(call.callId);
+    const tokens = settlement && ['done', 'error', 'aborted'].includes(settlement.terminal) &&
+      Number.isFinite(settlement.endedAt) && settlement.endedAt >= call.startedAt
+      ? readObservedModelTokens(settlement.usage) : null;
+    const priceVersion = typeof settlement?.priceVersion === 'string' && settlement.priceVersion.trim() ? settlement.priceVersion : null;
+    const costUsd = tokens && priceVersion && typeof settlement?.costUsd === 'number' &&
+      Number.isFinite(settlement.costUsd) && settlement.costUsd >= 0 ? settlement.costUsd : null;
+    if (costUsd === null) {
+      unknownCalls++;
+      diagnose('cost_unknown', call.callId);
+    } else knownSubtotalUsd += costUsd;
+    if (tokens) knownTokens += tokens.total;
+    else unknownTokens = true;
+    return { call, run, usage: settlement ? { ...settlement, usage: tokens, costUsd, priceVersion } : null,
+      state: conflict ? 'conflict' : tokens ? 'known' : 'unknown' };
+  });
+  const completeCost = records.length > 0 && unknownCalls === 0 && orphan.length === 0;
+  return {
+    scope: 'task-subtree', state: completeCost ? 'estimated' : 'unknown', totalUsd: completeCost ? knownSubtotalUsd : null,
+    knownSubtotalUsd, totalTokens: records.length > 0 && !unknownTokens && orphan.length === 0 ? knownTokens : null,
+    knownTokens, calls: records.length, unknownCalls, duplicateObservations: duplicates, orphanObservations: orphan.length, records,
+  };
+}
+
+/** Task Ledger and collaboration use the same phase boundaries from TaskSystem. */
+export function projectTaskTracePhases(events: TaskTraceEvent[], runs = readRuns(events)): TaskTraceReport['phases'] {
+  const phases: TaskTraceReport['phases'] = {
+    queue: { durationMs: null, intervals: [] }, execution: { durationMs: null, intervals: [] },
+    verification: { durationMs: null, intervals: [] }, recovery: { durationMs: null, intervals: [] },
+  };
+  const revisions = events.filter(event => event.kind === 'created' || event.kind === 'revised');
+  const candidates = events.filter(event => event.kind === 'submitted');
+  const queued = new Set<number>();
+  for (const claim of events.filter(event => event.kind === 'claimed')) {
+    const ready = revisions.findLast(event => event.seq < claim.seq);
+    if (ready && !queued.has(ready.seq)) {
+      const contract = ready.payload as TaskContract;
+      phases.queue.intervals.push({ start: contract.updatedAt, end: claim.at, from: 'task-ready', to: 'claimed' });
+      queued.add(ready.seq);
+    }
+  }
+  for (const run of runs) if (run.endedAt !== null) {
+    phases.execution.intervals.push({ start: run.startedAt, end: run.endedAt, from: 'run_started', to: 'run_finished' });
+  }
+  for (const start of candidates) {
+    const end = events.find(event => event.seq > start.seq && ['accepted', 'repair_started'].includes(event.kind));
+    if (end) phases.verification.intervals.push({ start: start.at, end: end.at, from: 'submitted', to: end.kind });
+  }
+  const recovery = events.filter(event => ['recovery_required', 'interrupted_run_replaced'].includes(event.kind));
+  for (const start of recovery) {
+    const end = events.find(event => event.seq > start.seq && ['handoff', 'context_rehydrated'].includes(event.kind));
+    if (end) phases.recovery.intervals.push({ start: start.at, end: end.at, from: start.kind, to: end.kind });
+  }
+  for (const phase of Object.values(phases)) phase.durationMs = unionDuration(phase.intervals);
+  if (runs.some(run => run.endedAt === null)) phases.execution.durationMs = null;
+  if (phases.verification.intervals.length !== candidates.length) phases.verification.durationMs = null;
+  if (phases.recovery.intervals.length !== recovery.length) phases.recovery.durationMs = null;
+  return phases;
+}
+
 /** Query existing owner records and diagnose missing or changed references. */
 export function readTaskTrace(
   store: TaskSystemStore,
@@ -308,7 +413,6 @@ export function readTaskTrace(
     .filter((e) => e.kind === "delegation_prepared")
     .map((e) => e.payload as TaskWriterDelegation);
   const runs = readRuns(events);
-  const familyRuns = readRuns(snapshot.runEvents);
   const operations = events
     .filter((e) => e.kind === "operation_started")
     .map((e) => {
@@ -520,122 +624,10 @@ export function readTaskTrace(
           check.receipt.ownerProof?.effectReceiptId ?? check.receipt.receiptId,
         );
     }
-  const calls = new Map<string, TaskModelCall>();
-  const usage = new Map<string, TaskModelUsage>();
-  const conflicts = new Set<string>();
-  let duplicates = 0;
-  for (const event of snapshot.usageEvents) {
-    if (event.kind === "model_call_started") {
-      const call = event.payload as TaskModelCall,
-        old = calls.get(call.callId);
-      if (old && !same(old, call)) conflicts.add(call.callId);
-      else if (old) duplicates++;
-      else calls.set(call.callId, call);
-    } else if (event.kind === "model_usage") {
-      const record = event.payload as { callId: string; usage: TaskModelUsage },
-        old = usage.get(record.callId);
-      if (old && !same(old, record.usage)) conflicts.add(record.callId);
-      else if (old) duplicates++;
-      else usage.set(record.callId, record.usage);
-    } else if (event.kind === "model_usage_conflict")
-      conflicts.add(String(object(event.payload).callId));
-  }
-  const orphanUsage = [...usage.keys()].filter((callId) => !calls.has(callId));
-  orphanUsage.forEach((callId) => diagnose("cost_conflict", callId));
-  let knownSubtotalUsd = 0,
-    knownTokens = 0,
-    unknownCalls = 0,
-    unknownTokens = false;
-  const records = [...calls.values()].map((call) => {
-    // The first model call can precede checkout admission. Join its original
-    // run receipt while preserving the model-call facts captured at start.
-    const originalRun = familyRuns.find(
-      (run) =>
-        run.runId === call.runId &&
-        run.taskRevision === call.taskRevision &&
-        same(run.credential, call.credential),
-    );
-    const resolvedRun = call.provenance?.run ?? originalRun?.provenance?.run;
-    const run =
-      resolvedRun?.runId === call.runId &&
-      resolvedRun.scope.sessionKey === call.credential.sessionKey
-        ? resolvedRun
-        : null;
-    if (!run) diagnose("source_identity_unknown", call.callId);
-    const value = conflicts.has(call.callId) ? null : (usage.get(call.callId) ?? null);
-    if (conflicts.has(call.callId)) diagnose("cost_conflict", call.callId);
-    if (!value || value.costUsd === null || !value.priceVersion) {
-      unknownCalls++;
-      diagnose("cost_unknown", call.callId);
-    } else knownSubtotalUsd += value.costUsd;
-    if (!value?.usage) unknownTokens = true;
-    else knownTokens += value.usage.total;
-    return { call, usage: value, run };
-  });
-  if (!records.length) diagnose("cost_unknown", task.contract.taskNodeId);
-  const phases: TaskTraceReport["phases"] = {
-    queue: { durationMs: null, intervals: [] },
-    execution: { durationMs: null, intervals: [] },
-    verification: { durationMs: null, intervals: [] },
-    recovery: { durationMs: null, intervals: [] },
-  };
-  const queuedRevisions = new Set<number>();
-  for (const claim of claims.filter(
-    (claim) => events.find((event) => event.seq === claim.sequence)?.kind === "claimed",
-  )) {
-    const ready = revisions.findLast((r) => r.sequence < claim.sequence);
-    if (ready && !queuedRevisions.has(ready.sequence)) {
-      phases.queue.intervals.push({
-        start: ready.contract.updatedAt,
-        end: events.find((e) => e.seq === claim.sequence)!.at,
-        from: "task-ready",
-        to: "claimed",
-      });
-      queuedRevisions.add(ready.sequence);
-    }
-  }
-  for (const run of runs)
-    if (run.endedAt !== null)
-      phases.execution.intervals.push({
-        start: run.startedAt,
-        end: run.endedAt,
-        from: "run_started",
-        to: "run_finished",
-      });
-  for (const candidate of candidates) {
-    const start = events.find((e) => e.seq === candidate.sequence)!;
-    const end = events.find(
-      (e) => e.seq > start.seq && ["accepted", "repair_started"].includes(e.kind),
-    );
-    if (end)
-      phases.verification.intervals.push({
-        start: start.at,
-        end: end.at,
-        from: "submitted",
-        to: end.kind,
-      });
-  }
-  for (const event of events.filter((e) =>
-    ["recovery_required", "interrupted_run_replaced"].includes(e.kind),
-  )) {
-    const end = events.find(
-      (e) => e.seq > event.seq && ["handoff", "context_rehydrated"].includes(e.kind),
-    );
-    if (end)
-      phases.recovery.intervals.push({
-        start: event.at,
-        end: end.at,
-        from: event.kind,
-        to: end.kind,
-      });
-  }
+  const costs = projectTaskTraceCosts(snapshot, diagnose);
+  if (!costs.records.length) diagnose('cost_unknown', task.contract.taskNodeId);
+  const phases = projectTaskTracePhases(events, runs);
   for (const phase of Object.keys(phases) as Array<keyof typeof phases>) {
-    phases[phase].durationMs = unionDuration(phases[phase].intervals);
-    if (
-      (phase === "execution" && runs.some((run) => run.endedAt === null)) ||
-      (phase === "verification" && phases.verification.intervals.length !== candidates.length)
-    )
-      phases[phase].durationMs = null;
     if (phases[phase].durationMs === null) diagnose("phase_unknown", phase);
   }
   for (const run of runs) {
@@ -677,25 +669,7 @@ export function readTaskTrace(
     operations,
     candidates,
     checks,
-    costs: {
-      scope: "task-subtree",
-      state:
-        records.length > 0 && unknownCalls === 0 && orphanUsage.length === 0
-          ? "estimated"
-          : "unknown",
-      totalUsd:
-        records.length > 0 && unknownCalls === 0 && orphanUsage.length === 0
-          ? knownSubtotalUsd
-          : null,
-      knownSubtotalUsd,
-      totalTokens:
-        records.length > 0 && !unknownTokens && orphanUsage.length === 0 ? knownTokens : null,
-      knownTokens,
-      calls: records.length,
-      unknownCalls,
-      duplicateObservations: duplicates,
-      records,
-    },
+    costs,
     phases,
     cleanup: events.filter((e) =>
       ["artifact_retained", "worktree_cleanup_prepared", "worktree_cleanup_completed"].includes(

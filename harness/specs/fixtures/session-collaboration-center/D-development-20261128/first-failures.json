@@ -1,0 +1,346 @@
+{
+  "driven_by": "agent",
+  "runs": [
+    {
+      "run": "pre-source-r2",
+      "candidate": {
+        "commit": "25118d45eb3bdedefbbe45f8250cec7a2e735b41",
+        "tree": "78ad6a58976c1662d2d646507fc05d818c399943",
+        "dirty": true,
+        "workingTree": "8dbd71c526952f9be5b876a90bbd5344714bff32"
+      },
+      "error": "Check failed: harness-validate",
+      "rawReportSha256": "e8dab503a3cfb89abfd3e13ca49c825478e4876bb2e317a35c9477242faf4e39",
+      "steps": [
+        {
+          "id": "index-evidence",
+          "exitCode": 0,
+          "tests": null
+        },
+        {
+          "id": "contract",
+          "exitCode": 0,
+          "tests": null
+        },
+        {
+          "id": "i18n",
+          "exitCode": 0,
+          "tests": null
+        },
+        {
+          "id": "comms-replay",
+          "exitCode": 0,
+          "tests": null
+        },
+        {
+          "id": "comms-compare",
+          "exitCode": 0,
+          "tests": null
+        },
+        {
+          "id": "harness-validate",
+          "exitCode": 1,
+          "tests": null
+        }
+      ]
+    },
+    {
+      "run": "pre-source-r3",
+      "candidate": {
+        "commit": "25118d45eb3bdedefbbe45f8250cec7a2e735b41",
+        "tree": "78ad6a58976c1662d2d646507fc05d818c399943",
+        "dirty": true,
+        "workingTree": "4749d23151ba9f700856e358301054c252ad1784"
+      },
+      "error": "Check failed: eslint",
+      "rawReportSha256": "4bc6caf27a0deaef7e2d860f4be07c6a7cbc3e6c3d4a31468e8bb20b71642362",
+      "steps": [
+        {
+          "id": "index-evidence",
+          "exitCode": 0,
+          "tests": null
+        },
+        {
+          "id": "contract",
+          "exitCode": 0,
+          "tests": null
+        },
+        {
+          "id": "i18n",
+          "exitCode": 0,
+          "tests": null
+        },
+        {
+          "id": "comms-replay",
+          "exitCode": 0,
+          "tests": null
+        },
+        {
+          "id": "comms-compare",
+          "exitCode": 0,
+          "tests": null
+        },
+        {
+          "id": "harness-validate",
+          "exitCode": 0,
+          "tests": null
+        },
+        {
+          "id": "harness-dry-run",
+          "exitCode": 0,
+          "tests": null
+        },
+        {
+          "id": "electron-collect",
+          "exitCode": 0,
+          "tests": null
+        },
+        {
+          "id": "eslint",
+          "exitCode": 1,
+          "tests": null
+        }
+      ]
+    },
+    {
+      "run": "pre-source-r5",
+      "candidate": {
+        "commit": "25118d45eb3bdedefbbe45f8250cec7a2e735b41",
+        "tree": "78ad6a58976c1662d2d646507fc05d818c399943",
+        "dirty": true,
+        "workingTree": "246ec89d395956e54003d6555f6f5125422cfa73"
+      },
+      "error": "Check failed: eslint",
+      "rawReportSha256": "789585462bcbb358f42b6aa5f9fe2a9eb508a0c7ad0a3b70413ca37566f6b8aa",
+      "steps": [
+        {
+          "id": "index-evidence",
+          "exitCode": 0,
+          "tests": null
+        },
+        {
+          "id": "contract",
+          "exitCode": 0,
+          "tests": null
+        },
+        {
+          "id": "i18n",
+          "exitCode": 0,
+          "tests": null
+        },
+        {
+          "id": "comms-replay",
+          "exitCode": 0,
+          "tests": null
+        },
+        {
+          "id": "comms-compare",
+          "exitCode": 0,
+          "tests": null
+        },
+        {
+          "id": "harness-validate",
+          "exitCode": 0,
+          "tests": null
+        },
+        {
+          "id": "harness-dry-run",
+          "exitCode": 0,
+          "tests": null
+        },
+        {
+          "id": "electron-collect",
+          "exitCode": 0,
+          "tests": null
+        },
+        {
+          "id": "eslint",
+          "exitCode": 1,
+          "tests": null
+        }
+      ]
+    },
+    {
+      "run": "unit-r1",
+      "candidate": {
+        "commit": "25118d45eb3bdedefbbe45f8250cec7a2e735b41",
+        "tree": "78ad6a58976c1662d2d646507fc05d818c399943",
+        "dirty": true,
+        "workingTree": "fe74a6f9e1eb39b6325327c472759022f3023f33"
+      },
+      "error": "Unit checks failed: session-collaboration-boundary.test.ts",
+      "rawReportSha256": "05d89ece82a554a58fed422d321a89670e0ff49ea863e933a6eebd77e06c11d4",
+      "steps": [
+        {
+          "id": "01-session-collaboration-cost-attribution.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 4,
+            "numPassedTests": 4,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "02-session-collaboration-resource-owner.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 3,
+            "numPassedTests": 3,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "03-session-collaboration-budget-view.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 1,
+            "numPassedTests": 1,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "04-task-model-usage.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 11,
+            "numPassedTests": 11,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "05-task-traceability.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 6,
+            "numPassedTests": 6,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "06-usage-live-scope.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 2,
+            "numPassedTests": 2,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "07-autonomy-provider-spend.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 33,
+            "numPassedTests": 33,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "08-resource-metrics-owner.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 3,
+            "numPassedTests": 3,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "09-session-collaboration-query.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 39,
+            "numPassedTests": 39,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "10-session-collaboration-panel.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 14,
+            "numPassedTests": 14,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "11-session-collaboration-material-adoption.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 35,
+            "numPassedTests": 35,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "12-session-collaboration-material-lifecycle.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 2,
+            "numPassedTests": 2,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "13-session-collaboration-material-query.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 1,
+            "numPassedTests": 1,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "14-session-collaboration-boundary.test",
+          "exitCode": 1,
+          "tests": {
+            "success": false,
+            "numTotalTests": 0,
+            "numPassedTests": 0,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        }
+      ]
+    }
+  ],
+  "retainedRawDirectory": "D:\\tmp\\session-collaboration-d-closeout-20261128"
+}

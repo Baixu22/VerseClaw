@@ -1,0 +1,45 @@
+{
+  "driven_by": "agent",
+  "candidate": {
+    "commit": "1a9fac9a0efd64eb98cd36f72260b91d7c20e2c7",
+    "tree": "41c3eb09f5006803603e19c791b3e9eeddc33592"
+  },
+  "runs": [
+    {
+      "job": "session-collaboration-d-closeout-20261128-unit-r10",
+      "receiptSha256": "2877f287460db4dda12b7c9c9c4c8c2167561105b913fc76060aac185019c666",
+      "status": "completed",
+      "exitCode": 0,
+      "commandStarted": true,
+      "treeExited": true,
+      "sourceUnchanged": true,
+      "peaks": {
+        "rssMiB": 821.703,
+        "commitMiB": 839.551,
+        "processCount": 10,
+        "cpuPercent": 507.89,
+        "cpuSecondsObserved": 56.531,
+        "readBytesObserved": 558845512,
+        "writeBytesObserved": 544650444
+      }
+    },
+    {
+      "job": "session-collaboration-d-closeout-20261128-final-source-r1",
+      "receiptSha256": "d0c790dc954ebe167af8c56478f6cccca2b6df33a13dafff44e88e823cd14f5e",
+      "status": "completed",
+      "exitCode": 0,
+      "commandStarted": true,
+      "treeExited": true,
+      "sourceUnchanged": true,
+      "peaks": {
+        "rssMiB": 592.23,
+        "commitMiB": 581.883,
+        "processCount": 6,
+        "cpuPercent": 207.83,
+        "cpuSecondsObserved": 16.0,
+        "readBytesObserved": 73196620,
+        "writeBytesObserved": 4225278
+      }
+    }
+  ]
+}

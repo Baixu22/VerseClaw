@@ -397,6 +397,7 @@ export async function createChildAdapter(params: {
 
   return {
     pid: child.pid ?? undefined,
+    isRootActive: () => childExitState == null && child.exitCode == null && child.signalCode == null && !waitResult && waitError === undefined,
     stdin,
     onStdout,
     onStderr,

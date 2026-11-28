@@ -1,5 +1,78 @@
 {
     "collaboration": {
+        "budget": {
+            "disabled": "予算は無効です",
+            "scopes": {
+                "host": "ホスト",
+                "project": "プロジェクト",
+                "session": "セッション"
+            },
+            "spentTokens": "消費トークン",
+            "heldTokens": "予約トークン",
+            "spentCost": "確認済み消費額（USD）",
+            "heldCost": "確認済み予約額（USD）",
+            "activeCalls": "実行中の呼び出し",
+            "unknownUsage": "使用量不明の呼び出し",
+            "unknownCost": "費用不明の呼び出し",
+            "admission": "実行許可",
+            "admissionStates": {
+                "fenced": "新規許可を停止中",
+                "waiting": "待機中",
+                "active": "有効な許可あり",
+                "idle": "有効または待機中の許可なし"
+            },
+            "rejectedWhileFenced": "停止中の拒否数"
+        },
+        "resourceDetails": {
+            "shared": "共有",
+            "reservations": "予約済みポート",
+            "count": "件数",
+            "rss": "常駐メモリ",
+            "cpu": "CPU",
+            "activePermits": "有効な許可",
+            "waiters": "待機数",
+            "pids": "プロセス ID",
+            "kinds": {
+                "process": "プロセスツリー",
+                "terminal": "ターミナル",
+                "browser": "ブラウザーセッション",
+                "background-port": "観測済みポート",
+                "worktree": "管理ワークツリー",
+                "admission-permit": "実行許可",
+                "provider": "プロバイダー予算",
+                "durable-helper": "バックグラウンドヘルパー",
+                "shared-gateway": "Gateway プロセス"
+            }
+        },
+        "usage": {
+            "timingTitle": "タスクの段階",
+            "phaseNames": {
+                "queue": "待機",
+                "execution": "実行",
+                "verification": "検証",
+                "recovery": "復旧"
+            },
+            "title": "モデル使用量",
+            "session": "現在のセッション履歴",
+            "task": "タスクツリー",
+            "run": "現在または直近の記録済み実行",
+            "calls": "観測済みの呼び出し",
+            "tokens": "トークン",
+            "knownTokens": "確認済みのトークン",
+            "cacheRead": "キャッシュ読み取り",
+            "cacheWrite": "キャッシュ書き込み",
+            "cost": "推定費用（USD）",
+            "subtotal": "確認済み費用の小計（USD）",
+            "missingUsage": "使用量が不明な呼び出し",
+            "missingPrice": "料金が不明な呼び出し",
+            "conflict": "観測の競合",
+            "coordination": "連携コスト",
+            "observations": "このセッションの最近の呼び出し",
+            "attempt": "試行 {{attempt}}",
+            "callTokens": "{{tokens}} トークン",
+            "priceVersion": "料金バージョン",
+            "priceVersions": "料金バージョン"
+        },
         "materials": {
             "title": "共有資料",
             "filter": "タスク、ファイル、トピック、または証拠",

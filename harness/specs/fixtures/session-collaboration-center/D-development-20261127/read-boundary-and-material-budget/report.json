@@ -1,0 +1,528 @@
+{
+  "schema": "SessionCollaborationDDevelopment/v1",
+  "driven_by": "agent",
+  "actor": "codex/session-collaboration-d-relay-01a21cb0",
+  "status": "development-verified",
+  "node": "TF-0935",
+  "sourceCandidate": "aaa2f6176cbe016df7d24bc8e6e3141f23dc154d",
+  "baseCandidate": "23ebd9b6c9f936545ddc073097a14dfec1ed5018",
+  "sourceTree": "b3b3da8d095a9856db8fd0f21490cf4bc4cd41a9",
+  "sources": {
+    "openclaw_runtime/src/gateway/server-methods/session-collaboration-resources.ts": {
+      "workingTreeSha256": "1602378f8b9a46ce427a54502adc73b002e70d6f1b1f3c4691bd904de0245716",
+      "gitBlobOid": "6d08d86c6ac21c6ef82b56a26d80da94083c4415",
+      "gitBlobSha256": "1602378f8b9a46ce427a54502adc73b002e70d6f1b1f3c4691bd904de0245716"
+    },
+    "tests/unit/session-collaboration-query.test.ts": {
+      "workingTreeSha256": "a0f41b8fed36fd402989cc880b5c1208678fedf35e415637ba8238b2fc6b86f3",
+      "gitBlobOid": "87280931453d717ead2fd5a73f10e5f4ee86aed9",
+      "gitBlobSha256": "a0f41b8fed36fd402989cc880b5c1208678fedf35e415637ba8238b2fc6b86f3"
+    },
+    "shared/task-system/store.ts": {
+      "workingTreeSha256": "ccbd40fa27fdd22cd9710eeb4460acf804d127088434b2e7522520600b819fe5",
+      "gitBlobOid": "5ed92c5999764d4818fd614e956803031b96f66a",
+      "gitBlobSha256": "ccbd40fa27fdd22cd9710eeb4460acf804d127088434b2e7522520600b819fe5"
+    },
+    "tests/unit/session-collaboration-material-lifecycle.test.ts": {
+      "workingTreeSha256": "4afd9d233eaf34d1a4bd07a64dec3f56b860ed68bcb2bd68b53757e1c55255ee",
+      "gitBlobOid": "4f14fbd7abcbbab4dedd2e942e0a8e3e714e7de9",
+      "gitBlobSha256": "4afd9d233eaf34d1a4bd07a64dec3f56b860ed68bcb2bd68b53757e1c55255ee"
+    },
+    "README.md": {
+      "workingTreeSha256": "2a30b6016eeb33be7d728e616c49f734f00113f3726a5f5755ee48d40414dd51",
+      "gitBlobOid": "3e7e9d4dc58a1c014fd415d9636ac5a35faa6c52",
+      "gitBlobSha256": "2a30b6016eeb33be7d728e616c49f734f00113f3726a5f5755ee48d40414dd51"
+    },
+    "README.zh-CN.md": {
+      "workingTreeSha256": "5ebe30dc522b778f6b358cc6b935962b2d427c1d552821348aa663762fd7e6c5",
+      "gitBlobOid": "b6ce6f7f67ba78be2864732510a32cdc792544a9",
+      "gitBlobSha256": "5ebe30dc522b778f6b358cc6b935962b2d427c1d552821348aa663762fd7e6c5"
+    },
+    "README.ja-JP.md": {
+      "workingTreeSha256": "ed16cbcbad9ba7a2f262a33563de783e40b1f8f8941e2b84e0453eb3d3ac3b28",
+      "gitBlobOid": "799d2beed009cd57bcfc502839fff62aea6851ae",
+      "gitBlobSha256": "ed16cbcbad9ba7a2f262a33563de783e40b1f8f8941e2b84e0453eb3d3ac3b28"
+    },
+    "docs/modules/sessions.md": {
+      "workingTreeSha256": "10596693085b12944a88effc9b710883ed1db9cf9e049f7b60a4723b7f8b4a58",
+      "gitBlobOid": "26a97f27b85e165c7f518086e01580d61baf2a56",
+      "gitBlobSha256": "10596693085b12944a88effc9b710883ed1db9cf9e049f7b60a4723b7f8b4a58"
+    },
+    "harness/specs/tasks/session-collaboration-resource-read-revalidation-20261127.md": {
+      "workingTreeSha256": "c63414230b517490a4ac3ebe0b3f8d195ac79ec8d0cddd5402247f8a97f7fa92",
+      "gitBlobOid": "90ae12e6dd3ec6b7afcbc3a2c777546beb5a8f62",
+      "gitBlobSha256": "c63414230b517490a4ac3ebe0b3f8d195ac79ec8d0cddd5402247f8a97f7fa92"
+    },
+    "harness/specs/tasks/session-collaboration-material-conflict-budget-20261127.md": {
+      "workingTreeSha256": "dccbc97ef34ed5844be0c04b55b2f4b0e65cc841eb9ec64dc45eac1673ceb964",
+      "gitBlobOid": "bfd9f5713184e6e4748557a5b0a5a5f33eb3bc72",
+      "gitBlobSha256": "dccbc97ef34ed5844be0c04b55b2f4b0e65cc841eb9ec64dc45eac1673ceb964"
+    }
+  },
+  "tests": {
+    "resourceRead": {
+      "redCases": [
+        {
+          "name": "clears a finished resource read when visibility changes",
+          "status": "failed"
+        },
+        {
+          "name": "clears a finished resource read when requester generation changes",
+          "status": "failed"
+        },
+        {
+          "name": "clears a finished resource read when requester workspace changes",
+          "status": "failed"
+        }
+      ],
+      "greenCases": [
+        {
+          "name": "clears a finished resource read when visibility changes",
+          "status": "passed"
+        },
+        {
+          "name": "clears a finished resource read when requester generation changes",
+          "status": "passed"
+        },
+        {
+          "name": "clears a finished resource read when requester workspace changes",
+          "status": "passed"
+        }
+      ],
+      "passed": 36,
+      "failed": 0,
+      "redReportSha256": "e97d2a4748695987327f982c90f783894e3a1db36495c2111c4cb0cb73324af1",
+      "greenReportSha256": "7e149071bdbfe7159215a865686583bf62d4bddb7e79953fd0fa7600131f6897"
+    },
+    "materialConflictBudget": {
+      "redCases": [
+        {
+          "name": "retains bounded active conflicts and keeps exhausted history unknown",
+          "status": "failed"
+        }
+      ],
+      "greenCases": [
+        {
+          "name": "retains bounded active conflicts and keeps exhausted history unknown",
+          "status": "passed"
+        }
+      ],
+      "passed": 46,
+      "failed": 0,
+      "redReportSha256": "99a45c6a67495ef47bf800f66790deb86bef96659dfba1aa29929ab93118d90c",
+      "greenReportSha256": "b577fe803e7f4e4106e114fef53c0936288921d6a7e3a9b53e436c069e38772e"
+    }
+  },
+  "checks": [
+    {
+      "name": "whitespace",
+      "argv": [
+        "C:\\Program Files\\Git\\bin\\git.EXE",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "seconds": 0.203,
+      "log": "D:\\tmp\\session-collaboration-d-relay-20261127\\source-checks-material-r1\\whitespace.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "contract",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/contract-check.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 3.109,
+      "log": "D:\\tmp\\session-collaboration-d-relay-20261127\\source-checks-material-r1\\contract.log",
+      "logSha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+    },
+    {
+      "name": "comms-replay",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/comms/replay.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 0.25,
+      "log": "D:\\tmp\\session-collaboration-d-relay-20261127\\source-checks-material-r1\\comms-replay.log",
+      "logSha256": "b0e36a29e62e425f433d8bb48542429bf4772667cb3dea070aa2effb54534e02"
+    },
+    {
+      "name": "comms-compare",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/comms/compare.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 0.156,
+      "log": "D:\\tmp\\session-collaboration-d-relay-20261127\\source-checks-material-r1\\comms-compare.log",
+      "logSha256": "3d1132ac8758e0a5852037ecd20286879f0a91ba92f84cd729e35b4c0583cb20"
+    },
+    {
+      "name": "harness-1-validate",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/session-collaboration-resource-read-revalidation-20261127.md",
+        "--since",
+        "23ebd9b6c9f936545ddc073097a14dfec1ed5018"
+      ],
+      "exitCode": 0,
+      "seconds": 1.172,
+      "log": "D:\\tmp\\session-collaboration-d-relay-20261127\\source-checks-material-r1\\harness-1-validate.log",
+      "logSha256": "e7bdf5badf2be74d6d9647e4284614c9e1ef15b1e56fa0a623db3ec97e467cfd"
+    },
+    {
+      "name": "harness-1-dry-run",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/session-collaboration-resource-read-revalidation-20261127.md",
+        "--since",
+        "23ebd9b6c9f936545ddc073097a14dfec1ed5018",
+        "--dry-run"
+      ],
+      "exitCode": 0,
+      "seconds": 0.938,
+      "log": "D:\\tmp\\session-collaboration-d-relay-20261127\\source-checks-material-r1\\harness-1-dry-run.log",
+      "logSha256": "1171e046ecf1bb5eb7db069bbfe06e8644a2116d916619c891466ec7b4927f1a"
+    },
+    {
+      "name": "harness-2-validate",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/session-collaboration-material-conflict-budget-20261127.md",
+        "--since",
+        "23ebd9b6c9f936545ddc073097a14dfec1ed5018"
+      ],
+      "exitCode": 0,
+      "seconds": 1.015,
+      "log": "D:\\tmp\\session-collaboration-d-relay-20261127\\source-checks-material-r1\\harness-2-validate.log",
+      "logSha256": "2019df112c8d488fa0d0f272c88edc9b6205bebb51e577179c8f81da938daa4f"
+    },
+    {
+      "name": "harness-2-dry-run",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/session-collaboration-material-conflict-budget-20261127.md",
+        "--since",
+        "23ebd9b6c9f936545ddc073097a14dfec1ed5018",
+        "--dry-run"
+      ],
+      "exitCode": 0,
+      "seconds": 0.907,
+      "log": "D:\\tmp\\session-collaboration-d-relay-20261127\\source-checks-material-r1\\harness-2-dry-run.log",
+      "logSha256": "1171e046ecf1bb5eb7db069bbfe06e8644a2116d916619c891466ec7b4927f1a"
+    },
+    {
+      "name": "lint",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/eslint/bin/eslint.js",
+        "openclaw_runtime/src/gateway/server-methods/session-collaboration-resources.ts",
+        "tests/unit/session-collaboration-query.test.ts",
+        "shared/task-system/store.ts",
+        "tests/unit/session-collaboration-material-lifecycle.test.ts"
+      ],
+      "exitCode": 0,
+      "seconds": 19.187,
+      "log": "D:\\tmp\\session-collaboration-d-relay-20261127\\source-checks-material-r1\\lint.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "sourceStable": true,
+  "reviews": {
+    "resourceRead": {
+      "provider": "ccs-ai",
+      "model": "ccs-ai/gpt-6.1-sol",
+      "findings": [],
+      "overallConfidence": 0.96,
+      "resultSha256": "bac390469f6b863bd824a2b0f4cad330e6a4cdca1cdc22faca81ee6d4f70dc5c",
+      "commandReceipt": {
+        "jobId": "session-collaboration-d-relay-20261127-resource-review-r1",
+        "commandDigest": "9d608ff46818f26e1eadb8bce042b685a92f37e794550ff1b296301076076850",
+        "status": "completed",
+        "exitCode": 0,
+        "treeExited": true,
+        "sourceUnchanged": true,
+        "budgetExceeded": false,
+        "peaks": {
+          "rssMiB": 663.621,
+          "commitMiB": 523.375,
+          "processCount": 20,
+          "cpuPercent": 216.14,
+          "cpuSecondsObserved": 14.703,
+          "readBytesObserved": 62504950,
+          "writeBytesObserved": 998648
+        },
+        "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\session-collaboration-d-relay-20261127-resource-review-r1\\receipt.json",
+        "sha256": "f33f6eed11dd8a9af3b5b496b97071b9cf9c0fefa4ca46fed035176304c59025"
+      }
+    },
+    "combined": {
+      "provider": "ccs-ai",
+      "model": "ccs-ai/gpt-6.1-sol",
+      "engine": "codex-autoreview",
+      "findings": [],
+      "overallConfidence": 0.94,
+      "resultSha256": "8bbf0ecb035c522c5e4dd11310f506d58eeb95e55edace06fd3cf2450eafb5ee",
+      "commandReceipt": {
+        "jobId": "session-collaboration-d-relay-20261127-review-final-r1",
+        "commandDigest": "eb53a9346cf70bb0904494eb906f02e8d7f86ea34b461deba8001a5626db59c8",
+        "status": "completed",
+        "exitCode": 0,
+        "treeExited": true,
+        "sourceUnchanged": true,
+        "budgetExceeded": false,
+        "peaks": {
+          "rssMiB": 568.133,
+          "commitMiB": 479.379,
+          "processCount": 31,
+          "cpuPercent": 337.67,
+          "cpuSecondsObserved": 35.328,
+          "readBytesObserved": 100525153,
+          "writeBytesObserved": 850492
+        },
+        "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\session-collaboration-d-relay-20261127-review-final-r1\\receipt.json",
+        "sha256": "01f2a345d6fac0bfbb3d978777467945d87d5477d824014680850da1fd494c23"
+      }
+    }
+  },
+  "commandReceipts": {
+    "resource-red-r1": {
+      "jobId": "session-collaboration-d-relay-20261127-resource-red-r1",
+      "commandDigest": "66582f78508012c6fa5844d554e548be45b8a43e081c17586257fb94c1626f33",
+      "status": "failed",
+      "exitCode": 1,
+      "treeExited": true,
+      "sourceUnchanged": true,
+      "budgetExceeded": false,
+      "peaks": {
+        "rssMiB": 662.352,
+        "commitMiB": 764.91,
+        "processCount": 6,
+        "cpuPercent": 183.16,
+        "cpuSecondsObserved": 18.359,
+        "readBytesObserved": 90449984,
+        "writeBytesObserved": 90875827
+      },
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\session-collaboration-d-relay-20261127-resource-red-r1\\receipt.json",
+      "sha256": "acff3d0e442f4f17264296df1d39b7aa4c6f59b02eefea29479594309d94bd1f"
+    },
+    "resource-green-r1": {
+      "jobId": "session-collaboration-d-relay-20261127-resource-green-r1",
+      "commandDigest": "98e18f4f5231796e3b3caa34a13a481176a6797e6979882976d043aa27335dc6",
+      "status": "completed",
+      "exitCode": 0,
+      "treeExited": true,
+      "sourceUnchanged": true,
+      "budgetExceeded": false,
+      "peaks": {
+        "rssMiB": 748.344,
+        "commitMiB": 815.184,
+        "processCount": 6,
+        "cpuPercent": 187.58,
+        "cpuSecondsObserved": 24.188,
+        "readBytesObserved": 388931392,
+        "writeBytesObserved": 453025938
+      },
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\session-collaboration-d-relay-20261127-resource-green-r1\\receipt.json",
+      "sha256": "93f023a1ee13f89f8ec6a7e9c3646466ec3aaf6a4db9560aa294d560f0ce11f6"
+    },
+    "resource-review-r1": {
+      "jobId": "session-collaboration-d-relay-20261127-resource-review-r1",
+      "commandDigest": "9d608ff46818f26e1eadb8bce042b685a92f37e794550ff1b296301076076850",
+      "status": "completed",
+      "exitCode": 0,
+      "treeExited": true,
+      "sourceUnchanged": true,
+      "budgetExceeded": false,
+      "peaks": {
+        "rssMiB": 663.621,
+        "commitMiB": 523.375,
+        "processCount": 20,
+        "cpuPercent": 216.14,
+        "cpuSecondsObserved": 14.703,
+        "readBytesObserved": 62504950,
+        "writeBytesObserved": 998648
+      },
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\session-collaboration-d-relay-20261127-resource-review-r1\\receipt.json",
+      "sha256": "f33f6eed11dd8a9af3b5b496b97071b9cf9c0fefa4ca46fed035176304c59025"
+    },
+    "material-red-r1": {
+      "jobId": "session-collaboration-d-relay-20261127-material-red-r1",
+      "commandDigest": "cf2a0135b5a9b89d7dfdbc2b28c7b8aa7e589fe14369964d7acf55488e69c45d",
+      "status": "failed",
+      "exitCode": 1,
+      "treeExited": true,
+      "sourceUnchanged": true,
+      "budgetExceeded": false,
+      "peaks": {
+        "rssMiB": 191.164,
+        "commitMiB": 193.609,
+        "processCount": 4,
+        "cpuPercent": 76.6,
+        "cpuSecondsObserved": 1.109,
+        "readBytesObserved": 5325093,
+        "writeBytesObserved": 90509
+      },
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\session-collaboration-d-relay-20261127-material-red-r1\\receipt.json",
+      "sha256": "ef9f50786a6fb11ffbdd0182818aca585ccd9a0a31a33ec24e00a7aec87373b2"
+    },
+    "material-green-r1": {
+      "jobId": "session-collaboration-d-relay-20261127-material-green-r1",
+      "commandDigest": "8fb639636d22aa605b3cb52e4016fca1f1b72f6704403c75a94c9352eb4cd678",
+      "status": "completed",
+      "exitCode": 0,
+      "treeExited": true,
+      "sourceUnchanged": true,
+      "budgetExceeded": false,
+      "peaks": {
+        "rssMiB": 778.074,
+        "commitMiB": 832.07,
+        "processCount": 6,
+        "cpuPercent": 169.3,
+        "cpuSecondsObserved": 22.656,
+        "readBytesObserved": 393683579,
+        "writeBytesObserved": 458597778
+      },
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\session-collaboration-d-relay-20261127-material-green-r1\\receipt.json",
+      "sha256": "eab1bcaa82d23cd534afb87dac8f6302cc27d2c4390e89a1191b451a089afff0"
+    },
+    "source-checks-material-r2": {
+      "jobId": "session-collaboration-d-relay-20261127-source-checks-material-r2",
+      "commandDigest": "9df7c0d615637cc34c501d4f744a5d87039fe64bb9825250218cf139b6df2094",
+      "status": "completed",
+      "exitCode": 0,
+      "treeExited": true,
+      "sourceUnchanged": true,
+      "budgetExceeded": false,
+      "peaks": {
+        "rssMiB": 397.316,
+        "commitMiB": 400.828,
+        "processCount": 5,
+        "cpuPercent": 249.93,
+        "cpuSecondsObserved": 5.438,
+        "readBytesObserved": 29704329,
+        "writeBytesObserved": 3224
+      },
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\session-collaboration-d-relay-20261127-source-checks-material-r2\\receipt.json",
+      "sha256": "e79511568aca302880f31b3d7d30299c35764fa07a813504ed856a0375d23034"
+    },
+    "review-final-r1": {
+      "jobId": "session-collaboration-d-relay-20261127-review-final-r1",
+      "commandDigest": "eb53a9346cf70bb0904494eb906f02e8d7f86ea34b461deba8001a5626db59c8",
+      "status": "completed",
+      "exitCode": 0,
+      "treeExited": true,
+      "sourceUnchanged": true,
+      "budgetExceeded": false,
+      "peaks": {
+        "rssMiB": 568.133,
+        "commitMiB": 479.379,
+        "processCount": 31,
+        "cpuPercent": 337.67,
+        "cpuSecondsObserved": 35.328,
+        "readBytesObserved": 100525153,
+        "writeBytesObserved": 850492
+      },
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\session-collaboration-d-relay-20261127-review-final-r1\\receipt.json",
+      "sha256": "01f2a345d6fac0bfbb3d978777467945d87d5477d824014680850da1fd494c23"
+    }
+  },
+  "queueReconciliation": {
+    "driven_by": "agent",
+    "actor": "codex/session-collaboration-d-relay-01a21cb0",
+    "originalThreadId": "01a217dd-9844-75a3-9dae-8bfddcbad477",
+    "reconciledUnknownReviews": [
+      "session-collaboration-D-xingchi-review-20261127-r9",
+      "session-collaboration-D-xingchi-review-20261127-r11"
+    ],
+    "cancelledQueuedJobs": [
+      "session-collaboration-A-20261126-source-r1",
+      "session-collaboration-A-20261126-unit-r1",
+      "session-collaboration-A-20261126-typecheck-r1",
+      "session-collaboration-A-20261126-runtime-r1",
+      "session-collaboration-A-20261126-desktop-r1",
+      "session-collaboration-A-20261126-electron-r1",
+      "session-collaboration-A-20261126-harness-ci-r1",
+      "session-collaboration-A-20261126-preflight-r1",
+      "session-collaboration-A-20261126-versebrowser-r1",
+      "session-collaboration-A-20261126-unit-r3",
+      "session-collaboration-A-20261126-typecheck-r2",
+      "session-collaboration-A-20261126-runtime-r2",
+      "session-collaboration-A-20261126-desktop-r2",
+      "session-collaboration-A-20261126-electron-r2",
+      "session-collaboration-A-20261126-harness-ci-r2",
+      "session-collaboration-A-20261126-unit-r5",
+      "session-collaboration-A-20261126-typecheck-r3",
+      "session-collaboration-A-20261126-typecheck-split-r2",
+      "session-collaboration-A-20261126-runtime-r3",
+      "session-collaboration-A-20261126-desktop-r3",
+      "session-collaboration-A-20261126-electron-r3",
+      "session-collaboration-A-20261126-harness-ci-r3",
+      "session-collaboration-B-20261126-focused-r3",
+      "session-collaboration-C-20261126-focused-r1",
+      "session-collaboration-D-20261126-focused-r1",
+      "session-collaboration-D-20261126-focused-r2",
+      "session-collaboration-A-20261126-runtime-r6",
+      "session-collaboration-A-20261126-desktop-r10",
+      "session-collaboration-A-20261126-desktop-r11",
+      "session-collaboration-A-20261126-typecheck-split-r6",
+      "session-collaboration-A-20261126-harness-ci-r6",
+      "session-collaboration-A-20261126-electron-r10"
+    ]
+  },
+  "taskForest": {
+    "proposalId": "TFP-session-collab-D2-read-hardening-20261127-01a21cb0",
+    "updatedNodes": {
+      "TF-0935": {
+        "status": "in_progress",
+        "progress": 50.0,
+        "updated_at": "2026-11-27T14:06:08.117815Z",
+        "summary": "D2 资源详情在异步收集后复核读取者身份和可见性，换代、换工作区或权限撤销时丢弃旧数据。冲突历史最多扫描 MATERIAL_SCAN_LIMIT 条，预算未能确认冲突时保留 unknown。候选 aaa2f6176 的 46 项定向测试、九项源码门禁和星驰复审已完成。",
+        "evidence": [
+          "harness/specs/guides/session-collaboration-center-plan.md",
+          "harness/specs/tasks/session-collaboration-resource-read-revalidation-20261127.md",
+          "harness/specs/tasks/session-collaboration-material-conflict-budget-20261127.md",
+          "harness/specs/fixtures/session-collaboration-center/D-development-20261127/read-boundary-and-material-budget/REPORT.md",
+          "harness/specs/fixtures/session-collaboration-center/D-development-20261127/read-boundary-and-material-budget/report.json"
+        ]
+      },
+      "TF-0917": {
+        "status": "in_progress",
+        "progress": 10.0,
+        "updated_at": "2026-11-27T14:06:08.117815Z",
+        "summary": "D2 资源详情与冲突历史读取已完成一次经复审的开发增量。D1、D3、D4、D5 的同候选证据和整阶段验收继续推进。",
+        "evidence": [
+          "harness/specs/guides/session-collaboration-center-plan.md",
+          "harness/specs/tasks/session-collaboration-center-plan.md"
+        ]
+      }
+    },
+    "validateExitCode": 0,
+    "graphExportSha256": "7dba6f02e3d2553a892ba045d86cc007767b6b0e6d18252969b5c464f62cefe6",
+    "graphGeneratedAt": "2026-11-27T14:33:46.008506Z",
+    "htmlExportBytes": 1085040419,
+    "htmlExportSha256": "9eeb18c41be70612fd3c0eec874d82974274ccacf947034fd146800628dd62fe"
+  },
+  "deferredChecks": [
+    "full-typecheck",
+    "runtime-build",
+    "desktop-build",
+    "electron-e2e",
+    "ci"
+  ],
+  "rawDirectory": "D:\\tmp\\session-collaboration-d-relay-20261127"
+}

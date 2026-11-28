@@ -1,0 +1,27 @@
+{
+  "driven_by": "agent",
+  "runs": [
+    {
+      "job": "session-collaboration-d-closeout-20261128-pre-source-r4",
+      "receipt": {
+        "jobId": "session-collaboration-d-closeout-20261128-pre-source-r4",
+        "commandDigest": "c057bdaf62862fb6638f6b5d0b6a0d903a1405044c01a3f436dde8a783405a0a",
+        "leaseToken": "cf1dc04e6b88400dbab9ca2aa6668f6a",
+        "actor": "codex/session-collaboration-d-mainline",
+        "driven_by": "agent",
+        "status": "failed",
+        "commandStarted": false,
+        "exitCode": null,
+        "treeExited": true,
+        "reasons": [
+          {
+            "code": "cpu_pressure",
+            "actual": 94.5,
+            "limit": 85
+          }
+        ]
+      },
+      "receiptSha256": "efea1485539fb6d6d5533ca6659fc6a82b0c624be4afcd012e0388501b7deac0"
+    }
+  ]
+}

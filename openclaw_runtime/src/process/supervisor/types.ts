@@ -73,6 +73,8 @@ export type ManagedRunStdin = {
 
 export type SpawnProcessAdapter<WaitSignal = NodeJS.Signals | number | null> = {
   pid?: number;
+  /** Root liveness is independent of waiting for inherited stdio to close. */
+  isRootActive?: () => boolean;
   stdin?: ManagedRunStdin;
   onStdout: (listener: (chunk: string) => void) => void;
   onStderr: (listener: (chunk: string) => void) => void;
@@ -125,6 +127,9 @@ export type SpawnInput = SpawnChildInput | SpawnPtyInput;
 export type LifecycleRunSnapshot = {
   runId: string;
   pid?: number;
+  /** OS incarnation captured while the original adapter was still running. */
+  creationToken?: string;
+  rootActive?: boolean;
   lifecycle: ProcessLifecycleIdentity;
   cancel: () => void;
   wait: () => Promise<RunExit>;

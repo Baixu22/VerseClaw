@@ -1,0 +1,19 @@
+# D 开发审查修订
+
+unit-r1前13文件154项通过，第14文件因稀疏准备树缺少ignored VerseBrowser dist无法导入，0断言；相同manifest下复用A2现有dist，保留dependency-readback.json。未启动unit-r2/pre-source-r1取消。
+
+autoreview-r1三项已接受：scoped provider inventory改用只读SessionStore入口；材料注入保留原block字符/序列化大小，超出不注入并无prompt-used；D5逐指标检查完整配对覆盖。独立审查指出重复pair/run/session可伪造覆盖率，D4拒绝重复身份，新增反例。
+
+review-r2实际任务输入缺口已补；review-r3接受fork标签ID重建时原当前代次call仍被计量、材料原对象UTF8上限、D4 inputSha256和每组sourceSha256。Main usage/resources最终权限查询放在所有本地异步读之后。补充frame ref useLayoutEffect与唯一React key，保留原stale选择逻辑。pre-source-r3的lint失败原始记录保留。
+
+pre-source-r4因准入重检时CPU压力变化未启动，原失败回执保留。pre-source-r5前8项通过，ESLint发现分页在effect同步重置；分页现绑定viewKey/search并在身份切换时重置，新增切换后返回第一页回归。最终e369db716c503b62efe47e674e5a3eb703aa799f的unit-r6为17文件192/192，pre-source-r6为9项全部通过，均有completed/exit0队列回执。
+
+autoreview-r4一直未启动，已取消。资源恢复后autoreview-r5获准启动，使用星驰ccs-ai/gpt-6.1-sol审核最终候选；同模型原生子代理独立回读测试与源码证据，二者保留各自的原始记录。
+
+autoreview-r5两项已接受：成功响应的全零usage占位保持unknown，新增stop/toolUse/length反例；D4结果必须由原agent.wait回执的runId和text同时证明，缺正文或运行不符使D5不完整。当前主线agent.wait已能从原run缓存返回最终text，因此直接收紧采集与复算要求，不新增另一份结果来源。旧e369候选测试保留，修复候选为61f1b12ebb5237505a2eb8a34abdcd75f3312ce4。
+
+autoreview-r6仅剩PID复用归因问题。原ProcessSupervisor现在保存首次活跃根进程的创建标记；scoped采样同时核对原标记、前后owner句柄和原adapter根进程状态，未知身份保持unknown。child根退出早于stdio关闭时立即不再采纳身份；pty按原退出状态判断，首次采样晚于根退出的回填被拒绝。两条生命周期回归及PID已在首次测量前复用的反例覆盖该边界。
+
+autoreview-r7在旧c4fb候选上运行22分钟后中止，无verdict，exit1/sourceUnchanged和14个退出进程的记录保留。最终41c3eb09f5006803603e19c791b3e9eeddc33592候选由星驰原生子代理基于完整历史审查及最后修复独立复核，使用native-review-final产物，不计作CLI通过。
+
+unit-r9在11个文件完成后监督进程与测试进程退出，缺少整批回执；原owner核对全部进程身份均已退出，按failed/exitCode:null回写可恢复回执，保留原报告。unit-r10在同一tree重跑18文件198/198，有独立driver exit0及队列completed回执。pre-source-r9未启动即取消，改在clean代码提交1a9fac9a0efd64eb98cd36f72260b91d7c20e2c7上执行final-source-r1，9项检查及队列回执全部通过。

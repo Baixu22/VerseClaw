@@ -19,6 +19,8 @@ import { createTaskLedgerApi } from './task-ledger-api';
 import type { TerminalSessionManager } from './terminal-session-manager';
 import { collectLongSessionResourceInventory } from './long-session-resource-reclamation';
 import { buildSessionHostReadiness } from '../gateway/session-host-readiness';
+import { emptyCollaborationUsage, parseSessionCollaborationUsageQuery, validateCollaborationUsage } from '@shared/types/session-collaboration-usage';
+import { emptyCollaborationResources, parseSessionCollaborationResourceQuery, validateCollaborationResources } from '@shared/types/session-collaboration-resources';
 
 type RuntimeActivityResponse = {
   snapshot?: Partial<SessionActivitySnapshot> & {
@@ -169,6 +171,56 @@ export function createSessionActivityApi({
           return { success: true, page: emptySessionCollaborationPage(query, 'stale', 'scope-mismatch') };
         return { success: true, page: validateSessionCollaborationPage(query, response?.page) };
       } catch { return { success: true, page: emptySessionCollaborationPage(query, 'unavailable', 'owner-unavailable') }; }
+    },
+    modelUsage: async (input) => {
+      const query = parseSessionCollaborationUsageQuery(input);
+      const failed = (state: 'unavailable' | 'stale', reason: 'owner-missing' | 'owner-unavailable' | 'scope-mismatch') =>
+        ({ success: true, usage: emptyCollaborationUsage(query, state, reason) });
+      try {
+        const workspaceId = query.requester.workspaceId;
+        const root = await getWorkspaceRootPathById(workspaceId);
+        if (!root) return failed('unavailable', 'owner-missing');
+        const response = await gatewayManager.rpc<{ usage?: unknown }>('session.activitySnapshot', { modelUsage: query });
+        if (await getWorkspaceRootPathById(workspaceId) !== root) return failed('stale', 'scope-mismatch');
+        const visibility = parseSessionCollaborationQuery({ ...query, fields: [], limit: 1 });
+        const final = await gatewayManager.rpc<{ page?: SessionCollaborationPage }>('session.activitySnapshot', { query: visibility });
+        const page = validateSessionCollaborationPage(visibility, final?.page);
+        if (page.state !== 'ready') return { success: true, usage: emptyCollaborationUsage(query,
+          page.state === 'empty' ? 'unavailable' : page.state, page.reason ?? 'not-visible') };
+        return { success: true, usage: validateCollaborationUsage(query, response?.usage) };
+      } catch { return failed('unavailable', 'owner-unavailable'); }
+    },
+    resources: async (input) => {
+      const query = parseSessionCollaborationResourceQuery(input);
+      const { requester, target } = query;
+      const failed = (state: 'unavailable' | 'stale', reason: 'owner-missing' | 'owner-unavailable' | 'scope-mismatch' | 'binding-changed' | 'generation-changed') =>
+        ({ success: true, resources: emptyCollaborationResources(query, state, reason) });
+      try {
+        const [root, binding] = await Promise.all([getWorkspaceRootPathById(requester.workspaceId),
+          getPersistedCoordinatorBinding(target.workspaceId, target.sessionKey)]);
+        if (!root) return failed('unavailable', 'owner-missing');
+        if (binding?.sessionGeneration && binding.sessionGeneration !== target.sessionGeneration)
+          return failed('stale', 'generation-changed');
+        const gateway = gatewayManager.getStatus();
+        const reply = await gatewayManager.rpc<{ resources?: unknown }>('session.activitySnapshot', { resourceInventory: query }, 27_000);
+        const resources = validateCollaborationResources(query, reply?.resources);
+        if (resources.state !== 'ready' || !resources.inventory) return { success: true, resources };
+        const inventory = await collectLongSessionResourceInventory({ scope: resources.inventory.scope, runtimeInventory: resources.inventory,
+          terminalManager, scopedRead: true, sharedGatewayPid: gateway.state === 'running' ? gateway.pid : undefined });
+        const visibility = parseSessionCollaborationQuery({ ...query, fields: [], limit: 1 });
+        const [currentRoot, currentBinding] = await Promise.all([
+          getWorkspaceRootPathById(requester.workspaceId), getPersistedCoordinatorBinding(target.workspaceId, target.sessionKey),
+        ]);
+        const final = await gatewayManager.rpc<{ page?: SessionCollaborationPage }>('session.activitySnapshot', { query: visibility });
+        const page = validateSessionCollaborationPage(visibility, final?.page);
+        if (page.state !== 'ready') return { success: true, resources: emptyCollaborationResources(query,
+          page.state === 'empty' ? 'unavailable' : page.state, page.reason ?? 'not-visible') };
+        const gatewayAfter = gatewayManager.getStatus();
+        if (currentRoot !== root || gatewayAfter.connectedAt !== gateway.connectedAt || gatewayAfter.pid !== gateway.pid)
+          return failed('stale', 'scope-mismatch');
+        if (JSON.stringify(currentBinding) !== JSON.stringify(binding)) return failed('stale', 'binding-changed');
+        return { success: true, resources: validateCollaborationResources(query, { ...resources, inventory }) };
+      } catch { return failed('unavailable', 'owner-unavailable'); }
     },
     read: async (input) => {
       const query = parseSessionActivityReadQuery(input);

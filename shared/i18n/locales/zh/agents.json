@@ -1,5 +1,78 @@
 {
     "collaboration": {
+        "budget": {
+            "disabled": "预算未启用",
+            "scopes": {
+                "host": "宿主",
+                "project": "项目",
+                "session": "会话"
+            },
+            "spentTokens": "已花费 Token",
+            "heldTokens": "预留 Token",
+            "spentCost": "已知花费（USD）",
+            "heldCost": "已知预留（USD）",
+            "activeCalls": "活动调用",
+            "unknownUsage": "用量未知的调用",
+            "unknownCost": "费用未知的调用",
+            "admission": "准入",
+            "admissionStates": {
+                "fenced": "已关闭准入",
+                "waiting": "等待中",
+                "active": "有活动许可",
+                "idle": "无活动或等待许可"
+            },
+            "rejectedWhileFenced": "关闭期间拒绝"
+        },
+        "resourceDetails": {
+            "shared": "共享",
+            "reservations": "预留端口",
+            "count": "数量",
+            "rss": "驻留内存",
+            "cpu": "CPU",
+            "activePermits": "有效准入",
+            "waiters": "等待数",
+            "pids": "进程 ID",
+            "kinds": {
+                "process": "进程树",
+                "terminal": "终端",
+                "browser": "浏览器会话",
+                "background-port": "观测端口",
+                "worktree": "受管工作树",
+                "admission-permit": "执行准入",
+                "provider": "模型预算",
+                "durable-helper": "后台辅助进程",
+                "shared-gateway": "Gateway 进程"
+            }
+        },
+        "usage": {
+            "timingTitle": "任务阶段",
+            "phaseNames": {
+                "queue": "排队",
+                "execution": "执行",
+                "verification": "验证",
+                "recovery": "恢复"
+            },
+            "title": "模型消耗",
+            "session": "当前代次会话累计",
+            "task": "任务子树",
+            "run": "当前或最近有记录的运行",
+            "calls": "已观测调用",
+            "tokens": "Token",
+            "knownTokens": "已知 Token",
+            "cacheRead": "缓存读取 Token",
+            "cacheWrite": "缓存写入 Token",
+            "cost": "估算费用（USD）",
+            "subtotal": "已知费用小计（USD）",
+            "missingUsage": "缺用量的调用",
+            "missingPrice": "缺价格的调用",
+            "conflict": "观测冲突",
+            "coordination": "协调消耗",
+            "observations": "本会话最近调用",
+            "attempt": "第 {{attempt}} 次尝试",
+            "callTokens": "{{tokens}} Token",
+            "priceVersion": "价格版本",
+            "priceVersions": "价格版本"
+        },
         "materials": {
             "title": "共享材料",
             "filter": "任务、文件、主题或证据",

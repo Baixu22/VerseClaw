@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "SessionCollaborationBenefitInput/v1",
+  "pairCount": 5,
+  "input": {
+    "path": "paired-source.txt",
+    "contents": "Recorded observation\nverification-code: GATE-2718\n",
+    "task": "Return the verification code from the recorded observation, as one line without additional commentary.",
+    "result": "GATE-2718"
+  },
+  "provider": { "kind": "scripted-openai-compatible", "model": "mock-coder" },
+  "resources": { "lanesInFlight": 1, "workers": 1, "retries": 0, "mainRssIntervalMs": 250 },
+  "quality": "terminal-ok-and-exact-code",
+  "statistics": "nearest-rank"
+}

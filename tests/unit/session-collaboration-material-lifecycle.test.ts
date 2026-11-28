@@ -7,7 +7,7 @@ import { expect, it } from 'vitest';
 import { resolveTaskDomain } from '../../shared/task-system/identity';
 import { TaskSystemStore } from '../../shared/task-system/store';
 import type { AutonomySessionScope } from '../../shared/types/identity-scope';
-import { materialReference } from '../../shared/types/session-collaboration-material';
+import { MATERIAL_SCAN_LIMIT, materialReference } from '../../shared/types/session-collaboration-material';
 
 it('preserves original versions through conflict, replacement, revocation and missing evidence', () => {
   const workspace = mkdtempSync(join(tmpdir(), 'collaboration-material-lifecycle-'));
@@ -60,6 +60,44 @@ it('preserves original versions through conflict, replacement, revocation and mi
     expect(store.readSharedMaterial(source, source, firstRef)).toEqual(first);
     expect(store.readHistoricalSharedMaterial(source, source, firstRef)).toMatchObject({ material: first, state: 'unknown' });
     expect(store.readHistoricalSharedMaterial({ ...source, sessionGeneration: 'unbound' }, source, firstRef)).toBeNull();
+  } finally {
+    store.close();
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
+it('retains bounded active conflicts and keeps exhausted history unknown', () => {
+  const workspace = mkdtempSync(join(tmpdir(), 'collaboration-material-conflicts-'));
+  const store = new TaskSystemStore(resolveTaskDomain(workspace));
+  const source = { workspaceId: 'workspace-a', projectId: 'workspace-a',
+    sessionKey: 'agent:main:author', sessionGeneration: 'first' } as AutonomySessionScope;
+  try {
+    const { task } = store.create({ objective: 'Check conflict filtering', target: 'out.txt', constraints: [],
+      acceptance: [{ id: 'out', description: 'Check out', verification: { kind: 'owner-receipt', owner: 'fixture' } }],
+    }, 'create');
+    const claim = store.claim(task.contract.taskNodeId, source.sessionKey, source.sessionGeneration, 'claim').claim!;
+    const publish = (input: Parameters<typeof store.publishSharedMaterial>[1]) =>
+      store.publishSharedMaterial(claim, input, 'run-1', () => source);
+    const base = publish({ id: 'base', kind: 'claim', summary: 'Base claim', sensitivity: 'internal', evidenceRefs: [] });
+    const alt = publish({ id: 'alt', kind: 'claim', summary: 'Alternative claim', sensitivity: 'internal', evidenceRefs: [] });
+    const baseRef = materialReference(base);
+    const altRef = materialReference(alt);
+    const activeConflict = publish({ id: 'conflict-active', kind: 'conflict', summary: 'Active conflict',
+      sensitivity: 'internal', evidenceRefs: [], conflictsWith: [baseRef, altRef] });
+    for (let i = 0; i < 8; i++) {
+      const revoked = publish({ id: `conflict-revoked-${i}`, kind: 'conflict', summary: `Revoked ${i}`,
+        sensitivity: 'internal', evidenceRefs: [], conflictsWith: [baseRef, altRef] });
+      store.revokeSharedMaterial(claim, materialReference(revoked), 'Superseded', 'run-1', () => source);
+    }
+    expect(store.sharedMaterialStatus(base, source, Date.now())).toEqual({
+      state: 'conflict', related: [materialReference(activeConflict)],
+    });
+    for (let i = 8; i < MATERIAL_SCAN_LIMIT; i++) {
+      const revoked = publish({ id: `conflict-revoked-${i}`, kind: 'conflict', summary: `Revoked ${i}`,
+        sensitivity: 'internal', evidenceRefs: [], conflictsWith: [baseRef, altRef] });
+      store.revokeSharedMaterial(claim, materialReference(revoked), 'Superseded', 'run-1', () => source);
+    }
+    expect(store.sharedMaterialStatus(base, source, Date.now())).toEqual({ state: 'unknown' });
   } finally {
     store.close();
     rmSync(workspace, { recursive: true, force: true });
