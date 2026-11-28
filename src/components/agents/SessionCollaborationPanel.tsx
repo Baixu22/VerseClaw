@@ -17,6 +17,7 @@ import type { SessionActivitySnapshot } from '@shared/types/session-activity';
 import { SessionCollaborationMessages } from './SessionCollaborationMessages';
 import { SessionCollaborationMaterials } from './SessionCollaborationMaterials';
 import { SessionCollaborationHints } from './SessionCollaborationHints';
+import { SessionCollaborationRecovery } from './SessionCollaborationRecovery';
 import { invokeSessionCollaborationControl } from '@/lib/session-collaboration-control';
 import { SESSION_COLLABORATION_CONTROLS, type SessionCollaborationControl } from '@shared/types/session-collaboration-control';
 
@@ -34,6 +35,7 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
   const [detail, setDetail] = useState<{ key: string; snapshot: SessionActivitySnapshot } | null>(null);
   const [detailState, setDetailState] = useState<{ key: string; state: SessionCollaborationPage['state'] } | null>(null);
   const [loading, setLoading] = useState(false), [readState, setReadState] = useState('not_read');
+  const [recoveryFailed, setRecoveryFailed] = useState(false);
   const revision = useRef(0);
   const query = useMemo(() => requester ? parseSessionCollaborationQuery({ requester, ...(workspace ? { workspace } : {}),
     ...(view.search ? { search: view.search } : {}), ...(cursor ? { cursor } : {}) }) : null, [requester, workspace, view.search, cursor]);
@@ -103,7 +105,7 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
     }).catch(() => {});
     const unsubscribe = subscribeSessionCollaboration({ id: crypto.randomUUID(), query: target, condition: 'changed' }, value => {
       observe(value.page);
-    });
+    }, setRecoveryFailed);
     return () => { active = false; unsubscribe(); };
   }, [requester, view.selected, viewKey, selectedKey, detailKey]);
 
@@ -134,6 +136,8 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
         <RefreshCw className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />{t('collaboration.refresh')}
       </Button>
     </header>
+    {recoveryFailed && <p role="alert" className="text-xs text-red-700 dark:text-red-400">{t('collaboration.recovery.watchSaveFailed')}</p>}
+    <SessionCollaborationRecovery />
     {!requester ? <p className="text-sm text-muted-foreground">{t('collaboration.requesterMissing')}</p> : <>
       <label className="block space-y-1 text-xs text-muted-foreground">{t('collaboration.search')}
         <Input className="h-11 sm:h-9" value={view.search} maxLength={512} onChange={event => { setCursor(undefined); updateView(viewKey, { search: event.target.value }); }} data-testid="collaboration-search" />

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { hostApi } from '@/lib/host-api';
+import { hostEvents } from '@/lib/host-events';
 import { subscribeSessionCollaboration } from '@/stores/session-collaboration';
 import type { AutonomySessionScope } from '@shared/types/identity-scope';
 import type {
@@ -15,11 +16,13 @@ export function SessionCollaborationMaterials({ target, reference }: { target?: 
   const { t } = useTranslation('agents');
   const searchId = useId();
   const sequence = useRef(0);
+  const lastQuery = useRef<Omit<SessionCollaborationMaterialQuery, 'requester'> | null>(null);
   const [input, setInput] = useState('');
   const [search, setSearch] = useState('');
   const [open, setOpen] = useState(Boolean(reference));
   const [loading, setLoading] = useState(false);
   const [failure, setFailure] = useState(false);
+  const [recoveryFailed, setRecoveryFailed] = useState(false);
   const [page, setPage] = useState<SessionCollaborationMaterialPage | null>(null);
   const [reader, setReader] = useState<AutonomySessionScope | null>(null);
   const [selected, setSelected] = useState<Pick<SessionCollaborationMaterialSummary, 'source' | 'ref'> | null>(null);
@@ -35,12 +38,20 @@ export function SessionCollaborationMaterials({ target, reference }: { target?: 
       id: crypto.randomUUID(), condition: 'material-changed', materialRef: selected.ref, observedMaterialState: detail.state,
       query: { requester: reader, target: selected.source, limit: 1 },
     }, result => {
-      if (result.event?.materialState) setObservedState(result.event.materialState);
-      else if (result.state === 'unknown' || result.state === 'stale' || result.state === 'unavailable') setObservedState('unknown');
-    });
+      if (result.event?.materialState) {
+        setObservedState(result.event.materialState);
+        if (['revoked', 'expired', 'stale', 'unknown'].includes(result.event.materialState)) {
+          sequence.current++; setDetail(null); setPage(null); setLoading(false);
+        }
+      }
+      else if (result.state === 'unknown' || result.state === 'stale' || result.state === 'unavailable') {
+        sequence.current++; setDetail(null); setPage(null); setObservedState('unknown'); setFailure(true); setLoading(false);
+      }
+    }, setRecoveryFailed);
   }, [open, selected, detail, reader]);
 
   const request = useCallback(async (query: Omit<SessionCollaborationMaterialQuery, 'requester'>) => {
+    lastQuery.current = query;
     const revision = ++sequence.current;
     setLoading(true);
     setFailure(false);
@@ -48,20 +59,34 @@ export function SessionCollaborationMaterials({ target, reference }: { target?: 
       const active = await hostApi.sessions.collaborationSender();
       if (sequence.current !== revision) return;
       if (!active.source) throw new Error('MATERIAL_READER_UNAVAILABLE');
+      // Host and the material owner reauthorize the selected reference for this fresh reader.
       const result = await hostApi.sessions.collaborationMaterials({ ...query, requester: active.source.scope });
       if (sequence.current !== revision) return;
       if (!result.success || !result.materials) throw new Error('MATERIAL_QUERY_UNAVAILABLE');
       setReader(active.source.scope);
       if (query.ref) {
-        setDetail(result.materials.detail);
+        const detail = result.materials.detail;
+        const invalid = result.materials.state !== 'ready' || (detail && ['revoked', 'expired', 'stale', 'unknown'].includes(detail.state));
+        setDetail(invalid ? null : detail);
+        if (invalid || !detail) setPage(null);
+        setObservedState(detail?.state ?? null);
         setFailure(result.materials.state !== 'ready');
       } else setPage(result.materials);
     } catch {
-      if (sequence.current === revision) setFailure(true);
+      if (sequence.current === revision) { setFailure(true); setDetail(null); setPage(null); setReader(null); }
     } finally {
       if (sequence.current === revision) setLoading(false);
     }
   }, []);
+  useEffect(() => {
+    const invalidate = () => {
+      sequence.current++; setDetail(null); setPage(null); setReader(null); setObservedState(null); setLoading(false);
+      if (open && lastQuery.current) void request(lastQuery.current);
+    };
+    const navigation = hostEvents.onWorkspaceNavigationChanged(invalidate);
+    const reconnect = hostEvents.onGatewayStatus(status => { if (status.state === 'running') invalidate(); });
+    return () => { navigation(); reconnect(); };
+  }, [open, request]);
   const list = (text: string, cursor?: string) => {
     setSelected(null);
     setDetail(null);
@@ -96,6 +121,7 @@ export function SessionCollaborationMaterials({ target, reference }: { target?: 
       {t('collaboration.materials.title')}
     </summary>
     <div className="space-y-3 pt-3">
+      {recoveryFailed && <p role="alert" className="text-xs text-red-700 dark:text-red-400">{t('collaboration.recovery.watchSaveFailed')}</p>}
       <form className="flex flex-wrap items-end gap-2" onSubmit={event => { event.preventDefault(); list(input.trim()); }}>
         <div className="min-w-0 grow space-y-1">
           <label htmlFor={searchId} className="text-xs text-muted-foreground">{t('collaboration.materials.filter')}</label>

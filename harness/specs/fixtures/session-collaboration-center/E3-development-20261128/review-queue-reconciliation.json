@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "jobId": "session-collaboration-e3-20261128-autoreview-r5",
+  "actor": "codex/session-collaboration-e3",
+  "driven_by": "agent",
+  "leaseToken": "17bebfaf08c44b3bb5af1e48d11c0691",
+  "commandDigest": "ad7ffc9a9261c2ec34328ebd0707cb7830b82d0b92c4df4e030ac49c3e0d41f7",
+  "commandStarted": true,
+  "status": "failed",
+  "exitCode": null,
+  "treeExited": true,
+  "root": {
+    "pid": 52228,
+    "createdAt": 1795836624.6509907
+  },
+  "startedAt": 1795836624.6525352,
+  "endedAt": null,
+  "reconciledAt": 1795837276.7589073,
+  "error": "Supervisor exited on database lock before queue receipt; process exit code remains unknown.",
+  "sourceUnchanged": false,
+  "bindingErrors": [
+    {
+      "code": "binding_changed",
+      "path": "D:\\ClawX\\.git\\refs\\heads\\codex\\session-collaboration-e3-20261128"
+    }
+  ],
+  "peaks": {
+    "rssMiB": 747.348,
+    "commitMiB": 556.145,
+    "processCount": 24,
+    "cpuPercent": 177.69,
+    "cpuSecondsObserved": 73.906,
+    "readBytesObserved": 42463290,
+    "writeBytesObserved": 2153825
+  },
+  "reconciliation": {
+    "basis": "agent-resource-queue-authority actual-artifact reconciliation",
+    "observer": "codex/session-collaboration-e3",
+    "liveProcesses": [],
+    "supervisorAlive": false,
+    "reviewWrapperExitCode": 0,
+    "reviewWrapperReceiptSha256": "9bb9f419716cc7c530c8cfa8bf543fc2f52915d981fbb80312bbd4d31b666bc9",
+    "reviewWrapperSourceUnchanged": true,
+    "codeCommit": "4a7362a1cbc2daae319bcafaa9ccbf359066ab56",
+    "note": "Branch reference advanced after wrapper completed; source patch verified against committed code. Queue observation failure is retained."
+  },
+  "logs": {
+    "stdout.log": {
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\session-collaboration-e3-20261128-autoreview-r5\\stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr.log": {
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\session-collaboration-e3-20261128-autoreview-r5\\stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

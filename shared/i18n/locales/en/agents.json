@@ -58,7 +58,8 @@
                 "replied": "Replied",
                 "rejected": "Rejected",
                 "expired": "Expired"
-            }
+            },
+            "recoverySaveFailed": "Recovery storage is unavailable. Your draft is kept in this page; sending is paused until it can be saved."
         },
         "controls": {
             "title": "Original session controls",
@@ -191,6 +192,19 @@
                 "binding-committed": "Binding saved",
                 "confirmed": "Confirmed"
             }
+        },
+        "recovery": {
+            "title": "Saved drafts in this window ({{count}})",
+            "description": "Drafts keep their original source, target and session generation. Discarding removes this local copy; it does not cancel a sent message.",
+            "discard": "Discard saved draft",
+            "watchSaveFailed": "The notification cursor could not be saved, so this subscription is paused. Reopen the detail or reconnect to retry; a displayed notification may be replayed.",
+            "phases": {
+                "draft": "Draft",
+                "sending": "Sending",
+                "unknown": "Delivery unknown",
+                "retry": "Original message ready to retry"
+            },
+            "receipt": "Original receipt: {{state}}"
         }
     },
     "title": "Agents",

@@ -23,6 +23,32 @@ function observation(): SessionCollaborationObservation {
 }
 afterEach(() => { vi.useRealTimers(); vi.restoreAllMocks(); });
 describe('scoped collaboration waits', () => {
+  it.each(['changed', 'blocking-changed'] as const)('keeps repeated %s transitions distinct while replaying one cursor idempotently', async condition => {
+    const input = request(condition), current = observation();
+    const deps = { read: async () => current, subscribe: () => () => {} };
+    const baseline = await waitForSessionCollaboration(input, deps);
+    current.page.items[0].sources.session.value!.agentId = 'changed';
+    const first = await waitForSessionCollaboration({ ...input, cursor: baseline.cursor! }, deps);
+    current.page.items[0].sources.session.value!.agentId = 'main';
+    const back = await waitForSessionCollaboration({ ...input, cursor: first.cursor! }, deps);
+    current.page.items[0].sources.session.value!.agentId = 'changed';
+    const again = await waitForSessionCollaboration({ ...input, cursor: back.cursor! }, deps);
+    for (const result of [first, back, again]) expect(result.event).toMatchObject({ kind: condition });
+    expect([first.event?.sequence, back.event?.sequence, again.event?.sequence]).toEqual([1, 2, 3]);
+    expect(again.event?.id).not.toBe(first.event?.id);
+    expect((await waitForSessionCollaboration({ ...input, cursor: back.cursor! }, deps)).event?.id).toBe(again.event?.id);
+    expect(await waitForSessionCollaboration({ ...input, cursor: again.cursor! }, deps)).toMatchObject({ state: 'timeout', event: null });
+  });
+  it.each(['changed', 'blocking-changed'] as const)('rejects an exhausted %s sequence before emitting another event', async condition => {
+    const input = request(condition), current = observation();
+    const deps = { read: async () => current, subscribe: () => () => {} };
+    const baseline = await waitForSessionCollaboration(input, deps);
+    const cursor = JSON.parse(Buffer.from(baseline.cursor!, 'base64url').toString());
+    cursor[2] = Number.MAX_SAFE_INTEGER;
+    current.page.items[0].sources.session.value!.agentId = 'changed';
+    expect(await waitForSessionCollaboration({ ...input, cursor: Buffer.from(JSON.stringify(cursor)).toString('base64url') }, deps))
+      .toMatchObject({ state: 'stale', cursor: null, event: null });
+  });
   it('does not confuse an idle session with task acceptance and does not repeat an acknowledged idle event', async () => {
     const read = vi.fn(async () => observation()), cleanup = vi.fn(), subscribe = vi.fn(() => cleanup);
     const idle = await waitForSessionCollaboration(request('idle'), { read, subscribe });

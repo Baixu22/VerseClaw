@@ -449,3 +449,7 @@ Initial and updated compaction summaries preserve active user-designated stateme
 Coordination hints in session details show original task prerequisites, recorded writer leases, shared artifact references, and admission observations. Open the original task to act; passive reads do not acquire work or dispatch models.
 
 Forks and task transfers retain bounded references to the original collaboration material versions. Session details show their sources and the existing handoff or migration stage, with links to inspect the material and resume through the original session controls.
+
+Reloading the same app window restores collaboration drafts and acknowledged watch cursors. An interrupted send resumes as an unknown result and reads its original receipt before retrying. Materials are reread after reconnect or reader changes; stale source contents are cleared.
+
+Saved drafts remain inspectable with their original session generations and can be discarded explicitly. A failed notification cursor save pauses that subscription and shows a recovery warning.

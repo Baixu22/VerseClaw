@@ -92,7 +92,10 @@ export async function waitForSessionCollaboration(input: SessionCollaborationWat
       }
       if (request.condition === 'idle' && row.status === 'idle' && (!request.cursor || previous !== fingerprint)) event = { id: `idle:${fingerprint}`, owner: 'sessions', kind: 'idle' };
       if (previous && previous !== fingerprint && ['changed', 'blocking-changed'].includes(request.condition)) {
-        event = { id: `${request.condition}:${fingerprint}`, owner: request.condition === 'changed' ? 'sessions' : 'TaskSystem', kind: request.condition };
+        if (sequence >= Number.MAX_SAFE_INTEGER) return failure('stale', 'scope-mismatch');
+        cursorSequence = sequence + 1;
+        event = { id: `${request.condition}:${hash([fingerprint, cursorSequence])}`,
+          owner: request.condition === 'changed' ? 'sessions' : 'TaskSystem', kind: request.condition, sequence: cursorSequence };
       }
       cursor = Buffer.from(JSON.stringify([basis, fingerprint, cursorSequence])).toString('base64url');
       if (event) return result(request.condition === 'changed' ? 'changed' : 'satisfied', event);

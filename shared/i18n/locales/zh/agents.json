@@ -58,7 +58,8 @@
                 "replied": "已回复",
                 "rejected": "已拒绝",
                 "expired": "已过期"
-            }
+            },
+            "recoverySaveFailed": "恢复存储暂不可用。草稿保留在当前页面，保存成功后才能发送。"
         },
         "controls": {
             "title": "原会话控制",
@@ -191,6 +192,19 @@
                 "binding-committed": "绑定已保存",
                 "confirmed": "已确认"
             }
+        },
+        "recovery": {
+            "title": "本窗口保存的草稿（{{count}}）",
+            "description": "草稿保留原来源、目标与会话代次。清除仅移除本地副本，不会取消已发送的消息。",
+            "discard": "清除保存的草稿",
+            "watchSaveFailed": "通知确认位置保存失败，订阅已暂停。重新打开详情或恢复连接后重试，已显示的通知可能重放。",
+            "phases": {
+                "draft": "草稿",
+                "sending": "发送中",
+                "unknown": "送达结果未知",
+                "retry": "可重试原消息"
+            },
+            "receipt": "原消息回执：{{state}}"
         }
     },
     "title": "Agents",

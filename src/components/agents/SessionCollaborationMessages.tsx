@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { hostApi } from '@/lib/host-api';
+import { hostEvents } from '@/lib/host-events';
 import { useSessionCollaborationUi } from '@/stores/session-collaboration';
 import { SESSION_COLLABORATION_PURPOSES, type SessionCollaborationMessagePage, type SessionCollaborationMessageReceipt } from '@shared/types/session-collaboration-message';
 import type { AutonomySessionScope } from '@shared/types/identity-scope';
@@ -18,12 +19,14 @@ export function SessionCollaborationMessages({ requester, target, tasks = [] }: 
 }) {
   const { t } = useTranslation('agents');
   const [open, setOpen] = useState(false);
+  const [readerRevision, setReaderRevision] = useState(0);
   const [position, setPosition] = useState<{ key: string; taskNodeId?: string; cursor?: string } | null>(null);
   const [page, setPage] = useState<{ key: string; value: SessionCollaborationMessagePage } | null>(null);
   const [receipt, setReceipt] = useState<{ key: string; value: SessionCollaborationMessageReceipt } | null>(null);
   const [sourceRead, setSourceRead] = useState<{ key: string; value: { scope: AutonomySessionScope; name: string } | null } | null>(null), [state, setState] = useState('not_read');
-  const readKey = JSON.stringify([requester, target]), active = useRef(readKey); active.current = readKey;
+  const readKey = JSON.stringify([requester, target, readerRevision]), active = useRef(readKey); active.current = readKey;
   const listRequest = useRef(0), receiptRequest = useRef(0);
+  const recoveryRead = useRef<string | null>(null);
   const view = position?.key === readKey ? position : null;
   const taskNodeId = tasks.some(task => task.taskNodeId === view?.taskNodeId) ? view?.taskNodeId : undefined;
   const cursor = taskNodeId === view?.taskNodeId ? view?.cursor : undefined;
@@ -33,6 +36,7 @@ export function SessionCollaborationMessages({ requester, target, tasks = [] }: 
   const draftKey = source ? JSON.stringify([source.scope, target]) : null;
   const draft = useSessionCollaborationUi(value => draftKey ? value.messageDrafts[draftKey] : undefined);
   const update = useSessionCollaborationUi(value => value.updateMessageDraft);
+  const persistenceFailed = useSessionCollaborationUi(value => value.persistenceFailed);
   const editable = draft?.phase === 'draft';
   const retry = draft?.phase === 'retry';
   const canSend = Boolean(draft?.text.trim()) && (editable || retry);
@@ -42,6 +46,15 @@ export function SessionCollaborationMessages({ requester, target, tasks = [] }: 
     && task.taskNodeId === linkedTask.taskNodeId && task.revision === linkedTask.revision && task.digest === linkedTask.digest)
     ? `/task-ledger?${new URLSearchParams({ workspaceId: target.workspaceId, nodeId: linkedTask.taskNodeId })}`
     : null;
+  useEffect(() => {
+    const invalidate = () => {
+      active.current = ''; listRequest.current++; receiptRequest.current++;
+      setSourceRead(null); setReceipt(null); setPage(null); setReaderRevision(value => value + 1);
+    };
+    const navigation = hostEvents.onWorkspaceNavigationChanged(invalidate);
+    const reconnect = hostEvents.onGatewayStatus(status => { if (status.state === 'running') invalidate(); });
+    return () => { navigation(); reconnect(); };
+  }, []);
   const refresh = useCallback(async () => {
     if (!open || activeList.current !== listKey) return;
     const request = ++listRequest.current;
@@ -63,7 +76,7 @@ export function SessionCollaborationMessages({ requester, target, tasks = [] }: 
   }, [open, readKey]);
   useEffect(() => () => { receiptRequest.current++; }, [open, readKey]);
   useEffect(() => { if (open && draftKey && !draft) update(draftKey, {}); }, [open, draftKey, draft, update]);
-  const readReceipt = async (id: string) => {
+  const readReceipt = useCallback(async (id: string) => {
     const request = ++receiptRequest.current;
     try {
       const result = await hostApi.sessions.collaborationMessages({ requester, target, id });
@@ -80,10 +93,12 @@ export function SessionCollaborationMessages({ requester, target, tasks = [] }: 
       }
       return null;
     }
-  };
+  }, [requester, target, readKey]);
   const send = async () => {
     if (!source || !draftKey || !draft || !canSend) return;
-    update(draftKey, { phase: 'sending' });
+    if (!update(draftKey, { phase: 'sending' })) {
+      update(draftKey, { phase: retry ? 'retry' : 'draft' }); setState('unavailable'); return;
+    }
     try {
       const result = await hostApi.sessions.sendCollaborationMessage({ id: draft.id, target, purpose: draft.purpose, message: draft.text,
         expectedSource: source.scope, ...(draft.replyTo ? { replyTo: draft.replyTo } : {}) });
@@ -92,7 +107,7 @@ export function SessionCollaborationMessages({ requester, target, tasks = [] }: 
       const unresolved = !accepted && (result.phase === 'unknown' || (retry && !terminal));
       if (useSessionCollaborationUi.getState().messageDrafts[draftKey]?.id === draft.id) {
         if (accepted) update(draftKey, { id: crypto.randomUUID(), text: '', phase: 'draft', replyTo: undefined });
-        else update(draftKey, { phase: unresolved ? 'unknown' : 'draft' });
+        else update(draftKey, { phase: unresolved ? 'unknown' : 'draft', ...(terminal ? { id: crypto.randomUUID() } : {}) });
       }
       if (active.current !== readKey) return;
       if (result.receipt) setReceipt({ key: readKey, value: result.receipt });
@@ -100,18 +115,26 @@ export function SessionCollaborationMessages({ requester, target, tasks = [] }: 
       if (active.current === readKey) setState(unresolved ? 'unknown' : result.phase);
     } catch { if (useSessionCollaborationUi.getState().messageDrafts[draftKey]?.id === draft.id) update(draftKey, { phase: 'unknown' }); if (active.current === readKey) setState('unknown'); }
   };
-  const check = async () => {
-    if (!draft || !draftKey) return;
-    const messages = await readReceipt(draft.id);
-    if (!messages || useSessionCollaborationUi.getState().messageDrafts[draftKey]?.id !== draft.id) return;
+  const check = useCallback(async () => {
+    const original = draftKey ? useSessionCollaborationUi.getState().messageDrafts[draftKey] : undefined;
+    if (!original || !draftKey) return;
+    const messages = await readReceipt(original.id);
+    if (!messages || useSessionCollaborationUi.getState().messageDrafts[draftKey]?.id !== original.id) return;
     const current = messages.receipt;
     if (!current) {
       if (messages.state === 'empty') update(draftKey, { phase: 'retry' });
       return;
     }
     if (['accepted', 'queued', 'delivered', 'replied'].includes(current.phase)) update(draftKey, { id: crypto.randomUUID(), text: '', phase: 'draft', replyTo: undefined });
-    else if (['rejected', 'expired'].includes(current.phase)) update(draftKey, { phase: 'draft' });
-  };
+    else if (['rejected', 'expired'].includes(current.phase)) update(draftKey, { id: crypto.randomUUID(), phase: 'draft' });
+  }, [draftKey, readReceipt, update]);
+  useEffect(() => {
+    if (!open || !draftKey) { recoveryRead.current = null; return; }
+    const context = JSON.stringify([readKey, draftKey]);
+    if (recoveryRead.current === context) return;
+    recoveryRead.current = context;
+    if (useSessionCollaborationUi.getState().messageDrafts[draftKey]?.phase === 'unknown') void check();
+  }, [open, draftKey, readKey, check]);
   return <details className="rounded-md border border-border p-3" onToggle={event => setOpen(event.currentTarget.open)} data-testid="collaboration-messages">
     <summary className="cursor-pointer text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{t('collaboration.messages.title')}</summary>
     {open && <div className="space-y-3 pt-3">
@@ -149,6 +172,7 @@ export function SessionCollaborationMessages({ requester, target, tasks = [] }: 
         }}>{t('collaboration.messages.reply')}</Button>}
       </article>}
       <div className="space-y-2 border-t border-border pt-3">
+        {persistenceFailed && <p role="alert" className="text-xs text-red-700 dark:text-red-400">{t('collaboration.messages.recoverySaveFailed')}</p>}
         <p className="text-xs text-muted-foreground">{source ? t('collaboration.messages.sender', { name: source.name }) : t('collaboration.messages.sourceMissing')}</p>
         <label className="block space-y-1 text-xs">{t('collaboration.messages.purpose')}<select className="block min-h-9 w-full rounded-md border border-border bg-surface-input px-2" value={draft?.purpose ?? 'request'} disabled={!draftKey || !editable}
           onChange={event => { if (draftKey && editable) update(draftKey, { purpose: event.target.value as typeof SESSION_COLLABORATION_PURPOSES[number], id: crypto.randomUUID() }); }}>
