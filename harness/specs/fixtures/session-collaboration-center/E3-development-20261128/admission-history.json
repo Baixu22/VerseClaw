@@ -1,0 +1,49 @@
+{
+  "driven_by": "agent",
+  "runs": [
+    {
+      "job": "session-collaboration-e3-20261128-autoreview-r2",
+      "receipt": {
+        "jobId": "session-collaboration-e3-20261128-autoreview-r2",
+        "commandDigest": "9d991654b142d59866215c33055113ffe87d417b9cbef9f150a4fba51e2b6f80",
+        "leaseToken": "e32e7f40b70e451796378bb1f0db3b68",
+        "actor": "codex/session-collaboration-e3",
+        "driven_by": "agent",
+        "status": "failed",
+        "commandStarted": false,
+        "exitCode": null,
+        "treeExited": true,
+        "reasons": [
+          {
+            "code": "cpu_pressure",
+            "actual": 85.6,
+            "limit": 85
+          }
+        ]
+      },
+      "receiptSha256": "a5510d3a7dbcaeb5750bdfcbde3614d557d32663f9018a5328c03c4a3967ccec"
+    },
+    {
+      "job": "session-collaboration-e3-20261128-recovery-green-small",
+      "receipt": {
+        "jobId": "session-collaboration-e3-20261128-recovery-green-small",
+        "commandDigest": "5ef5c414b91dbf866c1beb86799b6aaad84452f89fb376a82d914af5702dd086",
+        "leaseToken": "6d47809b5d9b42eba6373041130f2a94",
+        "actor": "codex/session-collaboration-e3",
+        "driven_by": "agent",
+        "status": "failed",
+        "commandStarted": false,
+        "exitCode": null,
+        "treeExited": true,
+        "reasons": [
+          {
+            "code": "cpu_pressure",
+            "actual": 93.3,
+            "limit": 85
+          }
+        ]
+      },
+      "receiptSha256": "b5ad5e423b3eba398dac00d8dc1598d2b7be35b13e9355e8bd5e12f7a2f15639"
+    }
+  ]
+}

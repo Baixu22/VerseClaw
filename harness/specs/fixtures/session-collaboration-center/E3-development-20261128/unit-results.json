@@ -1,0 +1,507 @@
+{
+  "driven_by": "agent",
+  "testedTree": "e4068ad03a69dd83b47f3f4ec196b46c934c5127",
+  "files": [
+    {
+      "file": "tests/unit/session-collaboration-recovery-view.test.tsx",
+      "testSourceSha256": "b2c00a384e5cdf70692ee0a357e44ab01a46b236f19ebc6f23fad040ad3c3945",
+      "rawResultSha256": "9d05b9548a18efd9e8ad9efe9b303751dca9956c25a31e982dbd5b3ed5a4200c",
+      "passed": 15,
+      "total": 15,
+      "assertions": [
+        {
+          "name": "recovers an interrupted send after a renderer reload under the original scoped ID",
+          "status": "passed"
+        },
+        {
+          "name": "resumes from the acknowledged watch cursor after reload without replaying the same notification",
+          "status": "passed"
+        },
+        {
+          "name": "does not persist a watch cursor before its consumer accepts the update",
+          "status": "passed"
+        },
+        {
+          "name": "delivers every repeated owner transition before acknowledging its cursor",
+          "status": "passed"
+        },
+        {
+          "name": "pauses on a cursor save failure and retries the last saved cursor after reconnect",
+          "status": "passed"
+        },
+        {
+          "name": "keeps old-generation drafts inspectable and makes capacity available after explicit discard",
+          "status": "passed"
+        },
+        {
+          "name": "shows the material subscription recovery warning when its cursor cannot be saved",
+          "status": "passed"
+        },
+        {
+          "name": "ignores corrupt window recovery data and keeps stored drafts scoped to both generations",
+          "status": "passed"
+        },
+        {
+          "name": "clears a material body when its source resets and does not retain the old contents",
+          "status": "passed"
+        },
+        {
+          "name": "clears material contents on navigation and rejects an in-flight response for the previous reader",
+          "status": "passed"
+        },
+        {
+          "name": "does not dispatch a message when its recovery intent cannot be saved",
+          "status": "passed"
+        },
+        {
+          "name": "reads an unknown original receipt automatically when opening after reload without sending",
+          "status": "passed"
+        },
+        {
+          "name": "reauthorizes a selected material for the new reader after navigation before displaying fresh content",
+          "status": "passed"
+        },
+        {
+          "name": "checks an old-generation intent through the current reader and never associates its receipt with a replacement draft",
+          "status": "passed"
+        },
+        {
+          "name": "rejects an archived receipt that arrives after reader navigation",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-recovery.test.ts",
+      "testSourceSha256": "bdf9ef009907fd997f36f5f66f48a2675cd8955bc1646a2e6bf0f21909a28b33",
+      "rawResultSha256": "496259050194cad00c09134b58b5ca83c2e049db0c18946267f97d0b28da715c",
+      "passed": 5,
+      "total": 5,
+      "assertions": [
+        {
+          "name": "recovers the original message after interruption at accepted without repeating its effect",
+          "status": "passed"
+        },
+        {
+          "name": "recovers the original message after interruption at dispatch without repeating its effect",
+          "status": "passed"
+        },
+        {
+          "name": "recovers the original message after interruption at queued without repeating its effect",
+          "status": "passed"
+        },
+        {
+          "name": "recovers the original message after interruption at delivered without repeating its effect",
+          "status": "passed"
+        },
+        {
+          "name": "recovers the original message after interruption at replied without repeating its effect",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-message-view.test.tsx",
+      "testSourceSha256": "72dbf6a7ecb28f0034e8cd45e88724e6e57649eaa65e3bc37225de7e9fbf6ca3",
+      "rawResultSha256": "028ddfac79a3450ffa918072483126eaced97681f39cda51c2d191aa3fbc722f",
+      "passed": 8,
+      "total": 8,
+      "assertions": [
+        {
+          "name": "message view draft ownership allocates a new draft ID after recovering a rejected receipt",
+          "status": "passed"
+        },
+        {
+          "name": "message view draft ownership allocates a new draft ID after recovering a expired receipt",
+          "status": "passed"
+        },
+        {
+          "name": "message view draft ownership reads only on expansion and retains an unknown intent across unmount without a new ID",
+          "status": "passed"
+        },
+        {
+          "name": "message view draft ownership keeps a failed receipt read tied to the same unknown draft",
+          "status": "passed"
+        },
+        {
+          "name": "message view draft ownership retries the original intent without unlocking edits when its receipt is absent",
+          "status": "passed"
+        },
+        {
+          "name": "message view draft ownership keeps the new page when a previous-page refresh finishes late",
+          "status": "passed"
+        },
+        {
+          "name": "message view draft ownership starts a bounded task query without reusing an unfiltered cursor",
+          "status": "passed"
+        },
+        {
+          "name": "message view draft ownership keeps same-key drafts separate across workspace and physical generation",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-watch.test.ts",
+      "testSourceSha256": "20550078f3d2e799105418a332018f61710f06ce713e7eb1bf4230c9c2ed2428",
+      "rawResultSha256": "8dd2ba531f2d7246be9241ea392e13510c7648393df55857e74a136913871d59",
+      "passed": 15,
+      "total": 15,
+      "assertions": [
+        {
+          "name": "scoped collaboration waits keeps repeated changed transitions distinct while replaying one cursor idempotently",
+          "status": "passed"
+        },
+        {
+          "name": "scoped collaboration waits keeps repeated blocking-changed transitions distinct while replaying one cursor idempotently",
+          "status": "passed"
+        },
+        {
+          "name": "scoped collaboration waits rejects an exhausted changed sequence before emitting another event",
+          "status": "passed"
+        },
+        {
+          "name": "scoped collaboration waits rejects an exhausted blocking-changed sequence before emitting another event",
+          "status": "passed"
+        },
+        {
+          "name": "scoped collaboration waits does not confuse an idle session with task acceptance and does not repeat an acknowledged idle event",
+          "status": "passed"
+        },
+        {
+          "name": "scoped collaboration waits binds cursors to scope and condition while ignoring fresh observation timestamps",
+          "status": "passed"
+        },
+        {
+          "name": "scoped collaboration waits acknowledges a terminal event across row changes and a temporarily absent owner outcome",
+          "status": "passed"
+        },
+        {
+          "name": "scoped collaboration waits returns a real owner receipt once without turning session idleness into acceptance",
+          "status": "passed"
+        },
+        {
+          "name": "scoped collaboration waits rereads changes arriving during an owner read and releases its listener",
+          "status": "passed"
+        },
+        {
+          "name": "scoped collaboration waits finishes cancellation and a deadline while the owner read is still pending",
+          "status": "passed"
+        },
+        {
+          "name": "scoped collaboration waits returns the original owner generation rejection without publishing a notification",
+          "status": "passed"
+        },
+        {
+          "name": "scoped collaboration waits returns a material invalidation for the original reference once across a resumed cursor",
+          "status": "passed"
+        },
+        {
+          "name": "scoped collaboration waits distinguishes repeated material state transitions and replays the same cursor idempotently",
+          "status": "passed"
+        },
+        {
+          "name": "scoped collaboration waits reads terminal identity from the existing runtime owner and rejects the old generation",
+          "status": "passed"
+        },
+        {
+          "name": "scoped collaboration waits rejects mixed watch requests before subscribing",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-panel.test.tsx",
+      "testSourceSha256": "635ab6172c512f4bad465c80c38a3d4fdd7db6e02f6c052cf7907ca817ac707e",
+      "rawResultSha256": "19fac2dc54556e1e87c92d8ccfdad496aa8a1f9d1667e4955c6dcee3598f8b60",
+      "passed": 11,
+      "total": 11,
+      "assertions": [
+        {
+          "name": "shared collaboration panel shows a paused subscription when its acknowledgement cannot be saved",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel keeps an unread requester separate from a real empty result",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel passes the scoped action to the chat owner after activating the selected session",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel qualifies stop through the Host reader before calling its scoped owner",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel loads only the selected detail, preserves keyboard focus on refresh and cancels on unmount",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel recovers an expired page cursor while keeping the filter and selected session",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel does not display a late previous-workspace reply under a new requester",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel fences selected detail when the target is no longer visible",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel replays the selected watch when Gateway reconnects before the pending wait fails",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel opens the worker after its parent switch changes the requester",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel marks retained details stale when their watch loses the source",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-delivery.test.ts",
+      "testSourceSha256": "b54b23f914b82695816721bebae06be89203aa62b1427104bece8e320870957d",
+      "rawResultSha256": "8602e095c59b9c6ed17093126757365058da81f564e566d47b6aee32620a4ac4",
+      "passed": 7,
+      "total": 7,
+      "assertions": [
+        {
+          "name": "original message intent owner keeps the first source capture through replay and refuses different content",
+          "status": "passed"
+        },
+        {
+          "name": "original message intent owner leaves the first read empty without creating the message table",
+          "status": "passed"
+        },
+        {
+          "name": "original message intent owner allows an accepted intent once and preserves unknown dispatch across an actual database reopen",
+          "status": "passed"
+        },
+        {
+          "name": "original message intent owner retains an owner ack and reads bounded metadata without full message bytes or writes",
+          "status": "passed"
+        },
+        {
+          "name": "original message intent owner does not replace a known accepted input with a late unknown or rejection",
+          "status": "passed"
+        },
+        {
+          "name": "original message intent owner keeps confirmed delivery when earlier acknowledgements arrive after reopening the owner",
+          "status": "passed"
+        },
+        {
+          "name": "original message intent owner retains the actual owner reply and its byte hash separately from metadata pages",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-material-view.test.tsx",
+      "testSourceSha256": "bdb49b6fb01588b9d2d515fd5b06118db1e0fd7c74e5488c65cb3536e1df4763",
+      "rawResultSha256": "1470c2c7e64b9befc98a4befef8b0ec180b5e21c31f83c076ed31adc9f155ef6",
+      "passed": 15,
+      "total": 15,
+      "assertions": [
+        {
+          "name": "opens the exact inherited material version using the current reader without a discovery query",
+          "status": "passed"
+        },
+        {
+          "name": "clears the material body when its owner reports revoked",
+          "status": "passed"
+        },
+        {
+          "name": "clears the material body when its owner reports expired",
+          "status": "passed"
+        },
+        {
+          "name": "clears the material body when its owner reports stale",
+          "status": "passed"
+        },
+        {
+          "name": "clears the material body when its owner reports unknown",
+          "status": "passed"
+        },
+        {
+          "name": "keeps an already revoked body cleared when reopening the original reference",
+          "status": "passed"
+        },
+        {
+          "name": "keeps an already expired body cleared when reopening the original reference",
+          "status": "passed"
+        },
+        {
+          "name": "keeps an already stale body cleared when reopening the original reference",
+          "status": "passed"
+        },
+        {
+          "name": "keeps an already unknown body cleared when reopening the original reference",
+          "status": "passed"
+        },
+        {
+          "name": "clears a previously listed summary when opening discovers its revocation",
+          "status": "passed"
+        },
+        {
+          "name": "clears a previously listed summary when its detail becomes stale",
+          "status": "passed"
+        },
+        {
+          "name": "clears a previously listed summary when its detail becomes empty",
+          "status": "passed"
+        },
+        {
+          "name": "uses the active reader from Main while preserving the selected material source",
+          "status": "passed"
+        },
+        {
+          "name": "keeps the pending selected detail across collapse and presents it only after reopening",
+          "status": "passed"
+        },
+        {
+          "name": "discards an earlier selected detail when another search finishes first",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-query.test.ts",
+      "testSourceSha256": "f04c2777476d0bc8bbd5a1d2c2107937c66ff3da741d972fcc2001bd63a281c5",
+      "rawResultSha256": "aea20c8f0038e3e1204556bee7587e52b86bfbf06e5b722c85e230103e980a9b",
+      "passed": 31,
+      "total": 31,
+      "assertions": [
+        {
+          "name": "uses the same Main-owned Gateway for watch and cancellation",
+          "status": "passed"
+        },
+        {
+          "name": "exposes coordination observations through the existing sessions_list and Gateway route without writes",
+          "status": "passed"
+        },
+        {
+          "name": "reads a bounded final material batch through the Gateway and rejects a reset during its reply",
+          "status": "passed"
+        },
+        {
+          "name": "releases cancelled and expired Gateway waits while their initial owner reads are pending",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail returns the same owner-backed scopes, goals, actions and task references through UI and both existing session tools without mutation",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail keeps owned runs running without observed actions and rejects empty ready actions across consumers",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail distinguishes failed owner reads from missing reply envelopes across Main, UI and both tools",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail filters by real TaskSystem goals and workspace without switching the active workspace",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail keeps an unverifiable goal unknown while filtering metadata rows that have no session identity",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail reuses one read-only TaskSystem connection per execution root and reads no transcript bytes",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail attempts an incompatible TaskSystem schema only once per execution root and preserves its bytes",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail returns bounded Unicode goals and preserves the full TaskSystem objective at the A1 detail entry",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail reads an original in-flight tool request with its own run identity and removes it when the owner settles",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail preserves a foreign admission scope for the same key and generation and rejects its actions across consumers",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail pages using a scoped metadata cursor and rejects old generations and cursor identities",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail invalidates a cursor after metadata label or effective visibility changes",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail keeps unselected fields not_read and bounds discovery to a single 100-candidate scan",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail distinguishes verified empty tasks, idle runs, unavailable owners and unknown activity",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail fences reset during the owner join and never reuses a current-session result for another workspace",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail applies original self visibility before hydrating task details",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail applies original tree visibility before hydrating task details",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail applies original agent visibility before hydrating task details",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail uses existing A2A allow rules and sandbox clamps without accepting policy overrides from parameters",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rejects model edits, spoofed requesters and stale sender generations on readOnly tool requests",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rejects malformed, unselected and cross-scope replies consistently at Main, UI and tool consumers",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail preserves unknown search matches and rejects a fabricated empty page across consumers",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rejects an unbounded or authority-bearing query before owner hydration: {\"limit\":51}",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rejects an unbounded or authority-bearing query before owner hydration: {\"limit\":0}",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rejects an unbounded or authority-bearing query before owner hydration: {\"fields\":[\"unknown\"]}",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rejects an unbounded or authority-bearing query before owner hydration: {\"cursor\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rejects an unbounded or authority-bearing query before owner hydration: {\"requester\":{\"workspaceId\":\"workspace-a\",\"projectId\":\"workspace-a\",\"sessionKey\":\"agent:main:a2-a\",\"sessionGeneration\":\"generation-a\",\"writeClaim\":true}}",
+          "status": "passed"
+        }
+      ]
+    }
+  ],
+  "rawReportSha256": "3dd2c1711e4fd4ba7528e384a62e78793430c2e4b3399aa4fe642ba463980413"
+}

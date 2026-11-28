@@ -1,0 +1,106 @@
+{
+  "candidate": {
+    "commit": "4a7362a1cbc2daae319bcafaa9ccbf359066ab56",
+    "tree": "e4068ad03a69dd83b47f3f4ec196b46c934c5127"
+  },
+  "errors": 0,
+  "warnings": 4,
+  "files": [
+    {
+      "path": "shared/session-collaboration-watch.ts",
+      "messages": []
+    },
+    {
+      "path": "src/components/agents/SessionCollaborationMaterials.tsx",
+      "messages": []
+    },
+    {
+      "path": "src/components/agents/SessionCollaborationMessages.tsx",
+      "messages": [
+        {
+          "ruleId": "react-hooks/exhaustive-deps",
+          "severity": 1,
+          "message": "The ref value 'listRequest.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'listRequest.current' to a variable inside the effect, and use that variable in the cleanup function.",
+          "line": 72,
+          "column": 64,
+          "endLine": 72,
+          "endColumn": 71
+        }
+      ]
+    },
+    {
+      "path": "src/components/agents/SessionCollaborationPanel.tsx",
+      "messages": [
+        {
+          "ruleId": "react-refresh/only-export-components",
+          "severity": 1,
+          "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.",
+          "line": 24,
+          "column": 14,
+          "messageId": "namedExport",
+          "endLine": 24,
+          "endColumn": 35
+        },
+        {
+          "ruleId": "react-hooks/exhaustive-deps",
+          "severity": 1,
+          "message": "The ref value 'revision.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'revision.current' to a variable inside the effect, and use that variable in the cleanup function.",
+          "line": 66,
+          "column": 119,
+          "endLine": 66,
+          "endColumn": 126
+        }
+      ]
+    },
+    {
+      "path": "src/components/agents/SessionCollaborationRecovery.tsx",
+      "messages": [
+        {
+          "ruleId": "react-hooks/exhaustive-deps",
+          "severity": 1,
+          "message": "The ref value 'revision.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'revision.current' to a variable inside the effect, and use that variable in the cleanup function.",
+          "line": 22,
+          "column": 29,
+          "endLine": 22,
+          "endColumn": 36
+        }
+      ]
+    },
+    {
+      "path": "src/stores/session-collaboration.ts",
+      "messages": []
+    },
+    {
+      "path": "tests/e2e/session-collaboration-recovery.spec.ts",
+      "messages": []
+    },
+    {
+      "path": "tests/unit/session-collaboration-material-view.test.tsx",
+      "messages": []
+    },
+    {
+      "path": "tests/unit/session-collaboration-message-view.test.tsx",
+      "messages": []
+    },
+    {
+      "path": "tests/unit/session-collaboration-panel.test.tsx",
+      "messages": []
+    },
+    {
+      "path": "tests/unit/session-collaboration-query.test.ts",
+      "messages": []
+    },
+    {
+      "path": "tests/unit/session-collaboration-recovery-view.test.tsx",
+      "messages": []
+    },
+    {
+      "path": "tests/unit/session-collaboration-recovery.test.ts",
+      "messages": []
+    },
+    {
+      "path": "tests/unit/session-collaboration-watch.test.ts",
+      "messages": []
+    }
+  ]
+}

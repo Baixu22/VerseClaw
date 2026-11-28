@@ -1,0 +1,261 @@
+{
+  "driven_by": "agent",
+  "runs": [
+    {
+      "run": "autoreview-r1",
+      "receipt": {
+        "candidate": "cc2302f36c3a36be1120e29235b9c48aed741598",
+        "tree": "ee4ab1d5408d46fd3b736f919cc6fc952e502476",
+        "patchSha256": "d36d8e9bd3801e4721818a9c8b5073916ad1eb8810a5d6538e19ce3a07cfb1b6",
+        "datasetSha256": "69bc0e4732409e40b55197e45b9c941739a535ed72aef108c37e0bbeb2e2800d",
+        "argv": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\tmp\\session-collaboration-e3-20261128\\review-with-raw.py",
+          "D:\\tmp\\session-collaboration-e3-20261128\\autoreview-r1-engine.json",
+          "--mode",
+          "local",
+          "--base",
+          "cc2302f36c3a36be1120e29235b9c48aed741598",
+          "--engine",
+          "codex",
+          "--stream-engine-output",
+          "--model",
+          "ccs-ai/gpt-6.1-sol",
+          "--thinking",
+          "high",
+          "--no-web-search",
+          "--prompt-file",
+          "D:\\tmp\\session-collaboration-e3-20261128\\autoreview-r1-notes.md",
+          "--dataset",
+          "D:\\tmp\\session-collaboration-e3-20261128\\autoreview-r1-dataset.json",
+          "--output",
+          "D:\\tmp\\session-collaboration-e3-20261128\\autoreview-r1.txt",
+          "--json-output",
+          "D:\\tmp\\session-collaboration-e3-20261128\\autoreview-r1.json"
+        ],
+        "exitCode": 1,
+        "seconds": 40.797,
+        "model": "ccs-ai/gpt-6.1-sol",
+        "driven_by": "agent",
+        "actor": "codex/session-collaboration-e3",
+        "sourceUnchanged": true
+      },
+      "receiptSha256": "33c0b287595ce170550c6918eb8316efcfafceb09f0097ae0e32b7de2b0faba8",
+      "result": null,
+      "resultSha256": null
+    },
+    {
+      "run": "autoreview-r3",
+      "receipt": {
+        "candidate": "cc2302f36c3a36be1120e29235b9c48aed741598",
+        "tree": "ee4ab1d5408d46fd3b736f919cc6fc952e502476",
+        "patchSha256": "3bc607819f8bf8da48ac51dd053d04bd1ae356baf8fa6da1257f4fbfab2999cd",
+        "datasetSha256": "58b13aaeb8f7897f84f62c8103717d8db0c62bfb87f93cf045b1904daa805832",
+        "argv": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\tmp\\session-collaboration-e3-20261128\\review-with-raw.py",
+          "D:\\tmp\\session-collaboration-e3-20261128\\autoreview-r3-engine.json",
+          "--mode",
+          "local",
+          "--base",
+          "cc2302f36c3a36be1120e29235b9c48aed741598",
+          "--engine",
+          "codex",
+          "--stream-engine-output",
+          "--model",
+          "ccs-ai/gpt-6.1-sol",
+          "--thinking",
+          "high",
+          "--no-web-search",
+          "--prompt-file",
+          "D:\\tmp\\session-collaboration-e3-20261128\\autoreview-r3-notes.md",
+          "--dataset",
+          "D:\\tmp\\session-collaboration-e3-20261128\\autoreview-r3-dataset.json",
+          "--output",
+          "D:\\tmp\\session-collaboration-e3-20261128\\autoreview-r3.txt",
+          "--json-output",
+          "D:\\tmp\\session-collaboration-e3-20261128\\autoreview-r3.json"
+        ],
+        "exitCode": 1,
+        "seconds": 509.578,
+        "model": "ccs-ai/gpt-6.1-sol",
+        "driven_by": "agent",
+        "actor": "codex/session-collaboration-e3",
+        "sourceUnchanged": true
+      },
+      "receiptSha256": "ee3f91fc38fd77e55b6a1b7e2233e31110cb23090c30a79eeed2fe8e167f3c50",
+      "result": {
+        "findings": [
+          {
+            "body": "当订阅返回带事件的结果时，`onUpdate(result)` 会同步更新界面；随后代码无论消费者是否成功处理都继续保存游标。若消费者抛错，事件可能已显示但仍会被确认为已处理，重载后从新游标续读会跳过该事件。应把消费者处理成功作为确认游标的前提，并处理消费者异常。",
+            "category": "bug",
+            "code_location": {
+              "file_path": "src/stores/session-collaboration.ts",
+              "line": 120
+            },
+            "confidence": 0.98,
+            "priority": "P1",
+            "title": "消费者处理失败时仍推进已持久化游标"
+          },
+          {
+            "body": "页面重载后，“结果未知”的草稿只会在用户手动点击“检查”时查询原回执；没有自动恢复查询。若用户直接离开页面或 Gateway 重启后不再打开消息详情，原始收件回执不会被读取，恢复行为与任务说明中“恢复后按原 ID 读回状态”不符。打开详情时应自动按原消息 ID 查回执，并仅在 owner 确认不存在后启用原意图重试。",
+            "category": "bug",
+            "code_location": {
+              "file_path": "src/components/agents/SessionCollaborationMessages.tsx",
+              "line": 100
+            },
+            "confidence": 0.91,
+            "priority": "P2",
+            "title": "重载后未知发送不会自动查询原回执"
+          },
+          {
+            "body": "导航失效时 `invalidate` 将 `lastQuery` 中的旧查询直接重新提交；`request` 虽会重新读取当前 sender，却仍把旧 target/ref 交给 Host。若导航切换到另一个工作区后原引用仍可访问，组件会继续读取并展示旧工作区材料，与按当前读取者重新核验并清除旧内容的边界不符。导航后应仅在目标仍属于当前允许范围时重查，否则保持清空。",
+            "category": "security",
+            "code_location": {
+              "file_path": "src/components/agents/SessionCollaborationMaterials.tsx",
+              "line": 73
+            },
+            "confidence": 0.86,
+            "priority": "P1",
+            "title": "导航后仍以旧目标重新读取材料"
+          }
+        ],
+        "overall_confidence": 0.91,
+        "overall_correctness": "patch is incorrect",
+        "overall_explanation": "发现三个恢复路径缺陷：游标确认未以消费者处理成功为条件，未知发送重载后没有自动回执核验，材料导航失效后仍使用旧目标重读。"
+      },
+      "resultSha256": "45a4304f03934801db1a4a58a90bd74d9e7f024a29399cbf142e05d7868176ed"
+    },
+    {
+      "run": "autoreview-r4",
+      "receipt": {
+        "candidate": "cc2302f36c3a36be1120e29235b9c48aed741598",
+        "tree": "ee4ab1d5408d46fd3b736f919cc6fc952e502476",
+        "patchSha256": "5e1dbab86e676ae089fa878c1f67f1b587c22b3943709b21363140876ccbf179",
+        "datasetSha256": "04c770867d5e0bab66bb158747a6c2f7a452bc79724d4513eba1bb4dc3f3c042",
+        "argv": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\tmp\\session-collaboration-e3-20261128\\review-with-raw.py",
+          "D:\\tmp\\session-collaboration-e3-20261128\\autoreview-r4-engine.json",
+          "--mode",
+          "local",
+          "--base",
+          "cc2302f36c3a36be1120e29235b9c48aed741598",
+          "--engine",
+          "codex",
+          "--stream-engine-output",
+          "--model",
+          "ccs-ai/gpt-6.1-sol",
+          "--thinking",
+          "high",
+          "--no-web-search",
+          "--prompt-file",
+          "D:\\tmp\\session-collaboration-e3-20261128\\autoreview-r4-notes.md",
+          "--dataset",
+          "D:\\tmp\\session-collaboration-e3-20261128\\autoreview-r4-dataset.json",
+          "--output",
+          "D:\\tmp\\session-collaboration-e3-20261128\\autoreview-r4.txt",
+          "--json-output",
+          "D:\\tmp\\session-collaboration-e3-20261128\\autoreview-r4.json"
+        ],
+        "exitCode": 1,
+        "seconds": 753.313,
+        "model": "ccs-ai/gpt-6.1-sol",
+        "driven_by": "agent",
+        "actor": "codex/session-collaboration-e3",
+        "sourceUnchanged": true
+      },
+      "receiptSha256": "497e01f6e869b3d3bdb588abd18c826846b4358d3b8a824d401889ff7a5e55bd",
+      "result": {
+        "findings": [
+          {
+            "body": "打开材料详情后，若 owner 撤销材料或任务代次变化，watch 会返回带有 `event.materialState` 的正常结果（例如 `revoked` 或 `stale`）。此分支只更新 `observedState`，没有清空 `detail`/`page`，因此界面仍会渲染旧的摘要、artifact/evidence 引用和任务链接。来源已经失效时仍可看到旧正文，违反 E3 的失效材料清除要求；应在这些失效状态下使当前详情失效并清除正文。",
+            "category": "security",
+            "code_location": {
+              "file_path": "src/components/agents/SessionCollaborationMaterials.tsx",
+              "line": 41
+            },
+            "confidence": 0.97,
+            "priority": "P1",
+            "title": "[P1] 材料失效事件仍保留旧正文"
+          },
+          {
+            "body": "恢复检查收到已有的 `rejected` 或 `expired` 回执时，这里只把阶段改回 `draft`，却保留原消息 ID。随后界面允许重试，但 `sessions.run-control` 对已存在且非 `accepted` 的 intent 直接返回缓存回执，不会再次派发，因此每次重试都会重复原拒绝/过期结果。E3 规定只有 owner 返回 `empty` 才能重试原意图；此处应保持终态，或为明确的新意图生成新 ID。",
+            "category": "bug",
+            "code_location": {
+              "file_path": "src/components/agents/SessionCollaborationMessages.tsx",
+              "line": 129
+            },
+            "confidence": 0.95,
+            "priority": "P2",
+            "title": "[P2] 拒绝或过期回执后的重试复用已终结 ID"
+          }
+        ],
+        "overall_confidence": 0.96,
+        "overall_correctness": "patch is incorrect",
+        "overall_explanation": "静态复核发现两个会影响 E3 恢复语义的实际问题：材料失效事件不会清除已展示正文，且拒绝/过期回执会暴露一个必然命中缓存的重试路径。"
+      },
+      "resultSha256": "aa56fec1bb50a27eda48f28240c105a9b9422e73d2bdfba2a184f6175bda5410"
+    },
+    {
+      "run": "autoreview-r5",
+      "receipt": {
+        "candidate": "cc2302f36c3a36be1120e29235b9c48aed741598",
+        "tree": "ee4ab1d5408d46fd3b736f919cc6fc952e502476",
+        "patchSha256": "6b0f0c7feb92cb35e1a5d62cfbfff20f4b3ddf7b5b01d03dc6f766f6262242b5",
+        "datasetSha256": "27dcd5dcded06ec95ffa2708002c91e2d93c68432a6db7607c1d21f58e34ad0e",
+        "argv": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\tmp\\session-collaboration-e3-20261128\\review-with-raw.py",
+          "D:\\tmp\\session-collaboration-e3-20261128\\autoreview-r5-engine.json",
+          "--mode",
+          "local",
+          "--base",
+          "cc2302f36c3a36be1120e29235b9c48aed741598",
+          "--engine",
+          "codex",
+          "--stream-engine-output",
+          "--model",
+          "ccs-ai/gpt-6.1-sol",
+          "--thinking",
+          "high",
+          "--no-web-search",
+          "--prompt-file",
+          "D:\\tmp\\session-collaboration-e3-20261128\\autoreview-r5-notes.md",
+          "--dataset",
+          "D:\\tmp\\session-collaboration-e3-20261128\\autoreview-r5-dataset.json",
+          "--output",
+          "D:\\tmp\\session-collaboration-e3-20261128\\autoreview-r5.txt",
+          "--json-output",
+          "D:\\tmp\\session-collaboration-e3-20261128\\autoreview-r5.json"
+        ],
+        "exitCode": 0,
+        "seconds": 265.985,
+        "model": "ccs-ai/gpt-6.1-sol",
+        "driven_by": "agent",
+        "actor": "codex/session-collaboration-e3",
+        "sourceUnchanged": true
+      },
+      "receiptSha256": "9bb9f419716cc7c530c8cfa8bf543fc2f52915d981fbb80312bbd4d31b666bc9",
+      "result": {
+        "findings": [],
+        "overall_confidence": 0.87,
+        "overall_correctness": "patch is correct",
+        "overall_explanation": "只读核对了相对指定 main 的变更、E3 数据集及相关 Host/Gateway 契约。已有修复与源码一致，未发现具有具体触发路径的新增或剩余缺陷。本轮未运行测试、构建、类型检查或 Electron；完整集成验收按要求延期。"
+      },
+      "resultSha256": "f6c175f054f8460e203fde6e90628aab0308a66c902ef9b87bcaeb81624e4915"
+    }
+  ]
+}

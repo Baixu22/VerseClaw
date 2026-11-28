@@ -1,0 +1,105 @@
+{
+  "driven_by": "agent",
+  "runs": [
+    {
+      "run": "recovery-red-small",
+      "candidate": {
+        "commit": "cc2302f36c3a36be1120e29235b9c48aed741598",
+        "tree": "ee4ab1d5408d46fd3b736f919cc6fc952e502476",
+        "dirty": true,
+        "workingTree": "307bf32aac234e878f7adc95539538b1795a9092"
+      },
+      "error": "Unit checks failed: session-collaboration-recovery-view.test.tsx",
+      "rawReportSha256": "d802178df5c00ad813155bf471302e3d7ea086f00a96c31c5dd93692086805cb",
+      "steps": [
+        {
+          "id": "01-session-collaboration-recovery-view.test",
+          "exitCode": 1,
+          "tests": {
+            "success": false,
+            "numTotalTests": 4,
+            "numPassedTests": 0,
+            "numFailedTests": 4,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        }
+      ]
+    },
+    {
+      "run": "repeated-transition-red",
+      "candidate": {
+        "commit": "cc2302f36c3a36be1120e29235b9c48aed741598",
+        "tree": "ee4ab1d5408d46fd3b736f919cc6fc952e502476",
+        "dirty": true,
+        "workingTree": "7bcdf64ddf902f4d5a13348a0c3efcc7b117e28d"
+      },
+      "error": "Unit checks failed: session-collaboration-watch.test.ts",
+      "rawReportSha256": "72b18a20ccc092999c88501ac6c27d839f20ac0da82394ddace65e41ea544158",
+      "steps": [
+        {
+          "id": "01-session-collaboration-watch.test",
+          "exitCode": 1,
+          "tests": {
+            "success": false,
+            "numTotalTests": 13,
+            "numPassedTests": 11,
+            "numFailedTests": 2,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        }
+      ]
+    },
+    {
+      "run": "unit-r6",
+      "candidate": {
+        "commit": "cc2302f36c3a36be1120e29235b9c48aed741598",
+        "tree": "ee4ab1d5408d46fd3b736f919cc6fc952e502476",
+        "dirty": true,
+        "workingTree": "49f29701fe4a0d09382e03c0f2d7bab5d98067be"
+      },
+      "error": "Unit checks failed: session-collaboration-message-view.test.tsx",
+      "rawReportSha256": "dba1a36dc1f55b974af61bbfa17c3dcc5edb6ead789200d0a9821ec2894d5095",
+      "steps": [
+        {
+          "id": "01-session-collaboration-recovery-view.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 15,
+            "numPassedTests": 15,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "02-session-collaboration-recovery.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 5,
+            "numPassedTests": 5,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "03-session-collaboration-message-view.test",
+          "exitCode": 1,
+          "tests": {
+            "success": false,
+            "numTotalTests": 8,
+            "numPassedTests": 6,
+            "numFailedTests": 2,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        }
+      ]
+    }
+  ],
+  "retainedRawDirectory": "D:\\tmp\\session-collaboration-e3-20261128"
+}
