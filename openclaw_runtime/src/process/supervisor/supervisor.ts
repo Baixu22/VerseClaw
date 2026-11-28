@@ -38,6 +38,8 @@ type SupervisorLogRuntime = typeof import("./supervisor-log.runtime.js");
 type ActiveRun = {
   run: ManagedRun;
   canSignal: () => boolean;
+  rootActive: () => boolean;
+  creationToken?: string;
   scopeKey?: string;
   lifecycle?: ProcessLifecycleIdentity;
 };
@@ -472,12 +474,21 @@ export function createProcessSupervisor(
         },
       };
 
-      active.set(runId, {
+      const owned: ActiveRun = {
         run: managedRun,
         canSignal: () => !adapterFinished && !settled,
+        rootActive: () => !adapterFinished && !settled && adapter.isRootActive?.() === true,
         scopeKey,
         lifecycle,
-      });
+      };
+      active.set(runId, owned);
+      if (lifecycle && typeof adapter.pid === 'number' && adapter.pid > 0) {
+        const pid = adapter.pid;
+        void captureProcessTrees([pid]).then(captured => {
+          if (active.get(runId) === owned && owned.rootActive() && captured.status === 'ok')
+            owned.creationToken = captured.capturedPids.get(pid);
+        }).catch(() => {});
+      }
       // Only runs with a usable PID can be reconciled after a restart; runs
       // without one stay in-memory-only (nothing to identify at the OS level).
       if (manifest && typeof adapter.pid === "number" && adapter.pid > 0) {
@@ -525,6 +536,8 @@ export function createProcessSupervisor(
       snapshots.push({
         runId,
         pid: entry.run.pid,
+        creationToken: entry.creationToken,
+        rootActive: entry.rootActive(),
         lifecycle: entry.lifecycle ?? normalized,
         cancel: () => {
           cancel(runId, "manual-cancel");

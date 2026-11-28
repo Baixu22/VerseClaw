@@ -60,11 +60,12 @@ beforeEach(() => {
 describe('shared collaboration panel', () => {
   it.each(['during-read', 'before-refresh'])('clears a previously visible list and fences late details when access is revoked %s', async timing => {
     let release!: (value: unknown) => void;
-    mocks.read.mockImplementationOnce(() => new Promise(resolve => { release = resolve; }));
+    let waiting = false;
+    mocks.query.mockImplementation(async request => request.target ? new Promise(resolve => { waiting = true; release = resolve; }) : ({ success: true, page: page(request) }));
     render(<MemoryRouter><SessionCollaborationPanel requester={input.requester} /></MemoryRouter>);
     const rowId = `collaboration-row-${encodeURIComponent(b.sessionKey)}`;
     fireEvent.click(await screen.findByTestId(rowId));
-    await waitFor(() => expect(mocks.read).toHaveBeenCalledOnce());
+    await waitFor(() => expect(waiting).toBe(true));
     mocks.query.mockImplementation(async request => ({ success: true, page: timing === 'during-read' || request.target
       ? emptySessionCollaborationPage(request, 'unavailable', 'not-visible') : emptySessionCollaborationPage(request, 'empty') }));
     fireEvent.click(screen.getByTestId('collaboration-refresh'));
@@ -72,21 +73,19 @@ describe('shared collaboration panel', () => {
     expect(screen.queryByTestId('collaboration-detail')).toBeNull();
     expect(screen.queryByTestId('collaboration-controls')).toBeNull();
     expect(screen.queryByTestId('collaboration-more')).toBeNull();
-    const oldSnapshot = createSessionActivityReadSnapshot(parseSessionCollaborationQuery({ requester: b }).requester);
-    await act(async () => release({ success: true, snapshot: oldSnapshot }));
-    mocks.query.mockImplementation(async request => ({ success: true, page: page(request) }));
-    mocks.read.mockImplementationOnce(() => new Promise(() => {}));
+    const oldPage = page(parseSessionCollaborationQuery({ requester: input.requester, target: b }));
+    oldPage.items[0].sources.goal.value!.text = 'Old revoked detail';
+    await act(async () => release({ success: true, page: oldPage }));
+    mocks.query.mockImplementation(async request => request.target ? new Promise(() => {}) : ({ success: true, page: page(request) }));
     fireEvent.click(screen.getByTestId('collaboration-refresh'));
     fireEvent.click(await screen.findByTestId(rowId));
-    await waitFor(() => expect(mocks.read).toHaveBeenCalledTimes(2));
-    const detail = within(screen.getByTestId('collaboration-detail'));
-    const resourceLabel = detail.getByText('collaboration.resources');
-    expect(resourceLabel.nextElementSibling?.textContent).toBe('collaboration.sources.not_read');
+    expect(within(screen.getByTestId('collaboration-detail')).queryByText('Old revoked detail')).toBeNull();
+    expect(mocks.read).not.toHaveBeenCalled();
   });
   it('keeps an authorized selection hidden by a list filter', async () => {
     render(<MemoryRouter><SessionCollaborationPanel requester={input.requester} /></MemoryRouter>);
     fireEvent.click(await screen.findByTestId(`collaboration-row-${encodeURIComponent(b.sessionKey)}`));
-    await waitFor(() => expect(mocks.read).toHaveBeenCalledOnce());
+    await waitFor(() => expect(mocks.query).toHaveBeenCalledWith(expect.objectContaining({ target: expect.objectContaining({ sessionKey: b.sessionKey }) })));
     fireEvent.change(screen.getByTestId('collaboration-search'), { target: { value: 'no-match' } });
     await waitFor(() => expect(screen.queryByTestId(`collaboration-row-${encodeURIComponent(b.sessionKey)}`)).toBeNull());
     expect(within(screen.getByTestId('collaboration-detail')).getByText('Goal workspace-b')).toBeTruthy();
@@ -142,7 +141,9 @@ describe('shared collaboration panel', () => {
     const mounted = render(<MemoryRouter><SessionCollaborationPanel requester={input.requester} /></MemoryRouter>);
     await screen.findByText('Goal workspace-a'); expect(mocks.read).not.toHaveBeenCalled(); expect(mocks.activate).not.toHaveBeenCalled();
     fireEvent.click(screen.getByTestId(`collaboration-row-${encodeURIComponent(b.sessionKey)}`));
-    await waitFor(() => expect(mocks.read).toHaveBeenCalledWith({ scope: parseSessionCollaborationQuery({ requester: b }).requester }));
+    const target = parseSessionCollaborationQuery({ requester: b }).requester;
+    await waitFor(() => expect(mocks.query).toHaveBeenCalledWith(expect.objectContaining({ target, limit: 1 })));
+    expect(mocks.read).not.toHaveBeenCalled();
     const filter = screen.getByTestId('collaboration-search') as HTMLInputElement;
     filter.focus(); fireEvent.change(filter, { target: { value: 'workspace-b' } });
     await waitFor(() => expect(mocks.query).toHaveBeenCalledWith(expect.objectContaining({ search: 'workspace-b' })));
@@ -170,6 +171,22 @@ describe('shared collaboration panel', () => {
     });
     expect(screen.getByTestId(rowId).getAttribute('aria-pressed')).toBe('true');
     expect(filter.value).toBe('workspace-b');
+  });
+  it('starts from the first page when switching requester and returning', async () => {
+    mocks.query.mockImplementation(async (request: SessionCollaborationQuery) => {
+      const result = page(request);
+      if (!request.cursor) result.nextCursor = 'next-owner-page';
+      return { success: true, page: result };
+    });
+    const mounted = render(<MemoryRouter><SessionCollaborationPanel requester={input.requester} /></MemoryRouter>);
+    fireEvent.click(await screen.findByTestId('collaboration-more'));
+    await waitFor(() => expect(mocks.query).toHaveBeenCalledWith(expect.objectContaining({ cursor: 'next-owner-page' })));
+    for (const requester of [parseSessionCollaborationQuery({ requester: b }).requester, input.requester]) {
+      mocks.query.mockClear();
+      mounted.rerender(<MemoryRouter><SessionCollaborationPanel requester={requester} /></MemoryRouter>);
+      await waitFor(() => expect(mocks.query).toHaveBeenCalledWith(expect.objectContaining({ requester })));
+      expect(mocks.query.mock.calls.every(([query]) => query.cursor === undefined)).toBe(true);
+    }
   });
   it('does not display a late previous-workspace reply under a new requester', async () => {
     let release!: (value: unknown) => void;
@@ -234,12 +251,12 @@ describe('shared collaboration panel', () => {
     mocks.watch.mockImplementationOnce(() => new Promise((_, reject) => { fail = reject; }));
     render(<MemoryRouter><SessionCollaborationPanel requester={input.requester} /></MemoryRouter>);
     fireEvent.click(await screen.findByTestId(`collaboration-row-${encodeURIComponent(b.sessionKey)}`));
-    await waitFor(() => expect(mocks.read).toHaveBeenCalled());
+    const target = parseSessionCollaborationQuery({ requester: b }).requester;
+    await waitFor(() => expect(mocks.query).toHaveBeenCalledWith(expect.objectContaining({ target, limit: 1 })));
     await act(async () => fail(new Error('Connection closed')));
     const detail = within(screen.getByTestId('collaboration-detail'));
     expect(detail.getByText('Goal workspace-b')).toBeTruthy();
-    const status = await detail.findByRole('status');
-    expect(status.textContent).toContain('collaboration.stale');
-    expect(status.textContent).toContain('collaboration.page.unavailable:0');
+    const status = await detail.findByText(/collaboration\.stale\s+collaboration\.page\.unavailable:0/u);
+    expect(status.getAttribute('role')).toBe('status');
   });
 });

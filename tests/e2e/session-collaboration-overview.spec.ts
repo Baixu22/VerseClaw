@@ -32,9 +32,13 @@ test('shared overview reads two original workspace owners and preserves focus an
     const filter = panel.getByTestId('collaboration-search');
     await filter.fill('Beta');
     const row = panel.getByTestId(`collaboration-row-${encodeURIComponent(beta.sessionKey)}`);
+    const beforeSelection = await collaborationReads('query');
     await row.press('Enter');
     await expect(panel.getByTestId('collaboration-detail')).toContainText('Beta collaboration goal');
-    await expect.poll(() => collaborationReads('read')).toBe(1);
+    await expect.poll(() => collaborationReads('query')).toBeGreaterThan(beforeSelection);
+    expect(await collaborationReads('read')).toBe(0);
+    expect(await collaborationReads('resources')).toBe(0);
+    expect(await collaborationReads('modelUsage')).toBe(0);
     await filter.focus();
     const queriesBefore = await collaborationReads('query');
     await publishGatewayStatus(app, { state: 'running', gatewayReady: true });

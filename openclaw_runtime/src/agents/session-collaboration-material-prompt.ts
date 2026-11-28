@@ -15,6 +15,7 @@ import {
 const TOOL_SCHEMA = 'SessionCollaborationMaterialTool/v1';
 const LEGACY_SCHEMA = 'SessionCollaborationMaterials/v1';
 const MAX_SELECTIONS = 4;
+const MAX_MATERIAL_PROMPT_BYTES = 16_384;
 const MATERIAL_WRAPPERS = new Set(['tool_call', 'tool_search_code', 'exec', 'wait']);
 type Selection = { ref: SessionCollaborationMaterialRef; source: AutonomySessionScope; reader: AutonomySessionScope; runId: string; id: string };
 type ResultBlock = { text: string; selections: Selection[] };
@@ -223,6 +224,7 @@ export function withMaterialPromptUse(streamFn: StreamFn, params: {
         const unavailable = { schemaVersion: TOOL_SCHEMA, state: 'unavailable', reason: 'material-use-unavailable' };
         const seen = new Set<string>();
         let deliveredCount = 0;
+        let deliveredBytes = 0;
         for (const block of [...requestBlocks].reverse()) {
           if (deliveredCount >= MAX_SELECTIONS || seen.size >= MATERIAL_SCAN_LIMIT || options?.signal?.aborted) break;
           const entries = new Map<string, { selection: Selection; value: unknown }>();
@@ -238,19 +240,24 @@ export function withMaterialPromptUse(streamFn: StreamFn, params: {
             if (options?.signal?.aborted) break;
             const material = currentMaterial(selection, detail);
             if (material) {
-              entries.set(selection.id, { selection, value: modelMaterial(material, selection) });
-              const candidate = replaceMaterialEnvelopes(block.text, entries);
-              if (Buffer.byteLength(candidate) <= Buffer.byteLength(block.text)) {
-                text = candidate;
-                selected.push(selection);
-                deliveredCount++;
-                continue;
+              const value = modelMaterial(material, selection);
+              const valueBytes = Buffer.byteLength(JSON.stringify(value));
+              if (deliveredBytes + valueBytes <= MAX_MATERIAL_PROMPT_BYTES) {
+                entries.set(selection.id, { selection, value });
+                const candidate = replaceMaterialEnvelopes(block.text, entries);
+                // History budgets already ran. Hydration must fit the existing block in both text and serialized form.
+                if (candidate.length <= block.text.length && Buffer.byteLength(candidate) <= Buffer.byteLength(block.text)
+                  && Buffer.byteLength(JSON.stringify(candidate)) <= Buffer.byteLength(JSON.stringify(block.text))) {
+                  text = candidate;
+                  selected.push(selection);
+                  deliveredCount++;
+                  deliveredBytes += valueBytes;
+                  continue;
+                }
               }
             }
             entries.set(selection.id, { selection, value: unavailable });
-            const candidate = replaceMaterialEnvelopes(block.text, entries);
-            if (Buffer.byteLength(candidate) <= Buffer.byteLength(block.text)) text = candidate;
-            else entries.delete(selection.id);
+            text = replaceMaterialEnvelopes(block.text, entries);
           }
           if (text !== block.text) replacements.set(block.text, { text, selections: selected });
         }

@@ -1,5 +1,6 @@
 /** Durable spend reservations owned by ProviderOutboundBudget, in the existing state database. */
 import { createHash, randomUUID } from "node:crypto";
+import { DatabaseSync } from "node:sqlite";
 import type { Selectable } from "kysely";
 import type { RuntimeFeatureConfig } from "../config/types.openclaw.js";
 import { executeSqliteQuerySync, getNodeSqliteKysely } from "../infra/kysely-sync.js";
@@ -9,6 +10,7 @@ import {
   type OpenClawStateDatabaseOptions,
 } from "../state/openclaw-state-db.js";
 import type { DB } from "../state/openclaw-state-db.generated.js";
+import { resolveOpenClawStateSqlitePath } from "../state/openclaw-state-db.paths.js";
 import {
   resolveProjectIdForWorkspace,
   type WorkspaceId,
@@ -327,28 +329,35 @@ export function reconcileProviderSpend(
 }
 export function providerSpendSnapshot(
   scope: ProviderSpendScope,
-  options: DatabaseOptions = {},
+  options: DatabaseOptions & { readOnly?: boolean } = {},
 ): ProviderSpendSnapshot[] {
-  const { db } = openOpenClawStateDatabase(options),
-    sql = getNodeSqliteKysely<DB>(db);
-  return scopeKeys(scope).map((key) =>
-    snapshot(
-      key.scope,
-      key.key,
-      executeSqliteQuerySync(
-        db,
-        sql
-          .selectFrom("provider_spend_calls")
-          .innerJoin(
-            "provider_spend_allocations",
-            "provider_spend_allocations.call_id",
-            "provider_spend_calls.call_id",
-          )
-          .selectAll("provider_spend_calls")
-          .where("scope_key", "=", key.key),
-      ).rows,
-    ),
-  );
+  const db = options.readOnly ? new DatabaseSync(options.path ?? resolveOpenClawStateSqlitePath(options.env), { readOnly: true })
+    : openOpenClawStateDatabase(options).db;
+  try {
+    if (options.readOnly) db.exec('BEGIN');
+    const sql = getNodeSqliteKysely<DB>(db);
+    const result = scopeKeys(scope).flatMap(key => {
+      const rows = executeSqliteQuerySync(db, sql.selectFrom("provider_spend_calls")
+        .innerJoin("provider_spend_allocations", "provider_spend_allocations.call_id", "provider_spend_calls.call_id")
+        .selectAll("provider_spend_calls").where("scope_key", "=", key.key)).rows;
+      if (options.readOnly && key.scope === 'session' && rows.some(row => {
+        if (row.state === 'cancelled') return false;
+        try {
+          const owner = JSON.parse(row.scope_json) as ProviderSpendScope;
+          return owner.workspaceId !== scope.workspaceId || owner.projectId !== scope.projectId ||
+            owner.sessionKey !== scope.sessionKey || owner.sessionGeneration !== scope.sessionGeneration;
+        } catch { return true; }
+      })) return [];
+      return [snapshot(key.scope, key.key, rows)];
+    });
+    if (options.readOnly) db.exec('COMMIT');
+    return result;
+  } finally {
+    if (options.readOnly) {
+      if (db.isTransaction) db.exec('ROLLBACK');
+      db.close();
+    }
+  }
 }
 
 export type ProviderSpendRunContext = {

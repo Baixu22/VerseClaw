@@ -437,3 +437,23 @@ it('qualifies selected materials in one final owner batch after asynchronous pre
   expect(readFinal).toHaveBeenCalledOnce();
   expect(record.mock.calls[0][0].map((item: TaskMaterialObservation) => item.id)).toEqual([b.id, b.id]);
 });
+
+it.each(['A'.repeat(2048), '\\"\n'.repeat(600), '汉'.repeat(1000)])('omits material that would expand an already budgeted provider block (%#)', async longSummary => {
+  const longMaterial = { ...material, id: 'long-finding', summary: longSummary };
+  const page = { ...emptyMaterialPage({ requester: scope }, 'ready'), detail: { material: longMaterial, state: 'claim' as const } };
+  const selection = await materialToolResult(page, 'tool-long', { runId });
+  const messages: Parameters<StreamFn>[1]['messages'] = [{
+    role: 'toolResult', toolName: 'sessions_list', toolCallId: 'tool-long', isError: false,
+    timestamp: 1, content: [{ type: 'text', text: JSON.stringify(selection, null, 2) }],
+  }];
+  const { provider, payload: outbound } = capturingProvider();
+  const read = vi.fn(async () => ({ material: longMaterial, state: 'claim' as const }));
+  const record = vi.fn();
+  const wrapped = withMaterialPromptUse(provider, { runId, modelCallId: 'long-summary-call', read, record });
+  await (await wrapped({} as Parameters<StreamFn>[0], { messages })).result();
+  const output = JSON.stringify(outbound()) ?? '';
+  expect(output).not.toContain(longSummary);
+  expect(output).toContain('material-use-unavailable');
+  expect(Buffer.byteLength(output)).toBeLessThanOrEqual(Buffer.byteLength(JSON.stringify({ messages })));
+  expect(record).not.toHaveBeenCalled();
+});

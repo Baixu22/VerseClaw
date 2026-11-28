@@ -1,5 +1,78 @@
 {
     "collaboration": {
+        "budget": {
+            "disabled": "Бюджет отключён",
+            "scopes": {
+                "host": "Хост",
+                "project": "Проект",
+                "session": "Сессия"
+            },
+            "spentTokens": "Потраченные токены",
+            "heldTokens": "Зарезервированные токены",
+            "spentCost": "Известные расходы (USD)",
+            "heldCost": "Известный резерв (USD)",
+            "activeCalls": "Активные вызовы",
+            "unknownUsage": "Вызовы с неизвестным расходом",
+            "unknownCost": "Вызовы с неизвестной стоимостью",
+            "admission": "Допуск",
+            "admissionStates": {
+                "fenced": "Новые разрешения закрыты",
+                "waiting": "Ожидание",
+                "active": "Есть активные разрешения",
+                "idle": "Активных или ожидающих разрешений нет"
+            },
+            "rejectedWhileFenced": "Отклонено при закрытии"
+        },
+        "resourceDetails": {
+            "shared": "Общий ресурс",
+            "reservations": "Зарезервированные порты",
+            "count": "Количество",
+            "rss": "Резидентная память",
+            "cpu": "ЦП",
+            "activePermits": "Активные разрешения",
+            "waiters": "Ожидающие",
+            "pids": "Идентификаторы процессов",
+            "kinds": {
+                "process": "Дерево процессов",
+                "terminal": "Терминалы",
+                "browser": "Сессии браузера",
+                "background-port": "Наблюдаемые порты",
+                "worktree": "Управляемые рабочие деревья",
+                "admission-permit": "Допуск к выполнению",
+                "provider": "Бюджет провайдера",
+                "durable-helper": "Фоновые процессы",
+                "shared-gateway": "Процесс Gateway"
+            }
+        },
+        "usage": {
+            "timingTitle": "Этапы задачи",
+            "phaseNames": {
+                "queue": "Очередь",
+                "execution": "Выполнение",
+                "verification": "Проверка",
+                "recovery": "Восстановление"
+            },
+            "title": "Использование моделей",
+            "session": "История текущей сессии",
+            "task": "Поддерево задачи",
+            "run": "Текущий или последний записанный запуск",
+            "calls": "Наблюдаемые вызовы",
+            "tokens": "Токены",
+            "knownTokens": "Известные токены",
+            "cacheRead": "Чтения кэша",
+            "cacheWrite": "Записи кэша",
+            "cost": "Оценка стоимости (USD)",
+            "subtotal": "Известная часть стоимости (USD)",
+            "missingUsage": "Вызовы без данных об использовании",
+            "missingPrice": "Вызовы без цены",
+            "conflict": "Противоречивые наблюдения",
+            "coordination": "Координация",
+            "observations": "Последние вызовы этой сессии",
+            "attempt": "Попытка {{attempt}}",
+            "callTokens": "Токены {{tokens}}",
+            "priceVersion": "Версия цен",
+            "priceVersions": "Версии цен"
+        },
         "materials": {
             "title": "Общие материалы",
             "filter": "Задача, файл, тема или доказательство",

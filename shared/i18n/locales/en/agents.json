@@ -1,5 +1,78 @@
 {
     "collaboration": {
+        "budget": {
+            "disabled": "Budget disabled",
+            "scopes": {
+                "host": "Host",
+                "project": "Project",
+                "session": "Session"
+            },
+            "spentTokens": "Spent tokens",
+            "heldTokens": "Held tokens",
+            "spentCost": "Known spent (USD)",
+            "heldCost": "Known held (USD)",
+            "activeCalls": "Active calls",
+            "unknownUsage": "Calls with unknown usage",
+            "unknownCost": "Calls with unknown cost",
+            "admission": "Admission",
+            "admissionStates": {
+                "fenced": "Closed to new permits",
+                "waiting": "Waiting",
+                "active": "Active permits",
+                "idle": "No active or waiting permits"
+            },
+            "rejectedWhileFenced": "Rejected while closed"
+        },
+        "resourceDetails": {
+            "shared": "Shared",
+            "reservations": "Reserved ports",
+            "count": "Count",
+            "rss": "Resident memory",
+            "cpu": "CPU",
+            "activePermits": "Active permits",
+            "waiters": "Waiting",
+            "pids": "Process IDs",
+            "kinds": {
+                "process": "Process tree",
+                "terminal": "Terminals",
+                "browser": "Browser sessions",
+                "background-port": "Observed ports",
+                "worktree": "Managed worktrees",
+                "admission-permit": "Execution admission",
+                "provider": "Provider budget",
+                "durable-helper": "Background helpers",
+                "shared-gateway": "Gateway process"
+            }
+        },
+        "usage": {
+            "timingTitle": "Task phases",
+            "phaseNames": {
+                "queue": "Queue",
+                "execution": "Execution",
+                "verification": "Verification",
+                "recovery": "Recovery"
+            },
+            "title": "Model usage",
+            "session": "Session transcript",
+            "task": "Task subtree",
+            "run": "Current or last recorded run",
+            "calls": "Observed calls",
+            "tokens": "Tokens",
+            "knownTokens": "Known tokens",
+            "cacheRead": "Cache reads",
+            "cacheWrite": "Cache writes",
+            "cost": "Estimated cost (USD)",
+            "subtotal": "Known cost subtotal (USD)",
+            "missingUsage": "Calls with missing usage",
+            "missingPrice": "Calls with missing price",
+            "conflict": "Conflicting observations",
+            "coordination": "Coordination",
+            "observations": "Recent calls for this session",
+            "attempt": "Attempt {{attempt}}",
+            "callTokens": "{{tokens}} tokens",
+            "priceVersion": "Price version",
+            "priceVersions": "Price versions"
+        },
         "materials": {
             "title": "Shared materials",
             "filter": "Task, file, topic, or evidence",

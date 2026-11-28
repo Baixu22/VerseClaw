@@ -146,6 +146,22 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
       } catch { respond(false, undefined, { code: 'INVALID_REQUEST', message: 'Invalid material batch query' }); }
       return;
     }
+    if (params.resourceInventory !== undefined) {
+      try {
+        if (Object.keys(params).length !== 1) throw new TypeError('One resource inventory query required');
+        const { readSessionCollaborationResources } = await import('./session-collaboration-resources.js');
+        respond(true, { resources: await readSessionCollaborationResources(params.resourceInventory, context) }, undefined);
+      } catch { respond(false, undefined, { code: 'INVALID_REQUEST', message: 'Invalid collaboration resource query' }); }
+      return;
+    }
+    if (params.modelUsage !== undefined) {
+      try {
+        if (Object.keys(params).length !== 1) throw new TypeError('One model usage query required');
+        const { readSessionCollaborationUsage } = await import('./session-collaboration-usage.js');
+        respond(true, { usage: await readSessionCollaborationUsage(params.modelUsage, context) }, undefined);
+      } catch { respond(false, undefined, { code: 'INVALID_REQUEST', message: 'Invalid collaboration usage query' }); }
+      return;
+    }
     if (params.materials !== undefined) {
       try {
         if (Object.keys(params).length !== 1) throw new TypeError('One material query required');

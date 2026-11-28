@@ -3,19 +3,22 @@ import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from 'vites
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { TaskSystemStore } from '../../shared/task-system/store';
 import { resolveTaskDomain } from '../../shared/task-system/identity';
 import { parseSessionActivityReadQuery, type SessionActivityReadReason } from '../../shared/types/session-activity';
 import { parseSessionCollaborationQuery, validateSessionCollaborationPage, type SessionCollaborationQuery, type SessionCollaborationPage } from '../../shared/types/session-collaboration';
 import { parseSessionCollaborationWatch, type SessionCollaborationWatchResult } from '../../shared/types/session-collaboration-watch';
+import type { LongSessionResourceInventory } from '../../shared/long-session-resource-reclamation';
+import type { SessionCollaborationResources } from '../../shared/types/session-collaboration-resources';
 import type { OpenClawConfig } from '../../openclaw_runtime/src/config/types.openclaw';
 import type { GatewayManager } from '../../electron/gateway/manager';
 import type { TerminalSessionManager } from '../../electron/services/terminal-session-manager';
 import type { ProcessSession } from '../../openclaw_runtime/src/agents/bash-process-registry';
 
-const mocks = vi.hoisted(() => ({ cfg: {} as OpenClawConfig, workspace: vi.fn(), git: vi.fn(), ledger: vi.fn(), history: vi.fn(),
+const mocks = vi.hoisted(() => ({ cfg: {} as OpenClawConfig, workspace: vi.fn(), activeWorkspace: vi.fn(),
+  hostResources: vi.fn(), runtimeResources: vi.fn(), git: vi.fn(), ledger: vi.fn(), history: vi.fn(),
   statusText: vi.fn(), patched: vi.fn(), checkoutCleanup: vi.fn(), taskAdmission: vi.fn(), taskOpens: [] as string[], fileReads: [] as string[] }));
 // Fixtures seed run identities without checkout writers; terminal teardown stays outside this read contract.
 vi.mock('../../openclaw_runtime/src/agents/execution-checkout-tools.js', () => ({ finishExecutionCheckoutRun: mocks.checkoutCleanup }));
@@ -34,15 +37,16 @@ vi.mock('node:fs/promises', async importOriginal => {
 vi.mock('../../openclaw_runtime/src/config/io.js', async importOriginal => ({ ...await importOriginal<typeof import('../../openclaw_runtime/src/config/io.js')>(), getRuntimeConfig: () => mocks.cfg }));
 vi.mock('../../electron/services/git-api', () => ({ createGitApi: () => ({ status: mocks.git }) }));
 vi.mock('../../electron/services/task-ledger-api', () => ({ createTaskLedgerApi: () => ({ snapshot: mocks.ledger }) }));
-vi.mock('../../electron/services/workspaces-api', () => ({ getWorkspaceRootPathById: mocks.workspace, getPersistedCoordinatorBinding: vi.fn() }));
-vi.mock('../../electron/services/long-session-resource-reclamation', () => ({ collectLongSessionResourceInventory: vi.fn() }));
+vi.mock('../../electron/services/workspaces-api', () => ({ getWorkspaceRootPathById: mocks.workspace,
+  getActiveWorkspaceProfile: mocks.activeWorkspace, getPersistedCoordinatorBinding: vi.fn() }));
+vi.mock('../../electron/services/long-session-resource-reclamation', () => ({ collectLongSessionResourceInventory: mocks.hostResources }));
 vi.mock('../../openclaw_runtime/src/agents/mission-control/store.js', () => ({ getLatestMissionForSession: vi.fn() }));
 vi.mock('../../openclaw_runtime/src/agents/subagent-registry.js', () => ({ listSubagentRunsForRequester: vi.fn(), listOrchestrationCompletionBatchesForRequester: vi.fn() }));
 vi.mock('../../openclaw_runtime/src/agents/task-loop-controller.js', () => ({ listTaskLoopRunsForSession: vi.fn() }));
 vi.mock('../../openclaw_runtime/src/agents/clawgraph/runtime.js', () => ({ listClawGraphRunSnapshots: vi.fn() }));
 vi.mock('../../openclaw_runtime/src/agents/long-task-control/store.js', () => ({ countLongTaskQueuedMessages: vi.fn(), getLatestLongTaskCheckpoint: vi.fn() }));
 vi.mock('../../openclaw_runtime/src/agents/runtime-effective-capability.js', () => ({ readRuntimeEffectiveCapabilityObservation: vi.fn(), resolveCurrentRuntimeGeneration: vi.fn() }));
-vi.mock('../../openclaw_runtime/src/gateway/session-resource-inventory.js', () => ({ readRuntimeSessionResourceInventory: vi.fn() }));
+vi.mock('../../openclaw_runtime/src/gateway/session-resource-inventory.js', () => ({ readRuntimeSessionResourceInventory: mocks.runtimeResources }));
 vi.mock('../../openclaw_runtime/src/gateway/server-methods/session-derivation-projection.js', () => ({ readSessionDerivation: vi.fn() }));
 vi.mock('../../openclaw_runtime/src/agents/tools/session-status.runtime.js', () => ({ buildStatusText: mocks.statusText }));
 vi.mock('../../openclaw_runtime/src/gateway/session-patch-hooks.js', () => ({ triggerSessionPatchHook: mocks.patched }));
@@ -81,16 +85,20 @@ function put(key: string, patch: Record<string, unknown>) {
   const entries = loadExistingSqliteSessionStoreReadOnly(sessionStore);
   entries[key] = { ...entries[key], ...patch } as typeof entries[string]; replaceSqliteSessionStore(sessionStore, entries);
 }
-async function runtime(input: SessionCollaborationQuery) {
-  let result!: { page: SessionCollaborationPage };
-  await sessionActivityHandlers['session.activitySnapshot']({ params: { query: input }, context: { chatAbortControllers: runs, getRuntimeConfig: () => mocks.cfg },
-    respond: (ok: boolean, data: unknown, error?: { message: string }) => { if (!ok) throw new Error(error?.message); result = data as typeof result; },
+async function runtimeSnapshot<T>(params: Record<string, unknown>): Promise<T> {
+  let result!: T;
+  await sessionActivityHandlers['session.activitySnapshot']({ params, context: { chatAbortControllers: runs, getRuntimeConfig: () => mocks.cfg },
+    respond: (ok: boolean, data: unknown, error?: { message: string }) => { if (!ok) throw new Error(error?.message); result = data as T; },
   } as never);
   return result;
 }
+function runtime(input: SessionCollaborationQuery) {
+  return runtimeSnapshot<{ page: SessionCollaborationPage }>({ query: input });
+}
 function main() {
-  const rpc = vi.fn(async (_method: string, payload: { query: SessionCollaborationQuery }): Promise<unknown> => runtime(payload.query));
-  return { rpc, api: createSessionActivityApi({ gatewayManager: { rpc } as unknown as GatewayManager, terminalManager: { list: vi.fn() } as unknown as TerminalSessionManager }) };
+  const rpc = vi.fn((_method: string, payload: Record<string, unknown>) => runtimeSnapshot(payload));
+  const getStatus = () => ({ state: 'running', pid: 100, connectedAt: 1 });
+  return { rpc, api: createSessionActivityApi({ gatewayManager: { rpc, getStatus } as unknown as GatewayManager, terminalManager: { list: vi.fn() } as unknown as TerminalSessionManager }) };
 }
 function ownerState() {
   const files: Record<string, string> = {};
@@ -198,6 +206,63 @@ it('reads a bounded final material batch through the Gateway and rejects a reset
   expect(call.mock.calls[0][0].params).toMatchObject({ materialsBatch: [{ requester: scope(), target: scope(), ref: materialReference(material) }] });
   call.mockImplementationOnce(async () => { put(A, { sessionId: 'reset' }); return { materials: pages }; });
   expect(await querySessionCollaborationMaterialBatchTool(opts, selections)).toMatchObject([{ state: 'unavailable', detail: null }]);
+});
+
+it('reads model and resource details for a verified requester outside the active workspace', async () => {
+  const requester = scope(B, 'workspace-b', 'generation-b');
+  const input = { requester, target: requester };
+  mocks.activeWorkspace.mockResolvedValue({ id: 'workspace-a', activeSessionKey: A, rootPath: workspaceA });
+  const message = { role: 'assistant', provider: 'fixture', model: 'fixture', stopReason: 'stop',
+    usage: { input: 10, output: 5, cacheRead: 0, cacheWrite: 0, totalTokens: 15 } };
+  mkdirSync(dirname(sessionStore), { recursive: true });
+  writeFileSync(join(dirname(sessionStore), 'generation-b.jsonl'),
+    [{ type: 'session', id: 'generation-b' }, { type: 'message', id: 'assistant', message }].map(row => JSON.stringify(row)).join('\n') + '\n');
+  const inventory: LongSessionResourceInventory = {
+    schema: 'LongSessionResourceInventory/v1', scope: { workspaceId: 'workspace-b', sessionKey: B, expectedSessionId: 'generation-b' },
+    capturedAt: new Date().toISOString(), owners: [],
+  };
+  mocks.runtimeResources.mockResolvedValueOnce(inventory);
+  mocks.hostResources.mockResolvedValueOnce(inventory);
+  const { api, rpc } = main();
+
+  await expect(api.modelUsage(input)).resolves.toMatchObject({
+    usage: { session: { state: 'ready', value: { calls: 1, totalTokens: 15 } } },
+  });
+  await expect(api.resources(input)).resolves.toMatchObject({ resources: { state: 'ready', inventory } });
+  expect(rpc).toHaveBeenCalledWith('session.activitySnapshot', { resourceInventory: input }, 27_000);
+  expect(rpc).toHaveBeenCalledWith('session.activitySnapshot', { query: query({ ...input, fields: [], limit: 1 }) });
+
+  const stale = { requester: { ...requester, sessionGeneration: 'old-generation' }, target: requester } as typeof input;
+  await expect(api.modelUsage(stale)).resolves.toMatchObject({
+    usage: { session: { state: 'stale', reason: 'generation-changed', value: null } },
+  });
+  await expect(api.resources(stale)).resolves.toMatchObject({
+    resources: { state: 'stale', reason: 'generation-changed', inventory: null },
+  });
+});
+
+it.each([
+  ['visibility', 'unavailable', 'not-visible'],
+  ['requester generation', 'stale', 'generation-changed'],
+  ['requester workspace', 'stale', 'scope-mismatch'],
+] as const)('clears a finished resource read when %s changes', async (change, state, reason) => {
+  const target = scope(B, 'workspace-b', 'generation-b');
+  const inventory: LongSessionResourceInventory = {
+    schema: 'LongSessionResourceInventory/v1',
+    scope: { workspaceId: target.workspaceId, sessionKey: B, expectedSessionId: target.sessionGeneration },
+    capturedAt: new Date().toISOString(), owners: [],
+  };
+  mocks.runtimeResources.mockImplementationOnce(async () => {
+    if (change === 'visibility') mocks.cfg.tools!.sessions!.visibility = 'self';
+    else if (change === 'requester generation') put(A, { sessionId: 'requester-reset-during-read' });
+    else put(A, { workspaceId: 'workspace-b', workspaceDir: workspaceB });
+    return inventory;
+  });
+  const result = await runtimeSnapshot<{ resources: SessionCollaborationResources }>({
+    resourceInventory: { requester: scope(), target },
+  });
+  expect(mocks.runtimeResources).toHaveBeenCalledTimes(1);
+  expect(result.resources).toMatchObject({ state, reason, inventory: null });
 });
 
 it('releases cancelled and expired Gateway waits while their initial owner reads are pending', async () => {
@@ -637,4 +702,21 @@ describe('A2 shared session discovery and detail', () => {
       const read = vi.spyOn(metadata, 'loadCombinedSessionStoreForGateway');
       await expect(runtime({ ...query(), ...patch } as SessionCollaborationQuery)).rejects.toThrow(); expect(read).not.toHaveBeenCalled();
     });
+});
+
+it.each(['modelUsage', 'resources'] as const)('rechecks %s access after the final Host workspace await', async method => {
+  const target = scope(B, 'workspace-b', 'generation-b');
+  const inventory: LongSessionResourceInventory = { schema: 'LongSessionResourceInventory/v1',
+    scope: { workspaceId: target.workspaceId, sessionKey: B, expectedSessionId: target.sessionGeneration },
+    capturedAt: new Date().toISOString(), owners: [] };
+  mocks.runtimeResources.mockResolvedValue(inventory); mocks.hostResources.mockResolvedValue(inventory);
+  let reads = 0;
+  mocks.workspace.mockImplementation(async (id: string) => {
+    if (++reads === 2) mocks.cfg.tools!.sessions!.visibility = 'self';
+    return id === 'workspace-a' ? workspaceA : workspaceB;
+  });
+  const { api } = main();
+  const result = await api[method]({ requester: scope(), target });
+  if ('usage' in result) expect(result.usage).toMatchObject({ session: { state: 'unavailable', value: null, reason: 'not-visible' }, calls: [] });
+  else expect(result.resources).toMatchObject({ state: 'unavailable', inventory: null, reason: 'not-visible' });
 });

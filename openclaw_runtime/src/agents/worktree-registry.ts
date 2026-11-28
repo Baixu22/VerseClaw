@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { lstatSync, readFileSync, realpathSync, statSync } from "node:fs";
+import { DatabaseSync } from "node:sqlite";
 import path from "node:path";
 import { isDeepStrictEqual } from "node:util";
 import {
@@ -8,7 +9,7 @@ import {
   getNodeSqliteKysely,
 } from "../infra/kysely-sync.js";
 import type { DB } from "../state/openclaw-state-db.generated.js";
-import { openExecutionStateDatabase as openOpenClawStateDatabase, runExecutionStateWriteTransaction as runOpenClawStateWriteTransaction } from "../state/execution-state-db.js";
+import { openExecutionStateDatabase as openOpenClawStateDatabase, resolveExecutionStatePath, runExecutionStateWriteTransaction as runOpenClawStateWriteTransaction } from "../state/execution-state-db.js";
 import type { MergeQueueItem, WorktreeRecord } from "./worktree-service.js";
 
 export type WorktreeRegistrationPhase = "intent" | "allocated" | "created" | "registered" | "ready";
@@ -76,12 +77,16 @@ export function observeWorktree(record: WorktreeRecord): WorktreeAvailability {
   }
 }
 
-export function loadWorktreeRegistryScope(baseRoot: string): WorktreeRegistryScope {
+export function loadWorktreeRegistryScope(baseRoot: string, readOnly = false): WorktreeRegistryScope {
   const key = canonicalWorktreePath(baseRoot);
   const baseIdentity = filesystemInstance(baseRoot);
-  const { db } = openOpenClawStateDatabase();
-  const query = getNodeSqliteKysely<RegistryDatabase>(db);
-  const row = executeSqliteQueryTakeFirstSync(db, query.selectFrom("managed_worktree_scopes").selectAll().where("scope_key", "=", key));
+  const db = readOnly ? new DatabaseSync(resolveExecutionStatePath(), { readOnly: true }) : openOpenClawStateDatabase().db;
+  const row = (() => {
+    try {
+      const query = getNodeSqliteKysely<RegistryDatabase>(db);
+      return executeSqliteQueryTakeFirstSync(db, query.selectFrom("managed_worktree_scopes").selectAll().where("scope_key", "=", key));
+    } finally { if (readOnly) db.close(); }
+  })();
   if (!row) return { key, baseIdentity, revision: 0, records: new Map(), queue: [] };
   const data = JSON.parse(row.state_json) as {
     schema?: number; baseIdentity?: string; records?: WorktreeRecord[]; queue?: MergeQueueItem[];
