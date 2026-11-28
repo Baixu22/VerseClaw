@@ -86,6 +86,10 @@ This repository is more than a renderer wrapper. It contains the React UI, Elect
 
 > **Current status:** `0.4.9-alpha.0`, controlled preview. Windows x64 local workflows are the primary acceptance target. macOS/Linux have build targets, but platform-specific runtime validation is separate. Release, GA, live readiness and product approval are not implied by component graduation or agent-driven evidence.
 
+
+Session reads recheck access before returning results and discard collected details when access is withdrawn during a read.
+
+
 ## What is in the product
 
 | Area | Current product shape | Deep dive |

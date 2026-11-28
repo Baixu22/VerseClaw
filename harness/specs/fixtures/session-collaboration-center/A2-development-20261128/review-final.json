@@ -1,0 +1,6 @@
+{
+  "findings": [],
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "只读审查未发现本次差异引入的可操作缺陷。查询在最终 metadata await 后重新读取当前 visibility、A2A 和 sandbox 策略，并核对全部实际扫描的候选；撤权路径通过统一失败页清空结果、游标和读取计数。Main、UI、sessions_list 与只读 session_status 沿用同一查询及响应校验。UI 新增的详情失效代次可拦截撤权后的迟到响应，共享材料类型移除 Runtime 依赖后保持原有类型集合。四类权限竞态回归及既有 E4 身份、导航隔离代码均已静态核对。本次未运行测试、类型检查、构建或 Electron。",
+  "overall_confidence": 0.9
+}

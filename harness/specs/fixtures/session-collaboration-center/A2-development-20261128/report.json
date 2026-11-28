@@ -1,0 +1,17 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/session-collaboration-a2",
+  "candidate": {
+    "commit": "b3695f180b4e5166624c793bbc285ec13a67eb42",
+    "tree": "c23fa5191d2fa1ee5d52e1a5c728957cffc62d0e"
+  },
+  "developmentAcceptance": "pass",
+  "fullAcceptance": "deferred_by_user",
+  "model": "ccs-ai/gpt-6.1-sol",
+  "testFiles": 7,
+  "passedTests": 145,
+  "sourceChecks": 8,
+  "electron": "collection-only",
+  "rawDirectory": "D:\\tmp\\session-collaboration-a2-closeout-20261128",
+  "dependencyMode": "existing dependency junctions; no installation"
+}

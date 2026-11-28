@@ -1,0 +1,186 @@
+{
+  "candidate": {
+    "commit": "b3695f180b4e5166624c793bbc285ec13a67eb42",
+    "tree": "c23fa5191d2fa1ee5d52e1a5c728957cffc62d0e"
+  },
+  "steps": [
+    {
+      "id": "contract",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=640",
+        "scripts/contract-check.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 3.969,
+      "stdoutSha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "i18n",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=640",
+        "scripts/i18n-lint.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 1.844,
+      "stdoutSha256": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "comms-replay",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=640",
+        "scripts/comms/replay.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 1.469,
+      "stdoutSha256": "1e36633d3be20cc2555c76366e39da4971e825db07ed598895cb6e9b96e870ab",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "comms-compare",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=640",
+        "scripts/comms/compare.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 1.313,
+      "stdoutSha256": "13d3466fcd717a47eb4f7d92fd1841107e2f6c91df61cb8591fcdf9795c590dd",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "harness-validate",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=640",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/session-collaboration-a2.md"
+      ],
+      "exitCode": 0,
+      "seconds": 1.969,
+      "stdoutSha256": "911ece653ec0010f61942c7b7c5677717e7b703e45a61c37f5ff0350dbd766bd",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "harness-dry-run",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=640",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/session-collaboration-a2.md",
+        "--dry-run"
+      ],
+      "exitCode": 0,
+      "seconds": 1.531,
+      "stdoutSha256": "b6f66a652e785f951cb20b65f6a0a287705fa41b0922917247e96a7f414d54c0",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "electron-collect",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=640",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/session-collaboration-overview.spec.ts",
+        "tests/e2e/session-collaboration-watch.spec.ts",
+        "--list"
+      ],
+      "exitCode": 0,
+      "seconds": 6.704,
+      "stdoutSha256": "e52eed875dc9ce0cf5c1cb4e3e62e7ce129958609ccf212a5b5558887d8de7d6",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "eslint",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=640",
+        "node_modules/eslint/bin/eslint.js",
+        "openclaw_runtime/src/gateway/server-methods/session-collaboration-query.ts",
+        "shared/types/session-collaboration-material.ts",
+        "src/components/agents/SessionCollaborationPanel.tsx",
+        "tests/e2e/session-collaboration-overview.spec.ts",
+        "tests/unit/session-collaboration-panel.test.tsx",
+        "tests/unit/session-collaboration-query.test.ts",
+        "--format",
+        "json",
+        "--output-file",
+        "D:\\tmp\\session-collaboration-a2-closeout-20261128\\final-source-r1\\eslint.json"
+      ],
+      "exitCode": 0,
+      "seconds": 9.078,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "rawReportSha256": "6f9972740313a4d1fc71c83fb239b10865f679804bed04f68071571a32e28b37",
+  "comms": {
+    "schema": "comms-compare-report/v1",
+    "generated_at": "2026-11-28T07:34:13.239Z",
+    "candidate": {
+      "commit": "b3695f180b4e5166624c793bbc285ec13a67eb42",
+      "tree": "c23fa5191d2fa1ee5d52e1a5c728957cffc62d0e"
+    },
+    "replay_candidate": {
+      "commit": "b3695f180b4e5166624c793bbc285ec13a67eb42",
+      "tree": "c23fa5191d2fa1ee5d52e1a5c728957cffc62d0e"
+    },
+    "result": "PASS",
+    "failures": [],
+    "rows": [
+      "| gateway-restart-during-run.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+      "| gateway-restart-during-run.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+      "| gateway-restart-during-run.history_inflight_max | 1.0000 | <= 1 | PASS |",
+      "| gateway-restart-during-run.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |",
+      "| gateway-restart-during-run.message_loss_count | 0.0000 | <= 0 | PASS |",
+      "| gateway-restart-during-run.message_order_violation_count | 0.0000 | <= 0 | PASS |",
+      "| happy-path-chat.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+      "| happy-path-chat.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+      "| happy-path-chat.history_inflight_max | 1.0000 | <= 1 | PASS |",
+      "| happy-path-chat.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |",
+      "| happy-path-chat.message_loss_count | 0.0000 | <= 0 | PASS |",
+      "| happy-path-chat.message_order_violation_count | 0.0000 | <= 0 | PASS |",
+      "| history-overlap-guard.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+      "| history-overlap-guard.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+      "| history-overlap-guard.history_inflight_max | 1.0000 | <= 1 | PASS |",
+      "| history-overlap-guard.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |",
+      "| history-overlap-guard.message_loss_count | 0.0000 | <= 0 | PASS |",
+      "| history-overlap-guard.message_order_violation_count | 0.0000 | <= 0 | PASS |",
+      "| invalid-config-patch-recovered.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+      "| invalid-config-patch-recovered.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+      "| invalid-config-patch-recovered.history_inflight_max | 1.0000 | <= 1 | PASS |",
+      "| invalid-config-patch-recovered.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |",
+      "| invalid-config-patch-recovered.message_loss_count | 0.0000 | <= 0 | PASS |",
+      "| invalid-config-patch-recovered.message_order_violation_count | 0.0000 | <= 0 | PASS |",
+      "| multi-agent-channel-switch.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+      "| multi-agent-channel-switch.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+      "| multi-agent-channel-switch.history_inflight_max | 0.0000 | <= 1 | PASS |",
+      "| multi-agent-channel-switch.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |",
+      "| multi-agent-channel-switch.message_loss_count | 0.0000 | <= 0 | PASS |",
+      "| multi-agent-channel-switch.message_order_violation_count | 0.0000 | <= 0 | PASS |",
+      "| network-degraded.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+      "| network-degraded.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+      "| network-degraded.history_inflight_max | 1.0000 | <= 1 | PASS |",
+      "| network-degraded.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |",
+      "| network-degraded.message_loss_count | 0.0000 | <= 0 | PASS |",
+      "| network-degraded.message_order_violation_count | 0.0000 | <= 0 | PASS |",
+      "| duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+      "| event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+      "| history_inflight_max | 1.0000 | <= 1 | PASS |",
+      "| rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |",
+      "| message_loss_count | 0.0000 | <= 0 | PASS |",
+      "| message_order_violation_count | 0.0000 | <= 0 | PASS |",
+      "| history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) |",
+      "| rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |"
+    ]
+  }
+}

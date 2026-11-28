@@ -1,0 +1,54 @@
+{
+  "candidate": {
+    "commit": "b3695f180b4e5166624c793bbc285ec13a67eb42",
+    "tree": "c23fa5191d2fa1ee5d52e1a5c728957cffc62d0e"
+  },
+  "errors": 0,
+  "warnings": 2,
+  "files": [
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/session-collaboration-query.ts",
+      "messages": []
+    },
+    {
+      "path": "shared/types/session-collaboration-material.ts",
+      "messages": []
+    },
+    {
+      "path": "src/components/agents/SessionCollaborationPanel.tsx",
+      "messages": [
+        {
+          "ruleId": "react-refresh/only-export-components",
+          "severity": 1,
+          "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.",
+          "line": 24,
+          "column": 14,
+          "messageId": "namedExport",
+          "endLine": 24,
+          "endColumn": 35
+        },
+        {
+          "ruleId": "react-hooks/exhaustive-deps",
+          "severity": 1,
+          "message": "The ref value 'revision.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'revision.current' to a variable inside the effect, and use that variable in the cleanup function.",
+          "line": 85,
+          "column": 119,
+          "endLine": 85,
+          "endColumn": 126
+        }
+      ]
+    },
+    {
+      "path": "tests/e2e/session-collaboration-overview.spec.ts",
+      "messages": []
+    },
+    {
+      "path": "tests/unit/session-collaboration-panel.test.tsx",
+      "messages": []
+    },
+    {
+      "path": "tests/unit/session-collaboration-query.test.ts",
+      "messages": []
+    }
+  ]
+}

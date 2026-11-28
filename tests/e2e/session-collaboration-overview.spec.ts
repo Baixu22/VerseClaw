@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { readFile, writeFile } from 'node:fs/promises';
 import { closeElectronApp, expect, getStableWindow, pinWindowContentSize, publishGatewayStatus, test } from './fixtures/electron';
-import { hostInvoke, startScriptedLlm } from './fixtures/fp-p1-harness';
+import { hostInvoke, startGateway, startScriptedLlm } from './fixtures/fp-p1-harness';
 import { configureSessionChainProvider, instrumentSessionChainHost, readSessionChainHostCalls } from './fixtures/session-task-chain';
 import { createCollaborationChild, createCollaborationProject, enableCollaborationFixtureVisibility } from './fixtures/session-collaboration';
 
@@ -76,6 +76,16 @@ test('shared overview reads two original workspace owners and preserves focus an
     const projectAfter = await hostInvoke(app, 'workspaces', 'list');
     expect(projectAfter).toEqual(projectBefore);
     expect(provider.log.length).toBe(modelCalls);
+    await page.getByTestId('sidebar-nav-system').click();
+    await filter.fill('Beta'); await row.click();
+    await expect(panel.getByTestId('collaboration-detail')).toContainText('Beta collaboration goal');
+    const config = await hostInvoke<{ hash: string }>(app, 'gateway', 'rpc', { method: 'config.get' });
+    await hostInvoke(app, 'gateway', 'rpc', { method: 'config.patch', params: { baseHash: config.hash,
+      raw: JSON.stringify({ tools: { sessions: { visibility: 'self' } } }) } });
+    await hostInvoke(app, 'gateway', 'stop'); await startGateway(app);
+    await expect(row).toHaveCount(0);
+    await expect(panel.getByText('Beta collaboration goal')).toHaveCount(0);
+    await expect(panel.getByTestId('collaboration-controls')).toHaveCount(0);
     await writeFile(info.outputPath('overview-readbacks.json'), JSON.stringify({ driven_by: 'agent', actor: 'session-collaboration-overview',
       sourceCandidate: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), alpha, beta, child, before, after, projectBefore, projectAfter, frames,
       modelCallsBefore: modelCalls, modelCallsAfter: provider.log.length }, null, 2));

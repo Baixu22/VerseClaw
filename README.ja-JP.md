@@ -85,6 +85,10 @@ Verse Claw は、組み込み OpenClaw Runtime 上に構築された Electron �
 
 > **現在の状態：**`0.4.9-alpha.0`、controlled preview。Windows x64 のローカル workflow が主な検証対象です。macOS/Linux には build target がありますが、platform runtime の検証は別です。component graduation や agent-driven evidence は、release、GA、liveReady、productApproved を意味しません。
 
+
+会話の読み取りは応答前に権限を再確認し、途中でアクセスが取り消された場合は取得済みの詳細を返しません。
+
+
 ## 製品を構成するモジュール
 
 | 領域 | 現在の形 | 詳細 |

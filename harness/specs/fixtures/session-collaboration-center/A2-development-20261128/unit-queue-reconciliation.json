@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "jobId": "session-collaboration-a2-closeout-20261128-unit-r4",
+  "actor": "codex/session-collaboration-a2",
+  "driven_by": "agent",
+  "leaseToken": "a8c8bc9021a64f9db1d2a54b3c02836d",
+  "commandDigest": "c603c5ab63c0a1a4975cd025ff8aa670dd3e77730108ee802d1558d4cf89c39b",
+  "commandStarted": true,
+  "status": "failed",
+  "exitCode": null,
+  "treeExited": true,
+  "root": {
+    "pid": 41660,
+    "createdAt": 1795849655.7816725
+  },
+  "startedAt": 1795849655.7834334,
+  "endedAt": null,
+  "reconciledAt": 1795850393.9607859,
+  "error": "Supervisor observation failed and exited without a queue receipt; original root exit remains unknown.",
+  "sourceUnchanged": true,
+  "bindingErrors": [],
+  "peaks": {
+    "rssMiB": 712.383,
+    "commitMiB": 808.324,
+    "processCount": 7,
+    "cpuPercent": 526.62,
+    "cpuSecondsObserved": 78.438,
+    "readBytesObserved": 493399591,
+    "writeBytesObserved": 479671266
+  },
+  "reconciliation": {
+    "basis": "agent-resource-queue-authority actual-artifact reconciliation",
+    "observer": "codex/session-collaboration-a2",
+    "liveProcesses": [],
+    "supervisorAlive": false,
+    "testReportSha256": "e8490a256777402bd4e3a2b8bd1978d8d3742f4bd31691258aab1800661aeb0d",
+    "testStepsExitCode": 0,
+    "rootExitCode": null,
+    "note": "All child test results were retained. Queue run is failed/unknown; unit-r5 repeats the same candidate with a driver exit receipt."
+  },
+  "logs": {
+    "stdout.log": {
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\session-collaboration-a2-closeout-20261128-unit-r4\\stdout.log",
+      "sha256": "44534f8e7e57870d967fbf8f33c182ab35107f0dda110a4aeeffcd37af57cbc4"
+    },
+    "stderr.log": {
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\session-collaboration-a2-closeout-20261128-unit-r4\\stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

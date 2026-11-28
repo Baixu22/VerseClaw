@@ -1,5 +1,9 @@
 # 会话、运行与连续性
 
+
+
+最后一次异步来源读取完成后，查询会用当前 visibility、A2A allow 与 sandbox 策略再次核对已读取候选。读取期间撤销访问返回 `unavailable/not-visible`，并清除结果、分页游标和读取计数。
+
 > 面向问题：Session、Run、Task、Workspace 分别是什么？聊天记录怎样保存和恢复？fork、handoff、archive、delete 和 checkpoint 各自改变哪些事实？
 
 ## 1. 五个对象不能混写

@@ -66,9 +66,12 @@ export async function readSessionCollaborationQuery(input: unknown, context: Gat
   if (!requester) return fail('unavailable', 'owner-missing');
   try { normalizeAutonomySessionScope(query.requester, requester); }
   catch { return fail('stale', query.requester.sessionGeneration === requester.sessionGeneration ? 'scope-mismatch' : 'generation-changed'); }
-  const sandboxed = resolveSandboxRuntimeStatus({ cfg, sessionKey: requester.sessionKey }).sandboxed;
-  const checker = createSessionVisibilityRowChecker({ action: query.target ? 'status' : 'list', requesterSessionKey: requester.sessionKey,
-    visibility: resolveEffectiveSessionToolsVisibility({ cfg, sandboxed }), a2aPolicy: createAgentToAgentPolicy(cfg) });
+  const visibilityFor = (currentConfig: typeof cfg) => {
+    const sandboxed = resolveSandboxRuntimeStatus({ cfg: currentConfig, sessionKey: requester.sessionKey }).sandboxed;
+    return createSessionVisibilityRowChecker({ action: query.target ? 'status' : 'list', requesterSessionKey: requester.sessionKey,
+      visibility: resolveEffectiveSessionToolsVisibility({ cfg: currentConfig, sandboxed }), a2aPolicy: createAgentToAgentPolicy(currentConfig) });
+  };
+  const checker = visibilityFor(context.getRuntimeConfig());
   const candidates = Object.entries(store).filter(([key, entry]) => parseAgentSessionKey(key)
     && checker.check({ key, spawnedBy: entry.spawnedBy, parentSessionKey: entry.parentSessionKey }).allowed
     && (!query.workspace || entry.workspaceId === query.workspace.workspaceId)
@@ -153,8 +156,13 @@ export async function readSessionCollaborationQuery(input: unknown, context: Gat
       }
       page.items.push(row);
     }
-    const after = await filterArchivedSessionStore(cfg, loadCombinedSessionStoreForGateway(cfg, { readOnly: true }).store);
+    const currentConfig = context.getRuntimeConfig();
+    const after = await filterArchivedSessionStore(currentConfig, loadCombinedSessionStoreForGateway(currentConfig, { readOnly: true }).store);
     if (signature(identityRows(after)) !== before) return fail('stale', 'generation-changed');
+    // Reload policy after the final owner await before releasing any collected facts.
+    const finalVisibility = visibilityFor(context.getRuntimeConfig());
+    if (candidates.slice(offset, index).some(([key, entry]) => !finalVisibility.check({ key,
+      spawnedBy: entry.spawnedBy, parentSessionKey: entry.parentSessionKey }).allowed)) return fail('unavailable', 'not-visible');
     for (const connection of connections.values()) if ('access' in connection) connection.access.assertCurrent();
   } catch (error) {
     if (error instanceof Error && /STALE|REPLACED/.test(error.message)) return fail('stale', 'execution-changed');
