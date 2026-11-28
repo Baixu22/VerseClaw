@@ -1,0 +1,8 @@
+{
+  "executor": "codex-subagent",
+  "model": "ccs-ai/gpt-6.1-sol",
+  "actor": "/root/d_final_acceptance",
+  "receiptSha256": "7ba12d79e93a2a2bd6a8c72add0e684335c82ca85f6083032f52401817895e2c",
+  "datasetSha256": "c1418d868c0ca71fa4d0a3263f2a106265239d24663d788a3ac7c54d5581f990",
+  "workingTree": "3c3700f6d0f9cd601a4728f5e21c7ff7c189aebd"
+}

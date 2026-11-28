@@ -1,0 +1,20 @@
+{
+  "findings": [
+    {
+      "priority": 2,
+      "title": "[P2] Include teardown outcome in the final evidence status",
+      "body": "The test sets evidence.status to passed at line 147, writes the artifact at line 157, then closes Electron and the scripted provider at line 158. closeElectronApp returns mainExited, launcherExited, and errors rather than throwing on every shutdown failure, and this result is ignored; the provider close can also reject. A run can therefore leave collaboration-center.json marked passed even when teardown is incomplete or the test fails afterward. Collect cleanup outcomes, set the final status after cleanup, and serialize the artifact only after that status is known.",
+      "confidence_score": 0.91,
+      "code_location": {
+        "absolute_file_path": "D:/tmp/session-collaboration-mainline-20261126/C/source/tests/e2e/session-collaboration-center.spec.ts",
+        "line_range": {
+          "start": 147,
+          "end": 158
+        }
+      }
+    }
+  ],
+  "overall_correctness": "patch is incorrect",
+  "overall_explanation": "The E5 chain assertions and Host contracts align with the current E implementation, including operator actor/sourceRun identity, receipt identity, scoped watch, material-use attribution, usage, resources, UI reload plus Gateway restart recovery, and stale-resource rejection after reset. One evidence-integrity defect remains: the artifact status is persisted before teardown and does not incorporate the Electron shutdown result. Static review only; no test or acceptance result is claimed.",
+  "overall_confidence": 0.9
+}

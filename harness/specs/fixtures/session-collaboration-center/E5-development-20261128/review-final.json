@@ -1,0 +1,6 @@
+{
+  "findings": [],
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "限定复核当前仅有的三行 E5 teardown 修复。cleanupFailure 在 finally 中赋值，成功主流程遇到清理失败时于 finally 结束且证据写出后再抛错；场景失败时原 catch 仍保存 firstFailure 并抛出场景错误，finally 记录清理结果且不覆盖该错误。未发现该 delta 的可行动代码问题。本结论为静态 native subagent 代码审查，不代表测试或 Electron 执行结果。",
+  "overall_confidence": 0.94
+}

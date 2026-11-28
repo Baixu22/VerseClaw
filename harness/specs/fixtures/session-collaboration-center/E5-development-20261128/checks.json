@@ -1,0 +1,180 @@
+{
+  "candidate": {
+    "commit": "731055fbb90c8d5e8aec439f76e98f51b66389de",
+    "tree": "3c3700f6d0f9cd601a4728f5e21c7ff7c189aebd"
+  },
+  "steps": [
+    {
+      "id": "contract",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=640",
+        "scripts/contract-check.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 3.094,
+      "stdoutSha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "i18n",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=640",
+        "scripts/i18n-lint.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 2.422,
+      "stdoutSha256": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "comms-replay",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=640",
+        "scripts/comms/replay.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 0.656,
+      "stdoutSha256": "bc5f170a68d220aef4f139cbc7c12a9b5cb16cb869126bd04b3353e036babb3c",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "comms-compare",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=640",
+        "scripts/comms/compare.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 0.532,
+      "stdoutSha256": "b1cd2214070f9c8d4fcb4bb846aa8c1f7637a05af0e2f0e6e029955779eac8e2",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "harness-validate",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=640",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/session-collaboration-e5.md"
+      ],
+      "exitCode": 0,
+      "seconds": 1.531,
+      "stdoutSha256": "d55027834a1639864271c2db05d1ff9abfa88faf1a3e17f994e56954455fb0dd",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "harness-dry-run",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=640",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/session-collaboration-e5.md",
+        "--dry-run"
+      ],
+      "exitCode": 0,
+      "seconds": 1.422,
+      "stdoutSha256": "b6f66a652e785f951cb20b65f6a0a287705fa41b0922917247e96a7f414d54c0",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "electron-collect",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=640",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/session-collaboration-",
+        "--list"
+      ],
+      "exitCode": 0,
+      "seconds": 2.485,
+      "stdoutSha256": "57f4e9175a9bf6029c8ee03f8bb80dd2d16d9349b21cb5d0986fa90ec99d8641",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "eslint",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=640",
+        "node_modules/eslint/bin/eslint.js",
+        "tests/e2e/session-collaboration-center.spec.ts",
+        "--format",
+        "json",
+        "--output-file",
+        "D:\\tmp\\session-collaboration-e5-closeout-20261128\\final-source-r2\\eslint.json"
+      ],
+      "exitCode": 0,
+      "seconds": 4.391,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "rawReportSha256": "ed467f8e3804d0b5fdfb1752e97651b9c8e8343751271a3adcc9ee87d96bce64",
+  "comms": {
+    "schema": "comms-compare-report/v1",
+    "generated_at": "2026-11-28T10:41:17.154Z",
+    "candidate": {
+      "commit": "731055fbb90c8d5e8aec439f76e98f51b66389de",
+      "tree": "3c3700f6d0f9cd601a4728f5e21c7ff7c189aebd"
+    },
+    "replay_candidate": {
+      "commit": "731055fbb90c8d5e8aec439f76e98f51b66389de",
+      "tree": "3c3700f6d0f9cd601a4728f5e21c7ff7c189aebd"
+    },
+    "result": "PASS",
+    "failures": [],
+    "rows": [
+      "| gateway-restart-during-run.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+      "| gateway-restart-during-run.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+      "| gateway-restart-during-run.history_inflight_max | 1.0000 | <= 1 | PASS |",
+      "| gateway-restart-during-run.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |",
+      "| gateway-restart-during-run.message_loss_count | 0.0000 | <= 0 | PASS |",
+      "| gateway-restart-during-run.message_order_violation_count | 0.0000 | <= 0 | PASS |",
+      "| happy-path-chat.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+      "| happy-path-chat.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+      "| happy-path-chat.history_inflight_max | 1.0000 | <= 1 | PASS |",
+      "| happy-path-chat.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |",
+      "| happy-path-chat.message_loss_count | 0.0000 | <= 0 | PASS |",
+      "| happy-path-chat.message_order_violation_count | 0.0000 | <= 0 | PASS |",
+      "| history-overlap-guard.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+      "| history-overlap-guard.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+      "| history-overlap-guard.history_inflight_max | 1.0000 | <= 1 | PASS |",
+      "| history-overlap-guard.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |",
+      "| history-overlap-guard.message_loss_count | 0.0000 | <= 0 | PASS |",
+      "| history-overlap-guard.message_order_violation_count | 0.0000 | <= 0 | PASS |",
+      "| invalid-config-patch-recovered.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+      "| invalid-config-patch-recovered.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+      "| invalid-config-patch-recovered.history_inflight_max | 1.0000 | <= 1 | PASS |",
+      "| invalid-config-patch-recovered.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |",
+      "| invalid-config-patch-recovered.message_loss_count | 0.0000 | <= 0 | PASS |",
+      "| invalid-config-patch-recovered.message_order_violation_count | 0.0000 | <= 0 | PASS |",
+      "| multi-agent-channel-switch.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+      "| multi-agent-channel-switch.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+      "| multi-agent-channel-switch.history_inflight_max | 0.0000 | <= 1 | PASS |",
+      "| multi-agent-channel-switch.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |",
+      "| multi-agent-channel-switch.message_loss_count | 0.0000 | <= 0 | PASS |",
+      "| multi-agent-channel-switch.message_order_violation_count | 0.0000 | <= 0 | PASS |",
+      "| network-degraded.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+      "| network-degraded.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+      "| network-degraded.history_inflight_max | 1.0000 | <= 1 | PASS |",
+      "| network-degraded.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |",
+      "| network-degraded.message_loss_count | 0.0000 | <= 0 | PASS |",
+      "| network-degraded.message_order_violation_count | 0.0000 | <= 0 | PASS |",
+      "| duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+      "| event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+      "| history_inflight_max | 1.0000 | <= 1 | PASS |",
+      "| rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |",
+      "| message_loss_count | 0.0000 | <= 0 | PASS |",
+      "| message_order_violation_count | 0.0000 | <= 0 | PASS |",
+      "| history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) |",
+      "| rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |"
+    ]
+  }
+}

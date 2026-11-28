@@ -1,0 +1,45 @@
+{
+  "driven_by": "agent",
+  "runs": [
+    {
+      "name": "e5-draft-check",
+      "report": {
+        "driven_by": "agent",
+        "draftOnly": true,
+        "scriptSha256": "b7d5914771a3b943a9b4526e5f41311d1c4341603be2f00507b26d3335f8be53",
+        "steps": [
+          {
+            "id": "eslint",
+            "exitCode": 0
+          },
+          {
+            "id": "collect",
+            "exitCode": 1
+          }
+        ]
+      },
+      "reportSha256": "c617ccce47bf442a3615e71d2cc4ad84218f593ab3ed1acaafb36ed4811dd754"
+    },
+    {
+      "name": "e5-draft-check-r3",
+      "report": {
+        "driven_by": "agent",
+        "draftOnly": true,
+        "scriptSha256": "b7d5914771a3b943a9b4526e5f41311d1c4341603be2f00507b26d3335f8be53",
+        "steps": [
+          {
+            "id": "eslint",
+            "exitCode": 0
+          },
+          {
+            "id": "collect",
+            "exitCode": 0
+          }
+        ],
+        "status": "passed"
+      },
+      "reportSha256": "2f1b9b831500b28356f826b3ddd81ee4a643b8b13acb162e5eea6dd8800fd886"
+    }
+  ],
+  "note": "Draft checks precede D merge. The first collection used a Windows path as a regex and matched zero tests; the relative-path retry passed. Final source checks bind the merged candidate."
+}

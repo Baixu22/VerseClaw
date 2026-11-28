@@ -1,0 +1,14 @@
+{
+  "candidate": {
+    "commit": "731055fbb90c8d5e8aec439f76e98f51b66389de",
+    "tree": "3c3700f6d0f9cd601a4728f5e21c7ff7c189aebd"
+  },
+  "errors": 0,
+  "warnings": 0,
+  "files": [
+    {
+      "path": "tests/e2e/session-collaboration-center.spec.ts",
+      "messages": []
+    }
+  ]
+}
