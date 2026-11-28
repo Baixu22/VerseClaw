@@ -1,0 +1,50 @@
+{
+  "candidate": {
+    "commit": "09796d28e19c26e6342f9d6f7e17caf566733a75",
+    "tree": "567b0649c4546f0bf4288922178926d66ccdb7b0"
+  },
+  "errors": 0,
+  "warnings": 0,
+  "files": [
+    {
+      "path": "electron/services/sessions-api.ts",
+      "messages": []
+    },
+    {
+      "path": "src/components/agents/SystemPortfolioPanel.tsx",
+      "messages": []
+    },
+    {
+      "path": "tests/e2e/session-collaboration-boundary.spec.ts",
+      "messages": []
+    },
+    {
+      "path": "tests/e2e/session-collaboration-material-lifecycle.spec.ts",
+      "messages": []
+    },
+    {
+      "path": "tests/unit/session-collaboration-boundary-owner.test.ts",
+      "messages": []
+    },
+    {
+      "path": "tests/unit/session-collaboration-boundary-provenance.test.ts",
+      "messages": []
+    },
+    {
+      "path": "tests/unit/session-collaboration-boundary-retention.test.ts",
+      "messages": []
+    },
+    {
+      "path": "tests/unit/session-collaboration-boundary.test.ts",
+      "messages": []
+    },
+    {
+      "path": "tests/unit/session-collaboration-system-notification.test.tsx",
+      "messages": []
+    },
+    {
+      "path": "tests/unit/session-collaboration-system-reader.test.tsx",
+      "messages": []
+    }
+  ]
+}

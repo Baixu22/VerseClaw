@@ -1,0 +1,63 @@
+{
+  "driven_by": "agent",
+  "candidate": {
+    "commit": "09796d28e19c26e6342f9d6f7e17caf566733a75",
+    "tree": "567b0649c4546f0bf4288922178926d66ccdb7b0"
+  },
+  "runs": [
+    {
+      "job": "session-collaboration-e4-20261128-unit-r7",
+      "receiptSha256": "edb85302e7ef90a15f428a5802e15677cd58463b7db757b6838975252702aa5e",
+      "status": "completed",
+      "exitCode": 0,
+      "commandStarted": true,
+      "treeExited": true,
+      "sourceUnchanged": true,
+      "peaks": {
+        "rssMiB": 441.492,
+        "commitMiB": 580.355,
+        "processCount": 8,
+        "cpuPercent": 629.2,
+        "cpuSecondsObserved": 38.969,
+        "readBytesObserved": 47187001,
+        "writeBytesObserved": 25899830
+      }
+    },
+    {
+      "job": "session-collaboration-e4-20261128-autoreview-r7",
+      "receiptSha256": "7a323dc29ce9b855754bc845c80d0e870404c98346c7842d0a2d0fccd31682c5",
+      "status": "completed",
+      "exitCode": 0,
+      "commandStarted": true,
+      "treeExited": true,
+      "sourceUnchanged": true,
+      "peaks": {
+        "rssMiB": 776.543,
+        "commitMiB": 539.332,
+        "processCount": 28,
+        "cpuPercent": 250.66,
+        "cpuSecondsObserved": 47.375,
+        "readBytesObserved": 42028054,
+        "writeBytesObserved": 2237609
+      }
+    },
+    {
+      "job": "session-collaboration-e4-20261128-final-source-r1",
+      "receiptSha256": "d58b8efbe8348e376172f09edcd5ecdb51f5a880ac39fcc2843db2087d8dde5d",
+      "status": "completed",
+      "exitCode": 0,
+      "commandStarted": true,
+      "treeExited": true,
+      "sourceUnchanged": true,
+      "peaks": {
+        "rssMiB": 378.281,
+        "commitMiB": 390.859,
+        "processCount": 5,
+        "cpuPercent": 213.76,
+        "cpuSecondsObserved": 7.469,
+        "readBytesObserved": 37517731,
+        "writeBytesObserved": 102323
+      }
+    }
+  ]
+}

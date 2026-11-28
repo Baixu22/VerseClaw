@@ -1,0 +1,6 @@
+{
+  "findings": [],
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "只读检查了完整变更函数、相关调用者，以及原 owner 的可见性、发送策略、回执校验和历史证据读取路径，未发现本次变更引入或暴露的具体可操作缺陷。消息入口绑定实际活动读取者，最终 owner 查询共同复核读取者与目标身份；导航观察覆盖切走后切回，并在异常及提前返回时释放。UI 异步身份结果受 revision 约束，同一身份的普通通知刷新保留组件状态。跨会话正文继续携带 inter_session 来源，权限和任务验收仍由原 owner 控制。本次未执行测试或构建；结论基于源码审查。",
+  "overall_confidence": 0.91
+}
